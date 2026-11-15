@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-PT" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Forja</title>
+  <meta name="description" content="Plano de treino para o muscle-up e para o supino: registo, progresso e alimentação.">
+  <meta name="theme-color" content="#1C2026">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Forja">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preload" href="fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/barlow-condensed-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/app.css">
+  <script>
+    try {
+      var s = JSON.parse(localStorage.getItem('forja.state.v1') || '{}');
+      document.documentElement.dataset.theme = (s.settings && s.settings.theme) || 'auto';
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <nav class="rail" id="nav" aria-label="Navegação principal"></nav>
+  <main id="view"></main>
+  <div id="restbar" role="timer" aria-live="off" hidden></div>
+  <div id="modal-root"></div>
+  <div id="toast-root" aria-live="polite"></div>
+  <noscript><p style="padding:24px">A Forja precisa de JavaScript ligado.</p></noscript>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
