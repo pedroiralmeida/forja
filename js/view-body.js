@@ -88,7 +88,7 @@ export function renderBody(root) {
           </div>
           <div class="daily-row">
             <div class="daily-label">Batido extra</div>
-            <div class="daily-value"><button class="toggle ${h.shake ? 'on' : ''}" data-act="shake" aria-pressed="${!!h.shake}">${h.shake ? icons.check + ' Bebido' : 'Leite, aveia, banana'}</button></div>
+            <div class="daily-value"><button class="toggle ${h.shake ? 'on' : ''}" data-act="shake" aria-pressed="${!!h.shake}">${h.shake ? icons.check + ' Bebido' : 'Leite, whey e aveia'}</button></div>
           </div>
           <div class="daily-row">
             <div class="daily-label">Sono</div>

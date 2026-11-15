@@ -684,7 +684,7 @@ export function bwStats() {
   } else if (weekly === null) {
     status = { level: 'info', text: 'Regista o peso 3 a 4 manhãs por semana; em duas semanas já há tendência.' };
   } else if (weekly < 0.05 && weeklyPrev !== null && weeklyPrev < 0.05) {
-    status = { level: 'warn', text: 'A média não sobe há 2 semanas. Acrescenta algo fixo ao teu dia: um batido de leite com aveia e banana, ou uma porção extra de arroz ou massa.' };
+    status = { level: 'warn', text: 'A média não sobe há 2 semanas. Acrescenta algo fixo ao teu dia: um shaker de leite com whey e aveia instantânea, um copo de leite e uma banana, ou uma porção extra de arroz ou massa.' };
   } else if (weekly < 0.05) {
     status = { level: 'soft', text: 'Esta semana a média não subiu. Se se repetir na próxima, come mais.' };
   } else if (weekly < 0.1) {
