@@ -38,7 +38,7 @@ export const EX = {
   },
   weighted_pullup: {
     name: 'Elevações com peso', kind: 'weighted_bw', tier: 'secondary', group: 'costas',
-    note: 'regista só o peso extra (cinto ou halter entre os pés)',
+    note: 'regista só o peso extra: 0 sem peso; depois cinto de lastro ou mochila com peso',
     cues: ['Começa com os braços estendidos e omoplatas ativas.', 'Queixo acima da barra em todas as reps; nada de meias reps.'],
   },
   pullup: {
@@ -114,35 +114,33 @@ export const EX = {
 export const BAND_LEVELS = ['forte', 'média', 'leve'];
 
 // Programa. mode: top_backoff | double | reps | skill
+// place: supera (supino e máquinas) | estadio (barras: muscle-up, elevações, dips)
 export const DAYS = {
   A: {
-    title: 'Pesado',
-    blurb: 'Série pesada de supino e força de costas.',
+    label: 'Supera A', title: 'Pesado', place: 'supera',
+    blurb: 'Série pesada de supino e costas nas máquinas.',
     slots: [
-      { id: 'A_skill', mode: 'skill', focus: 'main' },
       { id: 'A_bench', ex: 'bench', mode: 'top_backoff', topReps: 3, topRPE: 8, backSets: 3, backReps: 5, backRPE: 7 },
-      { id: 'A_wpull', ex: 'weighted_pullup', mode: 'double', sets: 4, min: 4, max: 6, startAdded: 5 },
-      { id: 'A_row', ex: 'row', mode: 'double', sets: 3, min: 8, max: 12 },
+      { id: 'A_row', ex: 'row', mode: 'double', sets: 4, min: 6, max: 10 },
+      { id: 'A_pulldown', ex: 'pulldown', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'A_face', ex: 'face_pull', mode: 'double', sets: 3, min: 12, max: 20 },
     ],
   },
   B: {
-    title: 'Volume',
+    label: 'Supera B', title: 'Volume', place: 'supera',
     blurb: 'Mais reps no supino para construir músculo.',
     slots: [
-      { id: 'B_skill', mode: 'skill', focus: 'secondary' },
       { id: 'B_bench', ex: 'bench', mode: 'double', sets: 4, min: 6, max: 8, startPct: 0.76 },
-      { id: 'B_sbd', ex: 'sbd', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
-      { id: 'B_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
+      { id: 'B_dips', ex: 'dips', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
+      { id: 'B_rowdb', ex: 'row_db', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'B_lat', ex: 'lateral_raise', mode: 'double', sets: 3, min: 12, max: 20 },
       { id: 'B_tri', ex: 'triceps_pushdown', mode: 'double', sets: 3, min: 10, max: 15 },
     ],
   },
   C: {
-    title: 'Força e técnica',
+    label: 'Supera C', title: 'Força e técnica', place: 'supera',
     blurb: 'Supino com pausa para ganhar força a sair do peito.',
     slots: [
-      { id: 'C_skill', mode: 'skill', focus: 'main' },
       { id: 'C_pause', ex: 'bench_paused', mode: 'double', sets: 4, min: 3, max: 5, startPct: 0.73 },
       { id: 'C_incl', ex: 'incline_db', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'C_pulldown', ex: 'pulldown', mode: 'double', sets: 3, min: 8, max: 12 },
@@ -150,21 +148,48 @@ export const DAYS = {
       { id: 'C_rear', ex: 'rear_delt', mode: 'double', sets: 2, min: 12, max: 20 },
     ],
   },
-  D: {
-    title: 'Ombros e braços',
-    blurb: 'Dia extra opcional: tríceps, ombros e um pouco de muscle-up.',
-    optional: true,
+  E1: {
+    label: 'Estádio 1', title: 'Muscle-up e força', place: 'estadio',
+    blurb: 'Muscle-up primeiro, depois elevações com peso e dips na barra.',
     slots: [
-      { id: 'D_skill', mode: 'skill', focus: 'light' },
-      { id: 'D_close', ex: 'bench_close', mode: 'double', sets: 3, min: 6, max: 10, startPct: 0.65 },
-      { id: 'D_ohp', ex: 'ohp_db', mode: 'double', sets: 3, min: 6, max: 10 },
-      { id: 'D_lat', ex: 'lateral_raise', mode: 'double', sets: 3, min: 12, max: 20 },
-      { id: 'D_triov', ex: 'triceps_overhead', mode: 'double', sets: 3, min: 10, max: 15 },
-      { id: 'D_hammer', ex: 'hammer_curl', mode: 'double', sets: 3, min: 8, max: 12 },
-      { id: 'D_face', ex: 'face_pull', mode: 'double', sets: 2, min: 12, max: 20 },
+      { id: 'E1_skill', mode: 'skill', focus: 'main' },
+      { id: 'E1_wpull', ex: 'weighted_pullup', mode: 'double', sets: 4, min: 5, max: 8, startAdded: 0 },
+      { id: 'E1_sbd', ex: 'sbd', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
+    ],
+  },
+  E2: {
+    label: 'Estádio 2', title: 'Muscle-up e volume', place: 'estadio',
+    blurb: 'Muscle-up primeiro, depois chest-to-bar e dips na barra.',
+    slots: [
+      { id: 'E2_skill', mode: 'skill', focus: 'main' },
+      { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
+      { id: 'E2_sbd', ex: 'sbd', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
     ],
   },
 };
+
+export const PLACE_DAYS = { supera: ['A', 'B', 'C'], estadio: ['E1', 'E2'] };
+
+// Horários segundo o Google (nov. 2026). Índice = dia da semana JS (0 = domingo).
+export const PLACES = {
+  supera: {
+    name: 'Supera Telheiras', short: 'Supera',
+    hours: { 0: ['9:00', '14:00'], 1: ['6:30', '22:00'], 2: ['6:30', '22:00'], 3: ['6:30', '22:00'], 4: ['6:30', '22:00'], 5: ['6:30', '22:00'], 6: ['9:00', '20:30'] },
+  },
+  estadio: {
+    name: 'Estádio Universitário', short: 'Estádio',
+    hours: { 0: null, 1: ['7:00', '21:00'], 2: ['7:00', '21:00'], 3: ['7:00', '21:00'], 4: ['7:00', '21:00'], 5: ['7:00', '21:00'], 6: ['8:00', '19:00'] },
+  },
+};
+
+export const PLAN_TYPES = [
+  { value: 'supera', label: 'Supera' },
+  { value: 'estadio', label: 'Estádio' },
+  { value: 'corrida', label: 'Corrida' },
+  { value: 'descanso', label: 'Descanso' },
+];
+
+export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 // Fases do muscle-up. Cada fase define os exercícios do bloco de skill.
 export const MU_STAGES = [
@@ -242,6 +267,7 @@ export const ALL_PLATES = [25, 20, 15, 10, 5, 2.5, 2, 1.25, 1, 0.5];
 export const DEFAULT_SETTINGS = {
   onboarded: false,
   daysPerWeek: 3,
+  weekPlan: { 0: 'descanso', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'supera', 6: 'corrida' },
   bar: 20,
   plates: [25, 20, 15, 10, 5, 2.5, 1.25],
   dbStep: 2,
@@ -264,11 +290,12 @@ export const GUIDE = [
     id: 'plano',
     title: 'Como funciona o plano',
     body: `
-<p>Treinas 3 dias por semana (ou 4, com o dia D opcional), sempre por esta ordem: A, B, C. Cada dia tem supino, trabalho de muscle-up e costas. Deixa pelo menos um dia de descanso entre treinos, por exemplo segunda, quarta e sexta.</p>
-<p><strong>Dia A, pesado.</strong> Uma série principal de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. A app ajusta essas séries ao que fizeste na principal: se a série principal saiu fácil, as seguintes sobem; se saiu difícil, descem.</p>
-<p><strong>Dia B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas as séries, a app sobe 2,5 kg na sessão seguinte.</p>
-<p><strong>Dia C, força e técnica.</strong> Supino com 2 segundos de pausa no peito. Tira o "ressalto" e constrói força exatamente onde o 100 kg costuma falhar.</p>
-<p>O bloco de muscle-up vem sempre no início do treino, enquanto estás fresco. Os exercícios mudam sozinhos à medida que vais cumprindo os marcos.</p>`,
+<p>Há dois sítios. No <strong>Supera</strong> fazes o supino e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, elevações e dips na barra reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
+<p>Por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; corrida ao sábado; descanso ao domingo. O Estádio fecha às 21h durante a semana, por isso nesses dias vai logo depois da missa.</p>
+<p><strong>Supera A, pesado.</strong> Uma série principal de supino de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
+<p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>
+<p><strong>Supera C, força e técnica.</strong> Supino com 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
+<p><strong>Estádio 1 e 2.</strong> Começam sempre pelo muscle-up, enquanto estás fresco. Os exercícios mudam sozinhos à medida que cumpres os marcos. Se correres no mesmo dia, corre depois, nunca antes.</p>`,
   },
   {
     id: 'supino',
@@ -298,6 +325,7 @@ export const GUIDE = [
 <p>Se a média não subir durante duas semanas, acrescenta algo fixo ao teu dia: um copo de leite com uma banana, ou mais uma mão cheia de arroz ou massa ao almoço e ao jantar. Se subir muito depressa e a barriga crescer, tira um pouco.</p>
 <p><strong>Proteína:</strong> cerca de 1,6 a 2,2 g por kg de peso. Na prática, 4 refeições com uma porção do tamanho da palma da mão (frango, peru, carne, peixe, atum, 3–4 ovos, skyr, queijo fresco), mais um batido de whey se faltar.</p>
 <p><strong>Batido para ganhar peso:</strong> leite, 1 dose de whey, 40–60 g de aveia, uma banana e uma colher de pasta de amendoim. Cerca de 700–800 kcal num copo.</p>
+<p><strong>Treinar às 19h:</strong> entre o almoço e o fim do treino passam muitas horas. Come um lanche por volta das 17h, antes de saíres do trabalho: por exemplo uma sandes com fiambre ou queijo e um iogurte, ou uma banana com skyr. Depois do treino janta com uma boa porção de proteína; se o jantar for muito tarde, bebe o batido de whey logo a seguir ao treino.</p>
 <p><strong>Dias de corrida:</strong> correr gasta muito. Conta com cerca de 1 kcal por kg de peso por km, ou seja, uns 640 kcal em 10 km. Nesses dias come claramente mais.</p>`,
   },
   {

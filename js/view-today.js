@@ -1,5 +1,5 @@
 // Ecrã "Hoje" e configuração inicial
-import { DAYS } from './data.js';
+import { DAYS, PLACES, MU_STAGES } from './data.js';
 import * as E from './engine.js';
 import { local, put, setSettings, persistLocal, remove } from './store.js';
 import { icons, navigate, rerender, toast, header, segmented, requestWakeLock } from './ui.js';
@@ -7,8 +7,10 @@ import { barbellSVG, platesFor, plateText } from './plates.js';
 import { esc, fmtNum, fmt1, fmtDateLong, todayISO, parseNum, weekStart, fmtDuration, plural } from './util.js';
 
 let chosenDay = null;
+let chosenPlace = null;
 export function resetChosenDay() {
   chosenDay = null;
+  chosenPlace = null;
 }
 
 const BENCH_FAMILY = ['bench', 'bench_paused', 'bench_close'];
@@ -37,7 +39,7 @@ export function goalMeters(goals, compact = false) {
     .join('')}</div>`;
 }
 
-function habitsCard(today) {
+function habitsCard(today, trainingDay) {
   const h = E.habitsFor(today);
   const target = E.proteinTarget();
   const bwToday = E.bodyweightEntries().find((b) => b.date === today);
@@ -46,6 +48,7 @@ function habitsCard(today) {
   <section class="panel">
     <h2 class="panel-title">O teu dia</h2>
     <div class="daily">
+      ${trainingDay ? `<div class="daily-row"><div class="daily-label">Antes do treino</div><div class="daily-value"><span>Lanche por volta das 17h, antes de saíres do trabalho: sandes e iogurte, ou banana e skyr.</span></div></div>` : ''}
       <div class="daily-row">
         <div class="daily-label">Peso de hoje</div>
         ${bwToday
@@ -79,30 +82,46 @@ export function renderToday(root) {
   const S = E.S();
   if (!S.onboarded) return navigate('#/inicio');
   const today = todayISO();
-  const order = E.dayOrder();
-  const day = chosenDay && order.includes(chosenDay) ? chosenDay : E.nextDay();
-  const next = E.nextDay();
+  const plan = E.planFor(today);
+  const place = chosenPlace || (plan === 'estadio' ? 'estadio' : 'supera');
+  const order = E.dayOrder(place);
+  const next = E.nextDay(place);
+  const day = chosenDay && order.includes(chosenDay) ? chosenDay : next;
   const deloadOn = E.isDeloadWeek();
   const session = E.buildSession(day, { deload: deloadOn });
   const tpl = DAYS[day];
+  const hours = E.placeHours(place, today);
   const main = session.exercises.find((e) => BENCH_FAMILY.includes(e.ex));
   const mainSets = main ? main.sets.filter((s) => s.kind !== 'warm') : [];
   const W = mainSets.length ? mainSets[0].w : null;
   const plates = W ? platesFor(W, S.bar, S.plates) : null;
+  const stage = MU_STAGES[E.muStage() - 1];
   const sugg = E.deloadSuggestion();
   const showSugg = sugg && local.dismissDeload !== weekStart(today);
   const week = E.weekSummary();
   const active = local.active;
   const mins = E.estimateMinutes(session);
+  const firstEver = E.sessions().length === 0;
+  const trainingDay = plan === 'supera' || plan === 'estadio';
 
   let html = header('Hoje', { sub: fmtDateLong(today) });
 
   if (active) {
     const elapsed = Date.now() - active.startedAt;
     html += `<section class="banner active-banner">
-      <div><strong>Treino em curso: dia ${esc(active.day)}</strong><p>Começou há ${fmtDuration(elapsed)}.</p></div>
+      <div><strong>Treino em curso: ${esc(E.dayTitle(active.day))}</strong><p>Começou há ${fmtDuration(elapsed)}.</p></div>
       <a class="btn primary" href="#/treino">Continuar treino</a>
     </section>`;
+  }
+
+  if (!active && plan === 'corrida') {
+    html += `<section class="banner"><div><strong>Dia de corrida</strong><p>No teu plano, hoje é para correr. Regista a corrida em Corpo. Se quiseres treinar na mesma, escolhe abaixo.</p></div><a class="btn secondary small" href="#/corpo">Registar corrida</a></section>`;
+  } else if (!active && plan === 'descanso') {
+    html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano. Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
+  }
+
+  if (firstEver && place === 'supera') {
+    html += `<section class="banner"><div><strong>Primeiro treino no Supera</strong><p>Vê se há discos de 1,25 kg (se não houver, tira-os em Mais → Definições), cinto de lastro e barras de segurança para o supino.</p></div></section>`;
   }
 
   if (deloadOn) {
@@ -113,13 +132,19 @@ export function renderToday(root) {
   }
 
   html += `<section class="today-hero">
+    <div class="place-row">
+      <div class="seg place-pick" role="tablist" aria-label="Onde treinas">
+        ${['supera', 'estadio'].map((pl) => `<button role="tab" class="seg-btn ${pl === place ? 'on' : ''}" data-place="${pl}" aria-selected="${pl === place}">${esc(PLACES[pl].short)}${plan === pl ? ' <small>(plano)</small>' : ''}</button>`).join('')}
+      </div>
+      <p class="place-hours ${hours && !hours.open ? 'closed' : ''}">${hours && hours.open ? `Aberto hoje das ${hours.from} às ${hours.to}` : 'Fechado hoje'} <span class="muted">(horário do Google)</span></p>
+    </div>
     <div class="day-pick" role="tablist" aria-label="Escolher o treino">
       ${order.map((d) => `<button role="tab" class="day-chip ${d === day ? 'on' : ''}" data-day="${d}" aria-selected="${d === day}">
         <span class="day-letter">${d}</span><span class="day-name">${esc(DAYS[d].title)}</span>${d === next ? '<span class="day-next">a seguir</span>' : ''}</button>`).join('')}
     </div>
     <div class="hero-main">
       <div class="hero-head">
-        <h2>Dia ${day}: ${esc(tpl.title)}</h2>
+        <h2>${esc(E.dayTitle(day))}</h2>
         <p class="muted">${esc(tpl.blurb)} Cerca de ${mins} min.</p>
       </div>
       ${main && W ? `
@@ -130,26 +155,32 @@ export function renderToday(root) {
           <span class="hero-target">${esc(main.target)}</span>
         </div>
         <div class="hero-bar">${barbellSVG(plates)}<p class="plate-text">${esc(plateText(plates))}</p></div>
+      </div>` : place === 'estadio' ? `
+      <div class="hero-lift">
+        <div class="hero-lift-text">
+          <span class="hero-ex">Muscle-up</span>
+          <span class="hero-weight num">Fase ${stage.n}<small> de 4</small></span>
+          <span class="hero-target">${esc(stage.name)}</span>
+        </div>
+        <div class="hero-mu"><p><strong>Para passar de fase:</strong> ${esc(stage.goal)}</p><p class="muted small">Faz o muscle-up primeiro, ainda fresco. Se correres hoje, corre depois.</p></div>
       </div>` : ''}
       <ol class="plan-list">
         ${session.exercises.map((e) => `
-          <li class="${BENCH_FAMILY.includes(e.ex) ? 'is-main' : ''}">
+          <li class="${BENCH_FAMILY.includes(e.ex) || e.mode === 'skill' ? 'is-main' : ''}">
             <span class="plan-name">${esc(E.exInfo(e.ex, e).name)}</span>
             <span class="plan-target num">${esc(e.target)}</span>
             <span class="plan-weight">${esc(weightSummary(e))}</span>
           </li>`).join('')}
       </ol>
-      ${active
-        ? ''
-        : `<button class="btn primary block big" data-act="start">Começar treino</button>`}
+      ${active ? '' : `<button class="btn primary block big" data-act="start">Começar treino</button>`}
     </div>
   </section>`;
 
   html += `<div class="two-col">`;
-  html += habitsCard(today);
+  html += habitsCard(today, trainingDay);
   html += `<section class="panel">
     <h2 class="panel-title">Esta semana</h2>
-    <p class="week-line"><span class="num big2">${week.sessions}</span> de ${S.daysPerWeek} treinos${week.km ? `, <span class="num big2">${fmt1(week.km)}</span> km de corrida` : ''}</p>
+    <p class="week-line"><span class="num big2">${week.sessions}</span> de ${E.weekTarget()} treinos${week.km ? `, <span class="num big2">${fmt1(week.km)}</span> km de corrida` : ''}</p>
     ${goalMeters(E.goals(), true)}
     <a class="link" href="#/progresso">Ver progresso</a>
   </section>`;
@@ -158,6 +189,13 @@ export function renderToday(root) {
   root.innerHTML = html;
 
   root.addEventListener('click', async (e) => {
+    const placeBtn = e.target.closest('[data-place]');
+    if (placeBtn) {
+      chosenPlace = placeBtn.dataset.place;
+      chosenDay = null;
+      rerender();
+      return;
+    }
     const dayBtn = e.target.closest('[data-day]');
     if (dayBtn) {
       chosenDay = dayBtn.dataset.day;
@@ -241,8 +279,8 @@ export function renderOnboarding(root) {
         <label class="field"><span>Elevações seguidas</span><input name="pullups" inputmode="numeric" value="${b.pullups}" class="input num"></label>
         <label class="field"><span>Peso corporal</span><span class="with-unit"><input name="bw" inputmode="decimal" value="${fmtNum(b.bw)}" class="input num"><i>kg</i></span></label>
       </div>
-      <div class="field"><span>Dias de treino por semana</span>${segmented('days', [{ value: 3, label: '3 dias' }, { value: 4, label: '4 dias' }], S.daysPerWeek)}</div>
       <div class="field"><span>O ginásio tem discos de 1,25 kg?</span>${segmented('small', [{ value: 'yes', label: 'Sim' }, { value: 'no', label: 'Não, o mais pequeno é 2,5 kg' }], S.plates.includes(1.25) ? 'yes' : 'no')}</div>
+      <p class="muted small">Plano semanal por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; corrida ao sábado. Mudas em Mais → Definições.</p>
       <button class="btn primary block big">Começar</button>
       <p class="muted center small">Já usas a Forja noutro dispositivo? <a href="#/mais/sync">Liga a sincronização</a> em vez de recomeçar.</p>
     </form>
@@ -261,7 +299,6 @@ export function renderOnboarding(root) {
     const plates = f.small.value === 'yes' ? [25, 20, 15, 10, 5, 2.5, 1.25] : [25, 20, 15, 10, 5, 2.5];
     setSettings({
       onboarded: true,
-      daysPerWeek: Number(f.days.value),
       plates,
       baseline: { date: today, bench: { w, reps, rpe: Number(f.rpe.value) }, pullups, bw },
     });

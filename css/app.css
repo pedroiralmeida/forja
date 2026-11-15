@@ -597,3 +597,15 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .bw-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) auto; gap: 8px; margin-bottom: 14px; }
 .bw-form .input { min-width: 0; }
 .daily-value .meter { width: 100%; }
+
+/* Sítio do treino e plano semanal */
+.place-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 10px; }
+.seg-btn { border: 0; background: transparent; color: var(--ink-2); font-weight: 600; font-size: 16px; padding: 8px 16px; border-radius: 9px; cursor: pointer; }
+.seg-btn small { font-weight: 500; font-size: 13px; opacity: 0.8; }
+.seg-btn.on { background: var(--yellow); color: var(--on-yellow); }
+.place-hours { margin: 0; font-size: 14px; color: var(--ink-2); }
+.place-hours.closed { color: var(--red); font-weight: 600; }
+.hero-mu { align-self: center; font-size: 16px; }
+.hero-mu p { margin: 0 0 6px; }
+.week-plan { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.wp-row { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; color: var(--ink-2); }

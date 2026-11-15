@@ -235,7 +235,7 @@ export function renderHistory(root) {
       const tpl = DAYS[s.day];
       html += `<li><a href="#/sessao/${s.id}">
         <span class="hist-date"><span class="num">${s.date.slice(8)}</span><small>${esc(fmtDate(s.date, { weekday: 'short' }))}</small></span>
-        <span class="hist-main"><b>${tpl ? `Dia ${s.day}: ${esc(tpl.title)}` : 'Treino livre'}${s.deload ? ' <span class="tag">deload</span>' : ''}</b><span class="muted">${esc(sessionHighlight(s))}</span></span>
+        <span class="hist-main"><b>${esc(E.dayTitle(s.day))}${s.deload ? ' <span class="tag">deload</span>' : ''}</b><span class="muted">${esc(sessionHighlight(s))}</span></span>
         <span class="muted small">${fmtDuration(s.duration || s.finishedAt - s.startedAt)}</span>
       </a></li>`;
     }

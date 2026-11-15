@@ -1,5 +1,5 @@
 // Mais: ferramentas, guia, definições, sincronização e dados
-import { EX, GUIDE, ALL_PLATES, MU_STAGES, DAYS } from './data.js';
+import { EX, GUIDE, ALL_PLATES, MU_STAGES, DAYS, PLAN_TYPES, WEEKDAYS } from './data.js';
 import * as E from './engine.js';
 import {
   local, setSettings, list, put, remove, exportJSON, importJSON, resetAll, connectSync, disconnectSync, syncNow,
@@ -8,7 +8,7 @@ import { icons, navigate, rerender, toast, header, segmented, confirmDialog, dow
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { esc, fmtNum, fmt1, todayISO, parseNum } from './util.js';
 
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.1.0';
 
 export function renderMore(root) {
   const s = local.sync;
@@ -127,7 +127,14 @@ export function renderSettings(root) {
     <form class="form" data-form="settings">
       <section class="panel">
         <h2 class="panel-title">Plano</h2>
-        <div class="field"><span>Dias de treino por semana</span>${segmented('daysPerWeek', [{ value: 3, label: '3 dias (A, B, C)' }, { value: 4, label: '4 dias (+ D)' }], S.daysPerWeek)}</div>
+        <div class="field"><span>Plano semanal</span>
+          <div class="week-plan">${[1, 2, 3, 4, 5, 6, 0].map((d) => `
+            <label class="wp-row"><span>${WEEKDAYS[d]}</span>
+              <select name="plan_${d}" class="input">${PLAN_TYPES.map((t) => `<option value="${t.value}" ${(S.weekPlan || {})[d] === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}</select>
+            </label>`).join('')}
+          </div>
+          <p class="muted small">Supera: supino e máquinas (rotação A, B, C). Estádio: muscle-up, elevações e dips na barra (rotação E1, E2).</p>
+        </div>
         <label class="field"><span>Fase do muscle-up</span>
           <select name="muStage" class="input">
             <option value="">Automática (pelos marcos): fase ${E.muStage()}</option>
@@ -188,7 +195,7 @@ export function renderSettings(root) {
     const w = parseNum(f.bw_w.value);
     const reps = parseNum(f.bw_reps.value);
     setSettings({
-      daysPerWeek: Number(f.daysPerWeek.value),
+      weekPlan: Object.fromEntries([0, 1, 2, 3, 4, 5, 6].map((d) => [d, f[`plan_${d}`].value])),
       muStage: f.muStage.value ? Number(f.muStage.value) : null,
       deloadEvery: Number(f.deloadEvery.value),
       bar: bar && bar > 0 ? bar : S.bar,

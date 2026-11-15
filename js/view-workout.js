@@ -114,7 +114,7 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
   if (!session) return navigate('#/hoje');
   if (mode === 'active') requestWakeLock();
   const tpl = DAYS[session.day];
-  const title = tpl ? `Dia ${session.day}: ${tpl.title}` : 'Treino livre';
+  const title = E.dayTitle(session.day);
 
   const draw = () => {
     root.innerHTML = `
@@ -389,7 +389,7 @@ export function renderSession(root, { id, fresh }) {
   const nSets = s.exercises.reduce((a, e) => a + e.sets.filter((x) => x.kind !== 'warm').length, 0);
   const benchBest = E.exerciseHistory('bench').find((h) => h.sessionId === s.id);
   root.innerHTML = `
-    ${header(fresh ? 'Treino guardado' : tpl ? `Dia ${s.day}: ${tpl.title}` : 'Treino', { back: '#/historico', sub: fmtDateLong(s.date) })}
+    ${header(fresh ? 'Treino guardado' : E.dayTitle(s.day), { back: '#/historico', sub: fmtDateLong(s.date) })}
     <section class="panel summary">
       <div class="stat"><span class="num big2">${fmtDuration(s.duration || (s.finishedAt - s.startedAt))}</span><span class="muted">duração</span></div>
       <div class="stat"><span class="num big2">${nSets}</span><span class="muted">séries</span></div>

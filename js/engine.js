@@ -1,5 +1,5 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import { EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS } from './data.js';
+import { EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, PLACES } from './data.js';
 import { state, list, get } from './store.js';
 import {
   uid, now, todayISO, addDays, daysBetween, weekStart, isoToMs, roundTo, clamp, mean, linreg, fmtNum, fmt1, DAY_MS,
@@ -167,17 +167,41 @@ export function bestBenchE1RM() {
 }
 
 // ---------- Dias e rotação ----------
-export function dayOrder() {
-  return S().daysPerWeek >= 4 ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C'];
+export function dayOrder(place = 'supera') {
+  return PLACE_DAYS[place] || PLACE_DAYS.supera;
 }
 
-export function nextDay() {
-  const order = dayOrder();
-  const last = sessions().find((s) => DAYS[s.day]);
-  if (!last) return 'A';
-  const i = order.indexOf(last.day);
-  if (i < 0) return 'A';
-  return order[(i + 1) % order.length];
+// Próximo dia da rotação de um sítio (Supera: A, B, C; Estádio: E1, E2)
+export function nextDay(place = 'supera') {
+  const order = dayOrder(place);
+  const last = sessions().find((s) => order.includes(s.day));
+  if (!last) return order[0];
+  return order[(order.indexOf(last.day) + 1) % order.length];
+}
+
+export function planFor(iso = todayISO()) {
+  const dow = new Date(isoToMs(iso)).getDay();
+  const plan = S().weekPlan || {};
+  return plan[dow] || plan[String(dow)] || 'descanso';
+}
+
+export function weekTarget() {
+  const plan = S().weekPlan || {};
+  return Object.values(plan).filter((v) => v === 'supera' || v === 'estadio').length;
+}
+
+// Horário de um sítio num dia: { open: bool, from, to }
+export function placeHours(place, iso = todayISO()) {
+  const p = PLACES[place];
+  if (!p) return null;
+  const dow = new Date(isoToMs(iso)).getDay();
+  const h = p.hours[dow];
+  return h ? { open: true, from: h[0], to: h[1] } : { open: false };
+}
+
+export function dayTitle(day) {
+  const t = DAYS[day];
+  return t ? `${t.label}: ${t.title}` : 'Treino livre';
 }
 
 export function slotEx(slot) {
@@ -348,6 +372,8 @@ function buildTopBackoff(slot, exId, deload) {
     }
   }
   const back = backoffWeight(slot, exId, null);
+  const prevTop = sessions().filter((s) => !s.deload && s.exercises.some((e) => e.slotId === slot.id && workSets(e).some((x) => x.kind === 'top'))).length;
+  if (!deload && prevTop % 4 === 0) note += ' Filma a série principal de lado para rever a técnica.';
   let sets;
   if (deload) {
     sets = Array.from({ length: deloadSets(slot.backSets + 1) }, () => setObj('work', roundW(exId, back * 0.9), slot.backReps, { tReps: `${slot.backReps}` }));
