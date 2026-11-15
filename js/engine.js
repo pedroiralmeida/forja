@@ -194,9 +194,30 @@ export function weekTarget() {
 export function placeHours(place, iso = todayISO()) {
   const p = PLACES[place];
   if (!p) return null;
+  if (p.always) return { open: true, always: true };
   const dow = new Date(isoToMs(iso)).getDay();
   const h = p.hours[dow];
   return h ? { open: true, from: h[0], to: h[1] } : { open: false };
+}
+
+// Dia livre: sugere o sítio onde faltou treino esta semana.
+// Até ao primeiro muscle-up, o Estádio tem prioridade; depois, o Supera.
+export function suggestPlace(iso = todayISO()) {
+  const plan = S().weekPlan || {};
+  const planned = { supera: 0, estadio: 0 };
+  for (const v of Object.values(plan)) if (planned[v] !== undefined) planned[v]++;
+  const ws = weekStart(iso);
+  const done = { supera: 0, estadio: 0 };
+  for (const s of sessions()) {
+    if (s.date < ws || s.date > addDays(ws, 6)) continue;
+    const pl = DAYS[s.day] && DAYS[s.day].place;
+    if (pl) done[pl]++;
+  }
+  const def = { supera: planned.supera - done.supera, estadio: planned.estadio - done.estadio };
+  const muDone = milestoneMap().mu1.achieved;
+  const order = muDone ? ['supera', 'estadio'] : ['estadio', 'supera'];
+  const place = order.find((p) => def[p] > 0) || null;
+  return { place, planned, done };
 }
 
 export function dayTitle(day) {

@@ -177,14 +177,14 @@ export const PLACES = {
     hours: { 0: ['9:00', '14:00'], 1: ['6:30', '22:00'], 2: ['6:30', '22:00'], 3: ['6:30', '22:00'], 4: ['6:30', '22:00'], 5: ['6:30', '22:00'], 6: ['9:00', '20:30'] },
   },
   estadio: {
-    name: 'Estádio Universitário', short: 'Estádio',
-    hours: { 0: null, 1: ['7:00', '21:00'], 2: ['7:00', '21:00'], 3: ['7:00', '21:00'], 4: ['7:00', '21:00'], 5: ['7:00', '21:00'], 6: ['8:00', '19:00'] },
+    name: 'Estádio Universitário', short: 'Estádio', always: true,
   },
 };
 
 export const PLAN_TYPES = [
   { value: 'supera', label: 'Supera' },
   { value: 'estadio', label: 'Estádio' },
+  { value: 'livre', label: 'Livre (repor o que faltou)' },
   { value: 'corrida', label: 'Corrida' },
   { value: 'descanso', label: 'Descanso' },
 ];
@@ -267,7 +267,7 @@ export const ALL_PLATES = [25, 20, 15, 10, 5, 2.5, 2, 1.25, 1, 0.5];
 export const DEFAULT_SETTINGS = {
   onboarded: false,
   daysPerWeek: 3,
-  weekPlan: { 0: 'descanso', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'supera', 6: 'corrida' },
+  weekPlan: { 0: 'descanso', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'supera', 6: 'livre' },
   bar: 20,
   plates: [25, 20, 15, 10, 5, 2.5, 1.25],
   dbStep: 2,
@@ -291,7 +291,8 @@ export const GUIDE = [
     title: 'Como funciona o plano',
     body: `
 <p>Há dois sítios. No <strong>Supera</strong> fazes o supino e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, elevações e dips na barra reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
-<p>Por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; corrida ao sábado; descanso ao domingo. O Estádio fecha às 21h durante a semana, por isso nesses dias vai logo depois da missa.</p>
+<p>Por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; sábado livre; descanso ao domingo. O sábado serve para repor um treino que tenha falhado durante a semana; se não faltou nada, corre ou descansa.</p>
+<p><strong>Semanas em que só dá para 4 treinos:</strong> enquanto não tiveres o primeiro muscle-up, faz 2 no Supera e 2 no Estádio. Aprender uma técnica precisa de repetição frequente, e um treino de supino a menos atrasa-te pouco: a rotação A, B, C continua de onde ficou. Depois do primeiro muscle-up, inverte: 3 no Supera e 1 no Estádio chegam para o manter e melhorar. No sábado livre, a app sugere sozinha o sítio certo.</p>
 <p><strong>Supera A, pesado.</strong> Uma série principal de supino de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
 <p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>
 <p><strong>Supera C, força e técnica.</strong> Supino com 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>

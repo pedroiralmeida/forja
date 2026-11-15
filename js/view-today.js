@@ -83,7 +83,9 @@ export function renderToday(root) {
   if (!S.onboarded) return navigate('#/inicio');
   const today = todayISO();
   const plan = E.planFor(today);
-  const place = chosenPlace || (plan === 'estadio' ? 'estadio' : 'supera');
+  const sug = plan === 'livre' ? E.suggestPlace(today) : null;
+  const autoPlace = plan === 'estadio' ? 'estadio' : plan === 'livre' && sug.place ? sug.place : 'supera';
+  const place = chosenPlace || autoPlace;
   const order = E.dayOrder(place);
   const next = E.nextDay(place);
   const day = chosenDay && order.includes(chosenDay) ? chosenDay : next;
@@ -116,6 +118,11 @@ export function renderToday(root) {
 
   if (!active && plan === 'corrida') {
     html += `<section class="banner"><div><strong>Dia de corrida</strong><p>No teu plano, hoje é para correr. Regista a corrida em Corpo. Se quiseres treinar na mesma, escolhe abaixo.</p></div><a class="btn secondary small" href="#/corpo">Registar corrida</a></section>`;
+  } else if (!active && plan === 'livre') {
+    const nm = { supera: 'Supera', estadio: 'Estádio' };
+    html += sug.place
+      ? `<section class="banner"><div><strong>Dia livre: repõe o que faltou</strong><p>Esta semana fizeste ${sug.done[sug.place]} de ${sug.planned[sug.place]} treinos no ${nm[sug.place]}. Sugestão para hoje: ${nm[sug.place]}.</p></div></section>`
+      : `<section class="banner"><div><strong>Dia livre</strong><p>Já fizeste todos os treinos desta semana. Corre ou descansa; se quiseres treinar na mesma, escolhe abaixo.</p></div><a class="btn secondary small" href="#/corpo">Registar corrida</a></section>`;
   } else if (!active && plan === 'descanso') {
     html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano. Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
   }
@@ -134,9 +141,9 @@ export function renderToday(root) {
   html += `<section class="today-hero">
     <div class="place-row">
       <div class="seg place-pick" role="tablist" aria-label="Onde treinas">
-        ${['supera', 'estadio'].map((pl) => `<button role="tab" class="seg-btn ${pl === place ? 'on' : ''}" data-place="${pl}" aria-selected="${pl === place}">${esc(PLACES[pl].short)}${plan === pl ? ' <small>(plano)</small>' : ''}</button>`).join('')}
+        ${['supera', 'estadio'].map((pl) => `<button role="tab" class="seg-btn ${pl === place ? 'on' : ''}" data-place="${pl}" aria-selected="${pl === place}">${esc(PLACES[pl].short)}${plan === pl ? ' <small>(plano)</small>' : sug && sug.place === pl ? ' <small>(sugerido)</small>' : ''}</button>`).join('')}
       </div>
-      <p class="place-hours ${hours && !hours.open ? 'closed' : ''}">${hours && hours.open ? `Aberto hoje das ${hours.from} às ${hours.to}` : 'Fechado hoje'} <span class="muted">(horário do Google)</span></p>
+      <p class="place-hours ${hours && !hours.open ? 'closed' : ''}">${hours && hours.always ? 'Parque de calistenia com acesso livre' : hours && hours.open ? `Aberto hoje das ${hours.from} às ${hours.to} <span class="muted">(horário do Google)</span>` : 'Fechado hoje <span class="muted">(horário do Google)</span>'}</p>
     </div>
     <div class="day-pick" role="tablist" aria-label="Escolher o treino">
       ${order.map((d) => `<button role="tab" class="day-chip ${d === day ? 'on' : ''}" data-day="${d}" aria-selected="${d === day}">
@@ -280,7 +287,7 @@ export function renderOnboarding(root) {
         <label class="field"><span>Peso corporal</span><span class="with-unit"><input name="bw" inputmode="decimal" value="${fmtNum(b.bw)}" class="input num"><i>kg</i></span></label>
       </div>
       <div class="field"><span>O ginásio tem discos de 1,25 kg?</span>${segmented('small', [{ value: 'yes', label: 'Sim' }, { value: 'no', label: 'Não, o mais pequeno é 2,5 kg' }], S.plates.includes(1.25) ? 'yes' : 'no')}</div>
-      <p class="muted small">Plano semanal por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; corrida ao sábado. Mudas em Mais → Definições.</p>
+      <p class="muted small">Plano semanal por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; sábado livre para repor o que faltar. Mudas em Mais → Definições.</p>
       <button class="btn primary block big">Começar</button>
       <p class="muted center small">Já usas a Forja noutro dispositivo? <a href="#/mais/sync">Liga a sincronização</a> em vez de recomeçar.</p>
     </form>
