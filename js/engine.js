@@ -2,7 +2,7 @@
 import { EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, PLACES } from './data.js';
 import { state, list, get } from './store.js';
 import {
-  uid, now, todayISO, addDays, daysBetween, weekStart, isoToMs, roundTo, clamp, mean, linreg, fmtNum, fmt1, DAY_MS,
+  uid, now, todayISO, addDays, daysBetween, weekStart, isoToMs, roundTo, clamp, mean, linreg, fmtNum, fmt1, fmtSigned, fmtDate, DAY_MS,
 } from './util.js';
 
 export const S = () => state.settings;
@@ -695,6 +695,43 @@ export function bwStats() {
     status = { level: 'soft', text: 'A subir depressa. Nas primeiras semanas com creatina é normal (é água). Se a cintura estiver a crescer, tira um pouco.' };
   }
   return { last, avgNow, weekly, status, count: e.length };
+}
+
+// ---------- Cintura ----------
+export function waistEntries() {
+  return list('waist').sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function bwAround(iso) {
+  const e = bodyweightEntries().filter((b) => Math.abs(daysBetween(b.date, iso)) <= 3);
+  return e.length ? mean(e.map((b) => b.kg)) : bodyweightAt(iso);
+}
+
+// Compara a cintura com o peso nas últimas semanas (regra prática: até ~1 cm por kg ganho é sobretudo músculo)
+export function waistStats() {
+  const w = waistEntries();
+  if (!w.length) return null;
+  const last = w[w.length - 1];
+  const daysSince = daysBetween(last.date, todayISO());
+  const cutoff = addDays(last.date, -42);
+  const ref = w.find((x) => x.date >= cutoff && daysBetween(x.date, last.date) >= 14) || null;
+  if (!ref) {
+    return { last, daysSince, status: { level: 'info', text: 'Mede uma vez por semana. A partir de 2 semanas de medições a app compara a cintura com o peso.' } };
+  }
+  const dWaist = last.cm - ref.cm;
+  const dBw = bwAround(last.date) - bwAround(ref.date);
+  const since = `Desde ${fmtDate(ref.date)}: peso ${fmtSigned(dBw)} kg, cintura ${fmtSigned(dWaist)} cm.`;
+  let status;
+  if (dBw >= 0.3) {
+    status = dWaist <= dBw * 1.0
+      ? { level: 'ok', text: `${since} A cintura sobe pouco face ao peso: estás a ganhar sobretudo músculo.` }
+      : { level: 'warn', text: `${since} A cintura está a subir mais de 1 cm por cada kg. É sinal de gordura a mais: corta um pouco, por exemplo o batido extra.` };
+  } else if (dWaist >= 1) {
+    status = { level: 'soft', text: `${since} A cintura subiu sem o peso subir. Confirma que medes sempre da mesma forma (de manhã, à altura do umbigo).` };
+  } else {
+    status = { level: 'info', text: `${since} Sem grandes mudanças.` };
+  }
+  return { last, ref, dWaist, dBw, daysSince, status };
 }
 
 // ---------- Hábitos e corrida ----------

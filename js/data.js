@@ -284,6 +284,8 @@ export const DEFAULT_SETTINGS = {
   deloadEvery: 6,
   bwGoal: 'gain',
   proteinPerKg: 1.8,
+  wheyProtein: 21,
+  creatineNote: '1 medida por dia',
 };
 
 // Guia: texto curto e prático

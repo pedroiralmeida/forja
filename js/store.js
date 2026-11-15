@@ -7,13 +7,13 @@ const LOCAL_KEY = 'forja.local.v1';
 const FILE = 'forja-dados.json';
 const API = 'https://api.github.com';
 
-export const COLLS = ['sessions', 'bodyweight', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides'];
+export const COLLS = ['sessions', 'bodyweight', 'waist', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides'];
 
 function emptyState() {
   return {
     v: 1,
     settings: { ...structuredClone(DEFAULT_SETTINGS), updatedAt: 0 },
-    sessions: {}, bodyweight: {}, habits: {}, runs: {}, milestones: {}, deloadWeeks: {}, overrides: {},
+    sessions: {}, bodyweight: {}, waist: {}, habits: {}, runs: {}, milestones: {}, deloadWeeks: {}, overrides: {},
   };
 }
 

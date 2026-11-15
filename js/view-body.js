@@ -32,6 +32,8 @@ export function renderBody(root) {
   const series = E.bwMovingAvg();
   const h = E.habitsFor(today);
   const runs = E.runs();
+  const waist = E.waistEntries();
+  const ws = E.waistStats();
   const week = E.weekSummary();
   const bw = E.latestBodyweight();
   const weekKcal = Math.round(week.km * bw / 50) * 50;
@@ -74,7 +76,7 @@ export function renderBody(root) {
               <div class="protein-line"><span class="num big2">${fmtNum(h.protein || 0)}</span><span class="muted"> de ${E.proteinTarget()} g</span></div>
               <div class="chips">
                 <button class="chip" data-prot="35">+ refeição (35 g)</button>
-                <button class="chip" data-prot="25">+ whey (25 g)</button>
+                <button class="chip" data-prot="${E.S().wheyProtein || 21}">+ whey (${E.S().wheyProtein || 21} g)</button>
                 <button class="chip" data-prot="10">+ 10 g</button>
                 ${h.protein ? '<button class="chip ghost" data-prot="-10" aria-label="Tirar 10 gramas">−10</button>' : ''}
               </div>
@@ -82,7 +84,7 @@ export function renderBody(root) {
           </div>
           <div class="daily-row">
             <div class="daily-label">Creatina</div>
-            <div class="daily-value"><button class="toggle ${h.creatine ? 'on' : ''}" data-act="creatine" aria-pressed="${!!h.creatine}">${h.creatine ? icons.check + ' Tomada' : 'Marcar como tomada'}</button></div>
+            <div class="daily-value"><button class="toggle ${h.creatine ? 'on' : ''}" data-act="creatine" aria-pressed="${!!h.creatine}">${h.creatine ? icons.check + ' Tomada' : 'Marcar como tomada'}</button><span class="muted small">${esc(E.S().creatineNote || '1 medida por dia')}</span></div>
           </div>
           <div class="daily-row">
             <div class="daily-label">Batido extra</div>
@@ -99,6 +101,22 @@ export function renderBody(root) {
     </div>
     <div class="two-col">
       <section class="panel">
+        <h2 class="panel-title">Cintura</h2>
+        <form class="bw-form" data-form="waist">
+          <span class="with-unit"><input name="cm" inputmode="decimal" class="input num" placeholder="${ws ? fmt1(ws.last.cm) : '75'}" aria-label="Cintura em cm"><i>cm</i></span>
+          <input name="date" type="date" class="input" value="${today}" max="${today}" aria-label="Data">
+          <button class="btn primary">Guardar</button>
+        </form>
+        ${ws ? `
+          <div class="stats-row">
+            <div class="stat"><span class="num big2">${fmt1(ws.last.cm)} cm</span><span class="muted">última, ${esc(fmtDate(ws.last.date))}</span></div>
+            ${ws.dWaist !== undefined ? `<div class="stat"><span class="num big2">${fmtSigned(ws.dWaist, 1)} cm</span><span class="muted">desde ${esc(fmtDate(ws.ref.date))}</span></div>` : ''}
+          </div>
+          <p class="status status-${ws.status.level}">${esc(ws.status.text)}</p>` : ''}
+        <div class="chart-box" data-chart="waist"></div>
+        <p class="muted small">Uma vez por semana, de manhã, à altura do umbigo. Fita justa mas sem apertar, e sem encolher a barriga. Regra prática: até cerca de 1 cm de cintura por cada kg que ganhas é sobretudo músculo.</p>
+      </section>
+      <section class="panel">
         <h2 class="panel-title">Corrida</h2>
         <form class="run-form" data-form="run">
           <label class="field"><span>Data</span><input name="date" type="date" class="input" value="${today}" max="${today}"></label>
@@ -109,14 +127,22 @@ export function renderBody(root) {
         ${week.km ? `<p class="status status-info">Esta semana: ${fmt1(week.km)} km, cerca de ${weekKcal} kcal a mais para compensar a comer.</p>` : ''}
         <div class="chart-box" data-chart="km"></div>
       </section>
-      <section class="panel">
+    </div>
+    <section class="panel">
         <h2 class="panel-title">Registos recentes</h2>
+        <div class="rec-cols">
+        <div>
         <h3 class="sub-title">Corridas</h3>
         ${runs.length ? `<ul class="rec-list">${runs.slice(0, 8).map((r) => `<li><span>${esc(fmtDate(r.date))}</span><span class="num">${fmt1(r.km)} km${r.min ? `, ${r.min} min (${pace(r)})` : ''}</span><button class="icon-btn small" data-del-run="${r.id}" aria-label="Apagar corrida">${icons.trash}</button></li>`).join('')}</ul>` : '<p class="muted">Sem corridas registadas.</p>'}
+        </div><div>
         <h3 class="sub-title">Pesagens</h3>
         ${series.length ? `<ul class="rec-list">${series.slice(-8).reverse().map((b) => `<li><span>${esc(fmtDate(b.date))}</span><span class="num">${fmt1(b.kg)} kg</span><button class="icon-btn small" data-del-bw="${b.date}" aria-label="Apagar pesagem">${icons.trash}</button></li>`).join('')}</ul>` : '<p class="muted">Sem pesagens.</p>'}
-      </section>
-    </div>`;
+        </div><div>
+        <h3 class="sub-title">Cintura</h3>
+        ${waist.length ? `<ul class="rec-list">${waist.slice(-8).reverse().map((w) => `<li><span>${esc(fmtDate(w.date))}</span><span class="num">${fmt1(w.cm)} cm</span><button class="icon-btn small" data-del-waist="${w.date}" aria-label="Apagar medição">${icons.trash}</button></li>`).join('')}</ul>` : '<p class="muted">Sem medições.</p>'}
+        </div>
+        </div>
+    </section>`;
 
   lineChart(root.querySelector('[data-chart="bw"]'), {
     label: 'Peso corporal e média de 7 dias',
@@ -132,6 +158,14 @@ export function renderBody(root) {
     const box = root.querySelector('[data-chart="bw"]');
     box.insertAdjacentHTML('beforebegin', '<div class="legend"><span><i class="lg-line" style="background:var(--yellow)"></i>Média de 7 dias</span><span><i class="lg-dot" style="background:var(--muted)"></i>Pesagem</span></div>');
   }
+  lineChart(root.querySelector('[data-chart="waist"]'), {
+    label: 'Cintura ao longo do tempo',
+    series: [{ name: 'Cintura', color: 'var(--green)', points: waist.map((w) => ({ x: isoToMs(w.date), y: w.cm, tip: `${fmt1(w.cm)} cm` })), dots: true }],
+    yFmt: (v) => fmtNum(v),
+    minSpan: 2,
+    height: 160,
+    empty: 'Regista a primeira medição para ver a evolução.',
+  });
   barChart(root.querySelector('[data-chart="km"]'), {
     label: 'Quilómetros por semana', bars, color: 'var(--green)', yFmt: (v) => fmtNum(v), empty: 'Os km por semana aparecem aqui.',
   });
@@ -145,6 +179,13 @@ export function renderBody(root) {
       if (!kg || kg < 30 || kg > 250) return toast('Escreve o peso em kg, por exemplo 64,2');
       put('bodyweight', date, { date, kg });
       toast('Peso guardado');
+      rerender();
+    } else if (f.dataset.form === 'waist') {
+      const cm = parseNum(f.cm.value);
+      const date = f.date.value || today;
+      if (!cm || cm < 40 || cm > 160) return toast('Escreve a cintura em cm, por exemplo 76,5');
+      put('waist', date, { date, cm });
+      toast('Cintura guardada');
       rerender();
     } else if (f.dataset.form === 'run') {
       const km = parseNum(f.km.value);
@@ -172,6 +213,11 @@ export function renderBody(root) {
     const dr = e.target.closest('[data-del-run]');
     if (dr && (await confirmDialog('Apagar esta corrida?', { ok: 'Apagar', danger: true }))) {
       remove('runs', dr.dataset.delRun);
+      rerender();
+    }
+    const dw = e.target.closest('[data-del-waist]');
+    if (dw && (await confirmDialog('Apagar esta medição da cintura?', { ok: 'Apagar', danger: true }))) {
+      remove('waist', dw.dataset.delWaist);
       rerender();
     }
     const db = e.target.closest('[data-del-bw]');

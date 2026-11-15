@@ -49,6 +49,7 @@ function habitsCard(today, trainingDay) {
     <h2 class="panel-title">O teu dia</h2>
     <div class="daily">
       ${trainingDay ? `<div class="daily-row"><div class="daily-label">Antes do treino</div><div class="daily-value"><span>Lanche por volta das 17h, antes de saíres do trabalho: sandes e iogurte, ou banana e skyr.</span></div></div>` : ''}
+      ${(() => { const ws = E.waistStats(); return ws && ws.daysSince >= 7 ? `<div class="daily-row"><div class="daily-label">Cintura</div><div class="daily-value"><span>Última medição há ${ws.daysSince} dias.</span> <a class="link" href="#/corpo">Medir</a></div></div>` : ''; })()}
       <div class="daily-row">
         <div class="daily-label">Peso de hoje</div>
         ${bwToday
@@ -62,7 +63,7 @@ function habitsCard(today, trainingDay) {
           <div class="meter thin"><span style="width:${Math.max(1, pct)}%"></span></div>
           <div class="chips">
             <button class="chip" data-prot="35">+ refeição (35 g)</button>
-            <button class="chip" data-prot="25">+ whey (25 g)</button>
+            <button class="chip" data-prot="${E.S().wheyProtein || 21}">+ whey (${E.S().wheyProtein || 21} g)</button>
             ${h.protein ? '<button class="chip ghost" data-prot="-25" aria-label="Tirar 25 gramas">−25</button>' : ''}
           </div>
         </div>
@@ -71,7 +72,7 @@ function habitsCard(today, trainingDay) {
         <div class="daily-label">Creatina</div>
         <div class="daily-value">
           <button class="toggle ${h.creatine ? 'on' : ''}" data-act="creatine" aria-pressed="${h.creatine}">${h.creatine ? icons.check + ' Tomada' : 'Marcar como tomada'}</button>
-          ${E.creatineStreak() > 1 ? `<span class="muted small">${E.creatineStreak()} dias seguidos</span>` : ''}
+          <span class="muted small">${esc(E.S().creatineNote || '1 medida por dia')}${E.creatineStreak() > 1 ? `, ${E.creatineStreak()} dias seguidos` : ''}</span>
         </div>
       </div>
     </div>

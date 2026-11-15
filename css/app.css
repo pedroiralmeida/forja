@@ -609,3 +609,6 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .hero-mu p { margin: 0 0 6px; }
 .week-plan { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
 .wp-row { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.rec-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 24px; }
+.rec-cols .sub-title:first-child { margin-top: 0; }
+.daily-value .muted.small { width: 100%; }
