@@ -1,11 +1,12 @@
 // Arranque: navegação, tema, service worker e sincronização
-import { load, local, settings, onChange, syncNow, syncConfigured } from './store.js';
+import { load, local, settings, onChange, syncNow, syncConfigured, loadInbox } from './store.js';
 import { setRouter, icons, toast, buildRest, requestWakeLock, unlockAudio, header } from './ui.js';
 import { renderToday, renderOnboarding } from './view-today.js';
 import { renderWorkout, renderSession } from './view-workout.js';
 import { renderProgress, renderExercise, renderHistory } from './view-progress.js';
 import { renderBody } from './view-body.js';
 import { renderMore, renderTools, renderGuide, renderSettings, renderSync, renderData } from './view-more.js';
+import { renderStock } from './view-stock.js';
 import { esc } from './util.js';
 
 load();
@@ -96,6 +97,7 @@ function render() {
         else if (parts[1] === 'definicoes') renderSettings(root);
         else if (parts[1] === 'sync') renderSync(root);
         else if (parts[1] === 'dados') renderData(root);
+        else if (parts[1] === 'stock') renderStock(root);
         else renderMore(root);
         break;
       default:
@@ -140,6 +142,7 @@ document.addEventListener('visibilitychange', () => {
     if (local.active) requestWakeLock();
     buildRest();
     if (syncConfigured() && Date.now() - (local.sync.lastSync || 0) > 120000) syncNow();
+    loadInbox();
   }
 });
 window.addEventListener('online', () => syncConfigured() && syncNow());
@@ -168,4 +171,4 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 render();
 buildRest();
-if (syncConfigured()) syncNow();
+loadInbox({ force: true }).finally(() => { if (syncConfigured()) syncNow(); });

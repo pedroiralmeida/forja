@@ -7,13 +7,13 @@ const LOCAL_KEY = 'forja.local.v1';
 const FILE = 'forja-dados.json';
 const API = 'https://api.github.com';
 
-export const COLLS = ['sessions', 'bodyweight', 'waist', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides'];
+export const COLLS = ['sessions', 'bodyweight', 'waist', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock'];
 
 function emptyState() {
   return {
     v: 1,
     settings: { ...structuredClone(DEFAULT_SETTINGS), updatedAt: 0 },
-    sessions: {}, bodyweight: {}, waist: {}, habits: {}, runs: {}, milestones: {}, deloadWeeks: {}, overrides: {},
+    sessions: {}, bodyweight: {}, waist: {}, habits: {}, runs: {}, milestones: {}, deloadWeeks: {}, overrides: {}, purchases: {}, stock: {},
   };
 }
 
@@ -185,6 +185,32 @@ export function resetAll() {
   saveRaw();
   persistLocal();
   emit('state');
+}
+
+// ---------- Dados enviados pelo Claude ----------
+// O Claude pode escrever registos em claude/inbox.json no repositório (por exemplo compras e stock).
+// A app junta-os ao estado com a mesma regra da sincronização: ganha a versão mais recente de cada registo,
+// por isso o que alterares ou apagares na app não volta atrás.
+let inboxAt = 0;
+export async function loadInbox({ force = false } = {}) {
+  if (!force && Date.now() - inboxAt < 10 * 60 * 1000) return false;
+  inboxAt = Date.now();
+  try {
+    const res = await fetch('./claude/inbox.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return false;
+    const inbox = await res.json();
+    const incoming = { settings: { updatedAt: -1 } };
+    for (const c of COLLS) if (inbox[c] && typeof inbox[c] === 'object') incoming[c] = inbox[c];
+    const merged = merge(state, incoming);
+    if (stable(merged) === stable(state)) return false;
+    state = merged;
+    saveRaw();
+    emit('remote');
+    scheduleSync();
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 // ---------- Sincronização (GitHub Gist) ----------

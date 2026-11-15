@@ -612,3 +612,28 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .rec-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 24px; }
 .rec-cols .sub-title:first-child { margin-top: 0; }
 .daily-value .muted.small { width: 100%; }
+
+/* Compras e stock */
+.stock-list, .purchase-list, .purchase-items { list-style: none; margin: 0; padding: 0; }
+.stock-item { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.stock-item:last-child { border-bottom: 0; }
+.stock-main { flex: 1; min-width: 0; }
+.stock-name { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.stock-line { margin: 4px 0 0; font-size: 15px; color: var(--ink-2); }
+.stock-item .meter.thin { margin: 6px 0 4px; }
+.stock-item .muted.small { margin: 2px 0 0; }
+.stock-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 2px; max-width: 45%; }
+.stock-item.s-encomendado .stock-name b, .stock-item.s-acabou .stock-name b { color: var(--ink-2); }
+.done-list { margin-top: 12px; color: var(--ink-2); }
+.done-list summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+.purchase { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.purchase:last-child { border-bottom: 0; }
+.purchase-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.purchase-date { color: var(--muted); font-size: 14px; }
+.purchase-total { margin-left: auto; font-size: 20px; font-weight: 600; }
+.purchase-items li { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; padding: 2px 0; color: var(--ink-2); }
+.purchase-foot { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.purchase-foot .muted { flex: 1; }
+.stock-banner { border-left-color: var(--blue); }
+.stock-banner p + p { margin-top: 4px; }
+.purchase-items li span:last-child { white-space: nowrap; }

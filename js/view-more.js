@@ -8,13 +8,19 @@ import { icons, navigate, rerender, toast, header, segmented, confirmDialog, dow
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { esc, fmtNum, fmt1, todayISO, parseNum } from './util.js';
 
-export const APP_VERSION = '1.3.1';
+export const APP_VERSION = '1.4.0';
 
 export function renderMore(root) {
   const s = local.sync;
   const syncText = s.token ? (s.status === 'error' ? 'Erro: ' + s.lastError : s.lastSync ? 'Ligada' : 'A ligar') : 'Desligada';
   root.innerHTML = `
     ${header('Mais')}
+    <section class="panel">
+      <h2 class="panel-title">Alimentação</h2>
+      <ul class="link-list">
+        <li><a href="#/mais/stock"><span>Compras e stock</span><span class="muted">${(() => { const n = E.stockSuggestions().length; return n ? `${n} ${n === 1 ? 'sugestão' : 'sugestões'}` : 'suplementos, compras, orçamento'; })()}</span>${icons.chevron}</a></li>
+      </ul>
+    </section>
     <section class="panel">
       <h2 class="panel-title">Ferramentas</h2>
       <ul class="link-list">
@@ -175,6 +181,7 @@ export function renderSettings(root) {
       <section class="panel">
         <h2 class="panel-title">Alimentação</h2>
         <div class="field"><span>Objetivo de peso</span>${segmented('bwGoal', [{ value: 'gain', label: 'Ganhar devagar' }, { value: 'maintain', label: 'Manter' }], S.bwGoal)}</div>
+        <label class="field"><span>Orçamento mensal para comida extra e suplementos</span><span class="with-unit"><input name="budgetMonthly" inputmode="decimal" class="input num" value="${S.budgetMonthly || 50}"><i>€</i></span></label>
         <label class="field"><span>Proteína numa dose de whey</span><span class="with-unit"><input name="wheyProtein" inputmode="numeric" class="input num" value="${S.wheyProtein || 21}"><i>g</i></span></label>
         <label class="field"><span>Proteína por kg de peso</span><select name="proteinPerKg" class="input">${[1.6, 1.8, 2, 2.2].map((v) => `<option value="${v}" ${S.proteinPerKg === v ? 'selected' : ''}>${fmtNum(v)} g/kg (${Math.round(E.latestBodyweight() * v)} g por dia)</option>`).join('')}</select></label>
       </section>
@@ -210,6 +217,7 @@ export function renderSettings(root) {
       bwGoal: f.bwGoal.value,
       proteinPerKg: Number(f.proteinPerKg.value),
       wheyProtein: Math.min(60, Math.max(5, parseNum(f.wheyProtein.value) || 21)),
+      budgetMonthly: Math.max(0, parseNum(f.budgetMonthly.value) ?? 50),
       theme: f.theme.value,
       baseline: { ...S.baseline, bench: { w: w || S.baseline.bench.w, reps: reps || S.baseline.bench.reps, rpe: Number(f.bw_rpe.value) }, pullups: parseNum(f.pullups.value) ?? S.baseline.pullups },
     });

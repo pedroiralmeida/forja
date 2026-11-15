@@ -1,5 +1,5 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import { EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, PLACES } from './data.js';
+import { EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES } from './data.js';
 import { state, list, get } from './store.js';
 import {
   uid, now, todayISO, addDays, daysBetween, weekStart, isoToMs, roundTo, clamp, mean, linreg, fmtNum, fmt1, fmtSigned, fmtDate, DAY_MS,
@@ -765,6 +765,119 @@ export function weekSummary(iso = todayISO()) {
   const rr = runs().filter((r) => r.date >= ws && r.date <= we);
   return { sessions: ss.length, km: rr.reduce((a, r) => a + (r.km || 0), 0), runs: rr.length };
 }
+
+// ---------- Compras e stock ----------
+// Estados do stock: encomendado → fechado (em casa) → uso → acabou
+export function stockItems() {
+  const order = { uso: 0, fechado: 1, encomendado: 2, acabou: 3 };
+  return list('stock').sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9) || (a.name || '').localeCompare(b.name || ''));
+}
+
+export function purchases() {
+  return list('purchases').sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+}
+
+export function stockLabel(kind) {
+  return (STOCK_KINDS[kind] || STOCK_KINDS.other).label;
+}
+
+export function dailyUse(it) {
+  return (Number(it.servingG) || 0) * (it.perDay ?? 1);
+}
+
+// Gramas que restam num artigo
+export function stockLeft(it, iso = todayISO()) {
+  if (it.status === 'acabou') return 0;
+  if (it.status !== 'uso') return Number(it.sizeG) || 0;
+  const base = it.leftG ?? (Number(it.sizeG) || 0);
+  const from = it.leftOn || it.openedOn || iso;
+  let used;
+  if (it.kind === 'creatine') {
+    // Para a creatina conta os dias marcados na app (desde a data de referência)
+    let n = 0;
+    for (const h of list('habits')) if (h.creatine && h.date >= from && h.date <= iso) n++;
+    const days = Math.max(0, daysBetween(from, iso));
+    used = (n || days) * (Number(it.servingG) || 0);
+  } else {
+    used = dailyUse(it) * Math.max(0, daysBetween(from, iso));
+  }
+  return Math.max(0, base - used);
+}
+
+export function stockDaysLeft(it, iso = todayISO()) {
+  const d = dailyUse(it);
+  if (!d) return null;
+  return stockLeft(it, iso) / d;
+}
+
+// Cobertura por tipo: o que está em uso mais o que já está em casa ou encomendado
+export function stockCoverage(iso = todayISO()) {
+  const out = {};
+  for (const it of stockItems()) {
+    if (it.status === 'acabou' || !STOCK_KINDS[it.kind] || it.kind === 'other') continue;
+    const c = out[it.kind] || (out[it.kind] = { kind: it.kind, label: stockLabel(it.kind), inUse: null, spareG: 0, arrivingG: 0, daily: 0 });
+    if (it.status === 'uso') { c.inUse = it; c.daily = dailyUse(it); }
+    else if (it.status === 'fechado') c.spareG += Number(it.sizeG) || 0;
+    else if (it.status === 'encomendado') c.arrivingG += Number(it.sizeG) || 0;
+    if (!c.daily) c.daily = dailyUse(it) || dailyUse(STOCK_KINDS[it.kind]);
+  }
+  for (const c of Object.values(out)) {
+    const leftNow = c.inUse ? stockLeft(c.inUse, iso) : 0;
+    c.leftNow = leftNow;
+    c.daysInUse = c.daily ? leftNow / c.daily : null;
+    c.daysTotal = c.daily ? (leftNow + c.spareG + c.arrivingG) / c.daily : null;
+    c.runOut = c.daysTotal !== null ? addDays(iso, Math.floor(c.daysTotal)) : null;
+  }
+  return out;
+}
+
+export function monthSpend(iso = todayISO()) {
+  const ym = iso.slice(0, 7);
+  let food = 0;
+  let gear = 0;
+  for (const p of purchases()) {
+    if ((p.date || '').slice(0, 7) !== ym) continue;
+    if (p.category === 'material') gear += Number(p.total) || 0;
+    else food += Number(p.total) || 0;
+  }
+  return { food, gear, budget: S().budgetMonthly || 50 };
+}
+
+// Sugestões: o que repor, o que abrir, encomendas a chegar e orçamento
+export function stockSuggestions(iso = todayISO()) {
+  const out = [];
+  for (const c of Object.values(stockCoverage(iso))) {
+    if (c.inUse && c.leftNow <= 0 && c.spareG > 0) {
+      out.push({ level: 'soft', kind: c.kind, text: `${c.label}: o que estava em uso já deve ter acabado. Abre o próximo e marca-o como "Em uso".` });
+    }
+    if (c.daysTotal === null) continue;
+    const days = Math.floor(c.daysTotal);
+    if (days <= 21) {
+      const orderBy = addDays(iso, Math.max(0, days - 6));
+      out.push({
+        level: days <= 10 ? 'warn' : 'soft', kind: c.kind,
+        text: days <= 0
+          ? `${c.label}: já não tens. Repõe assim que puderes.`
+          : `${c.label}: dá para cerca de ${days} dias (até ${fmtDate(c.runOut)}). Encomenda até ${fmtDate(orderBy)} para não ficares sem.`,
+      });
+    }
+  }
+  for (const p of purchases()) {
+    if (p.status !== 'a caminho') continue;
+    const late = p.expected && p.expected < iso;
+    out.push({
+      level: late ? 'soft' : 'info', purchase: p.id,
+      text: late
+        ? `A encomenda da ${p.store} devia ter chegado a ${fmtDate(p.expected)}. Já chegou? Marca-a como recebida.`
+        : `A caminho: encomenda da ${p.store}${p.expected ? `, prevista para ${fmtDate(p.expected, { weekday: 'long', day: 'numeric', month: 'short' })}` : ''}.`,
+    });
+  }
+  const m = monthSpend(iso);
+  if (m.food > m.budget) out.push({ level: 'soft', text: `Este mês já gastaste ${fmtNum(m.food)} € em comida e suplementos, acima dos ${fmtNum(m.budget)} € que definiste.` });
+  return out;
+}
+
+export { STOCK_KINDS, PURCHASE_CATEGORIES };
 
 // ---------- Lista de exercícios com histórico ----------
 export function trainedExercises() {

@@ -264,6 +264,17 @@ export const PLATE_STYLE = {
   0.5: { color: '#E9E9E9', h: 0.3, w: 4 },
 };
 
+// Stock de suplementos e comida: dose em gramas e doses por dia (para estimar quando acaba)
+export const STOCK_KINDS = {
+  whey: { label: 'Whey', servingG: 30, perDay: 1 },
+  creatine: { label: 'Creatina', servingG: 3.67, perDay: 1 },
+  oats: { label: 'Aveia instantânea', servingG: 45, perDay: 1 },
+  pb: { label: 'Manteiga de amendoim', servingG: 15, perDay: 1 },
+  other: { label: 'Outro', servingG: 0, perDay: 0 },
+};
+
+export const PURCHASE_CATEGORIES = { suplementos: 'Suplementos', comida: 'Comida', material: 'Material' };
+
 export const ALL_PLATES = [25, 20, 15, 10, 5, 2.5, 2, 1.25, 1, 0.5];
 
 export const DEFAULT_SETTINGS = {
@@ -285,6 +296,7 @@ export const DEFAULT_SETTINGS = {
   bwGoal: 'gain',
   proteinPerKg: 1.8,
   wheyProtein: 21,
+  budgetMonthly: 50,
   creatineNote: '1 medida por dia',
 };
 

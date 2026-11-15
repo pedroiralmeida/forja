@@ -128,6 +128,11 @@ export function renderToday(root) {
     html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano. Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
   }
 
+  const stockSug = E.stockSuggestions(today).filter((s) => s.level !== 'info' || s.purchase).slice(0, 2);
+  if (stockSug.length) {
+    html += `<section class="banner stock-banner"><div><strong>Compras e stock</strong>${stockSug.map((s) => `<p>${esc(s.text)}</p>`).join('')}</div><a class="btn secondary small" href="#/mais/stock">Ver</a></section>`;
+  }
+
   if (firstEver && place === 'supera') {
     html += `<section class="banner"><div><strong>Primeiro treino no Supera</strong><p>Vê se há discos de 1,25 kg (se não houver, tira-os em Mais → Definições), cinto de lastro e barras de segurança para o supino.</p></div></section>`;
   }

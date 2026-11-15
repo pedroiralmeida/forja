@@ -58,3 +58,9 @@ e abre `http://localhost:8000`.
 - `js/store.js`: dados locais, junção entre dispositivos e sincronização com o gist.
 - `js/view-*.js`: ecrãs. `js/ui.js`: componentes partilhados e temporizador.
 - `sw.js`: cache para funcionar sem internet.
+
+## Dados enviados pelo Claude
+
+O ficheiro `claude/inbox.json` tem registos (compras, stock e outros) que o Claude escreve no repositório. A app vai buscá-lo sempre que abre e junta-o aos teus dados com a mesma regra da sincronização: ganha a versão mais recente de cada registo. Por isso, o que alterares ou apagares na app não volta atrás.
+
+Como o repositório é público, este ficheiro também é. Não tem moradas, números de encomenda nem dados de pagamento.

@@ -1,0 +1,123 @@
+{
+ "_info": "Registos escritos pelo Claude para a app Forja. A app junta-os aos teus dados ao abrir; o que alterares na app prevalece.",
+ "purchases": {
+  "compra-zumub-2026-11-15": {
+   "id": "compra-zumub-2026-11-15",
+   "date": "2026-11-15",
+   "store": "Zumub",
+   "category": "suplementos",
+   "status": "a caminho",
+   "carrier": "Delnext",
+   "items": [
+    {
+     "name": "100% Whey Concentrate 1 kg, Cookies & Cream",
+     "price": 39.98
+    },
+    {
+     "name": "Manteiga de amendoim crocante 1 kg",
+     "price": 6.56
+    },
+    {
+     "name": "Papa de aveia instantânea Good Morning 3 kg, Donut",
+     "price": 16.33
+    }
+   ],
+   "subtotal": 62.87,
+   "discount": 23.37,
+   "shipping": 0,
+   "total": 39.5,
+   "note": "Cupão de 23,37 € usado, portes grátis",
+   "updatedAt": 1794786864473
+  },
+  "compra-amazon-2026-11-15": {
+   "id": "compra-amazon-2026-11-15",
+   "date": "2026-11-15",
+   "store": "Amazon",
+   "category": "material",
+   "status": "a caminho",
+   "expected": "2026-11-20",
+   "items": [
+    {
+     "name": "Fitas de pulso Fitgriff (par, 45 cm)",
+     "price": 12.15
+    },
+    {
+     "name": "Fita métrica corporal LiteTour",
+     "price": 9.14
+    },
+    {
+     "name": "Magnésio líquido Zedegran",
+     "price": 12.69
+    },
+    {
+     "name": "Shaker IronMaxx 700 ml",
+     "price": 4.48
+    }
+   ],
+   "total": 38.46,
+   "note": "Sem contar o outro artigo da mesma encomenda",
+   "updatedAt": 1794786864473
+  }
+ },
+ "stock": {
+  "whey-zumub-atual": {
+   "id": "whey-zumub-atual",
+   "kind": "whey",
+   "name": "Whey Zumub (saco atual)",
+   "sizeG": 1000,
+   "servingG": 30,
+   "perDay": 1,
+   "status": "uso",
+   "openedOn": "2026-11-16",
+   "note": "Assumi o saco cheio a 16/11; se não estiver, usa Ajustar",
+   "updatedAt": 1794786864473
+  },
+  "creatina-zumub": {
+   "id": "creatina-zumub",
+   "kind": "creatine",
+   "name": "Creatina Zumub",
+   "sizeG": 1000,
+   "servingG": 3.67,
+   "perDay": 1,
+   "status": "uso",
+   "openedOn": "2026-11-16",
+   "note": "Assumi o frasco cheio a 16/11",
+   "updatedAt": 1794786864473
+  },
+  "whey-zumub-cookies": {
+   "id": "whey-zumub-cookies",
+   "kind": "whey",
+   "name": "100% Whey Concentrate Cookies & Cream",
+   "sizeG": 1000,
+   "servingG": 30,
+   "perDay": 1,
+   "status": "encomendado",
+   "purchaseId": "compra-zumub-2026-11-15",
+   "updatedAt": 1794786864473
+  },
+  "manteiga-amendoim-zumub": {
+   "id": "manteiga-amendoim-zumub",
+   "kind": "pb",
+   "name": "Manteiga de amendoim crocante Zumub",
+   "sizeG": 1000,
+   "servingG": 15,
+   "perDay": 1,
+   "status": "encomendado",
+   "purchaseId": "compra-zumub-2026-11-15",
+   "note": "Guarda fora do frigorífico, longe do calor; mexe o óleo antes de usar",
+   "updatedAt": 1794786864473
+  },
+  "aveia-good-morning": {
+   "id": "aveia-good-morning",
+   "kind": "oats",
+   "name": "Papa de aveia Good Morning (Donut)",
+   "sizeG": 3000,
+   "servingG": 45,
+   "perDay": 1,
+   "status": "encomendado",
+   "purchaseId": "compra-zumub-2026-11-15",
+   "note": "No shaker com leite ou água, sem liquidificadora",
+   "updatedAt": 1794786864473
+  }
+ }
+}

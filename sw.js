@@ -1,6 +1,6 @@
 // Service worker da Forja: guarda a app em cache para funcionar sem internet.
 // Quando mudares algum ficheiro, sobe a VERSION para os dispositivos receberem a versão nova.
-const VERSION = 'forja-v1.3.1';
+const VERSION = 'forja-v1.4.0';
 const ASSETS = [
   "./",
   "./index.html",
@@ -27,6 +27,7 @@ const ASSETS = [
   "./js/util.js",
   "./js/view-body.js",
   "./js/view-more.js",
+  "./js/view-stock.js",
   "./js/view-progress.js",
   "./js/view-today.js",
   "./js/view-workout.js"
@@ -53,6 +54,7 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // GitHub API e afins: sempre rede
+  if (url.pathname.includes('/claude/')) return; // dados enviados pelo Claude: sempre da rede
   if (req.mode === 'navigate') {
     event.respondWith(caches.match('./index.html').then((r) => r || fetch(req)));
     return;
