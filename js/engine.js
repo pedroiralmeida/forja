@@ -498,7 +498,7 @@ function buildSkill(slot, deload) {
       ex: d.ex,
       mode: 'skill',
       target: `${n}×${range}`,
-      note: i === 0 ? `Fase ${stage.n} do muscle-up (${stage.name.toLowerCase()}). Escreve as reps que fizeste de facto (0 se falhaste) e descansa 2 min entre séries.` : '',
+      note: i === 0 ? `Fase ${stage.n} do muscle-up (${stage.name.toLowerCase()}). Aquece os pulsos primeiro. Escreve as reps que fizeste de facto (0 se falhaste) e descansa 2 min entre séries.` : '',
       sets: Array.from({ length: n }, () => setObj('work', null, null, { tReps: range, ...(band ? { band } : {}) })),
     };
   });

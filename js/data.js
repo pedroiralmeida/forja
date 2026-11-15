@@ -9,6 +9,7 @@ export const EX = {
       'Omoplatas juntas e para baixo antes de tirar a barra.',
       'Pés firmes no chão e empurra o chão com as pernas (leg drive).',
       'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
+      'Pulso direito, com a barra na base da palma e não nos dedos. Nas séries pesadas usa as fitas de pulso.',
       'Desce controlado, sobe com intenção. Barras de segurança sempre montadas.',
     ],
   },
@@ -92,6 +93,7 @@ export const EX = {
       'Balanço curto e controlado: corpo arqueado atrás, corpo "côncavo" à frente.',
       'Puxa a barra para as ancas e passa os cotovelos por cima depressa.',
       'Evita passar um braço de cada vez (chicken wing).',
+      'Aquece os pulsos antes (rodar os pulsos e apoiar o peso nas palmas). Se o pulso doer, para por hoje.',
     ],
   },
   row: {
@@ -293,6 +295,7 @@ export const GUIDE = [
 <p>Há dois sítios. No <strong>Supera</strong> fazes o supino e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, elevações e dips na barra reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
 <p>Por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; sábado livre; descanso ao domingo. O sábado serve para repor um treino que tenha falhado durante a semana; se não faltou nada, corre ou descansa.</p>
 <p><strong>Semanas em que só dá para 4 treinos:</strong> enquanto não tiveres o primeiro muscle-up, faz 2 no Supera e 2 no Estádio. Aprender uma técnica precisa de repetição frequente, e um treino de supino a menos atrasa-te pouco: a rotação A, B, C continua de onde ficou. Depois do primeiro muscle-up, inverte: 3 no Supera e 1 no Estádio chegam para o manter e melhorar. No sábado livre, a app sugere sozinha o sítio certo.</p>
+<p><strong>Dias com pouco tempo:</strong> se só tiveres 20 minutos, vai ao Estádio fazer apenas o bloco de muscle-up. É melhor do que saltar o treino.</p>
 <p><strong>Supera A, pesado.</strong> Uma série principal de supino de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
 <p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>
 <p><strong>Supera C, força e técnica.</strong> Supino com 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
@@ -327,6 +330,8 @@ export const GUIDE = [
 <p><strong>Proteína:</strong> cerca de 1,6 a 2,2 g por kg de peso. Na prática, 4 refeições com uma porção do tamanho da palma da mão (frango, peru, carne, peixe, atum, 3–4 ovos, skyr, queijo fresco), mais um batido de whey se faltar.</p>
 <p><strong>Batido para ganhar peso:</strong> leite, 1 dose de whey, 40–60 g de aveia, uma banana e uma colher de pasta de amendoim. Cerca de 700–800 kcal num copo.</p>
 <p><strong>Treinar às 19h:</strong> entre o almoço e o fim do treino passam muitas horas. Come um lanche por volta das 17h, antes de saíres do trabalho: por exemplo uma sandes com fiambre ou queijo e um iogurte, ou uma banana com skyr. Depois do treino janta com uma boa porção de proteína; se o jantar for muito tarde, bebe o batido de whey logo a seguir ao treino.</p>
+<p><strong>Se ficas sonolento depois de comer:</strong> em vez de duas refeições enormes, come mais vezes e em porções médias. Um almoço com menos arroz ou massa de uma vez, mais um lanche a meio da tarde, dá as mesmas calorias com menos sono. As calorias líquidas (o batido) pesam menos. Uma volta de 10 minutos a pé depois do almoço também ajuda.</p>
+<p><strong>Um dia-tipo, sem contar calorias:</strong> pequeno-almoço sempre (aveia com leite e whey, ou skyr com fruta e pão com pasta de amendoim); almoço normal com uma palma de proteína; lanche às 17h (sandes e iogurte); jantar depois do treino com proteína e hidratos. Se quiseres, um iogurte ou um copo de leite antes de dormir.</p>
 <p><strong>Dias de corrida:</strong> correr gasta muito. Conta com cerca de 1 kcal por kg de peso por km, ou seja, uns 640 kcal em 10 km. Nesses dias come claramente mais.</p>`,
   },
   {
