@@ -399,3 +399,13 @@ export function header(title, { back, sub, right = '' } = {}) {
     ${right}
   </header>`;
 }
+
+// Se há uma versão nova à espera (adiada por causa de um treino em curso), aplica-a já
+export function applyPendingUpdate() {
+  if (!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.getRegistration().then((r) => {
+    if (r && r.waiting && navigator.serviceWorker.controller) r.waiting.postMessage('skipWaiting');
+    const bar = document.getElementById('update-bar');
+    if (bar && !(r && r.waiting)) bar.remove();
+  }).catch(() => {});
+}

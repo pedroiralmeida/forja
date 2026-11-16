@@ -2,7 +2,7 @@
 import { DAYS, PLACES, MU_STAGES, MISS_REASONS, WEEKDAYS } from './data.js';
 import * as E from './engine.js';
 import { local, put, setSettings, persistLocal, remove } from './store.js';
-import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, modal } from './ui.js';
+import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, modal, confirmDialog, stopRest, releaseWakeLock, applyPendingUpdate } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
 import { setLine, sessionMeta } from './view-workout.js';
@@ -184,7 +184,12 @@ export function renderToday(root) {
   const today = todayISO();
   const plan = E.planFor(today);
   const sug = plan === 'livre' ? E.suggestPlace(today) : null;
-  const active = local.active;
+  // Treino aberto neste dispositivo que ficou esquecido: de outro dia, com mais de 4 horas,
+  // ou começado antes de um treino que já guardaste hoje (por exemplo, noutro dispositivo)
+  const openActive = local.active;
+  const savedAfter = openActive ? E.sessions().filter((x) => x.date === today && (x.finishedAt || 0) > (openActive.startedAt || 0)) : [];
+  const staleActive = !!openActive && (openActive.date !== today || Date.now() - (openActive.startedAt || 0) > 4 * 3600e3 || savedAfter.length > 0);
+  const active = staleActive ? null : openActive;
   // Já treinaste hoje: mostra o resumo e, abaixo, os próximos treinos
   const doneToday = active ? [] : E.sessions().filter((x) => x.date === today).reverse();
   const isDone = doneToday.length > 0;
@@ -216,6 +221,13 @@ export function renderToday(root) {
   const trainingDay = plan === 'supera' || plan === 'estadio';
 
   let html = header('Hoje', { sub: fmtDateLong(today) });
+
+  if (staleActive) {
+    const nDone = openActive.exercises.reduce((a, e) => a + e.sets.filter((x) => x.done && x.kind !== 'warm').length, 0);
+    html += `<section class="banner stale-banner"><div><strong>Ficou um treino aberto neste dispositivo</strong>
+      <p>${esc(E.dayTitle(openActive.day))}, começado há ${fmtDuration(Date.now() - openActive.startedAt)}${openActive.date !== today ? ` (${esc(fmtDate(openActive.date))})` : ''} e nunca terminado.${savedAfter.length ? ` Hoje já guardaste o ${esc(E.dayTitle(savedAfter[0].day))}, por isso este pode ser descartado.` : ''} ${nDone ? `Tem ${nDone} ${nDone === 1 ? 'série feita' : 'séries feitas'}: abre-o para terminar e guardar, se for para manter.` : 'Não tem nenhuma série feita.'}</p></div>
+      <div class="banner-actions"><button class="btn secondary small" data-act="stale-discard">Descartar</button><a class="btn ghost small" href="#/treino">Abrir</a></div></section>`;
+  }
 
   if (active) {
     const elapsed = Date.now() - active.startedAt;
@@ -382,6 +394,16 @@ export function renderToday(root) {
       persistLocal();
       requestWakeLock();
       navigate('#/treino');
+    } else if (a === 'stale-discard') {
+      const n = openActive ? openActive.exercises.reduce((x, en) => x + en.sets.filter((st) => st.done && st.kind !== 'warm').length, 0) : 0;
+      if (n && !(await confirmDialog(`Descartar este treino? As ${n} séries feitas perdem-se.`, { ok: 'Descartar', danger: true }))) return;
+      local.active = null;
+      persistLocal();
+      stopRest();
+      releaseWakeLock();
+      toast('Treino aberto descartado');
+      rerender();
+      applyPendingUpdate();
     } else if (a === 'skip-today') {
       if (await askReason(today, { skip: true })) rerender();
     } else if (a === 'unskip') {

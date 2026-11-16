@@ -3,7 +3,7 @@ import { EX, DAYS, BAND_LEVELS, PAIN_SPOTS, CONDITIONS } from './data.js';
 import * as E from './engine.js';
 import { local, persistLocal, put, get, remove, syncNow } from './store.js';
 import {
-  icons, navigate, rerender, toast, modal, confirmDialog, header, startRest, stopRest, unlockAudio, releaseWakeLock, requestWakeLock,
+  icons, navigate, rerender, toast, modal, confirmDialog, header, startRest, stopRest, unlockAudio, releaseWakeLock, requestWakeLock, applyPendingUpdate,
 } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { resetChosenDay } from './view-today.js';
@@ -332,6 +332,7 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
         stopRest();
         releaseWakeLock();
         navigate('#/hoje');
+        applyPendingUpdate();
       }
     } else if (act === 'finish') {
       finish(session, mode);
@@ -443,6 +444,7 @@ async function finish(session, mode) {
   resetChosenDay();
   syncNow();
   navigate(`#/sessao/${clean.id}/novo`);
+  setTimeout(applyPendingUpdate, 1500);
 }
 
 // ---------- Detalhe da sessão ----------
