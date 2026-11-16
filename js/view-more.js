@@ -41,8 +41,17 @@ export function renderMore(root) {
         <li><a href="#/mais/sync"><span>Sincronização</span><span class="muted">${esc(syncText)}</span>${icons.chevron}</a></li>
         <li><a href="#/mais/dados"><span>Backup e dados</span><span class="muted">exportar, importar</span>${icons.chevron}</a></li>
       </ul>
-      <p class="muted small">Forja ${APP_VERSION}. Os dados ficam neste dispositivo${s.token ? ' e no teu gist privado do GitHub' : ''}.</p>
+      <p class="muted small">Forja ${APP_VERSION}. Os dados ficam neste dispositivo${s.token ? ' e no teu gist privado do GitHub' : ''}. <button class="link-btn" data-act="force-update">Forçar atualização</button></p>
     </section>`;
+  // Apaga os ficheiros da app guardados em cache (os teus dados não são tocados) e recarrega
+  root.querySelector('[data-act="force-update"]').addEventListener('click', async () => {
+    toast('A atualizar…');
+    try {
+      if ('caches' in window) for (const k of await caches.keys()) await caches.delete(k);
+      if (navigator.serviceWorker) for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
+    } catch (e) { console.error(e); }
+    location.reload();
+  });
 }
 
 // ---------- Ferramentas ----------

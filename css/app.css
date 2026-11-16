@@ -701,3 +701,4 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .spend-hist .bar i { display: block; height: 100%; border-radius: 4px; background: var(--yellow); }
 .spend-hist .num { text-align: right; }
 [data-act="add-purchase"] { margin: 6px 0 14px; }
+.link-btn { background: none; border: 0; padding: 0; color: var(--link); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; }

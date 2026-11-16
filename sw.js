@@ -1,6 +1,6 @@
 // Service worker da Forja: guarda a app em cache para funcionar sem internet.
 // Quando mudares algum ficheiro, sobe a VERSION para os dispositivos receberem a versão nova.
-const VERSION = 'forja-v1.8.0';
+const VERSION = 'forja-v1.8.1';
 const ASSETS = [
   "./",
   "./index.html",
@@ -34,8 +34,11 @@ const ASSETS = [
   "./js/view-workout.js"
 ];
 
+// cache: 'reload' obriga a ir buscar cada ficheiro ao servidor. Sem isto, o browser podia
+// reaproveitar ficheiros antigos da sua cache HTTP (o GitHub Pages guarda-os 10 minutos)
+// e a versão nova ficava com código velho.
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(VERSION).then((c) => c.addAll(ASSETS)));
+  event.waitUntil(caches.open(VERSION).then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' })))));
 });
 
 self.addEventListener('activate', (event) => {
@@ -61,7 +64,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   event.respondWith(
-    caches.match(req, { ignoreSearch: true }).then((cached) => cached || fetch(req).then((res) => {
+    caches.match(req, { ignoreSearch: true }).then((cached) => cached || fetch(req, { cache: 'no-cache' }).then((res) => {
       if (res.ok && res.type === 'basic') {
         const copy = res.clone();
         caches.open(VERSION).then((c) => c.put(req, copy));
