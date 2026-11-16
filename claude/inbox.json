@@ -1,41 +1,88 @@
 {
  "_info": "Registos escritos pelo Claude para a app Forja. A app junta-os aos teus dados ao abrir; o que alterares na app prevalece.",
- "purchases": {
-  "compra-zumub-2026-11-15": {
-   "id": "compra-zumub-2026-11-15",
-   "date": "2026-11-15",
-   "store": "Zumub",
-   "category": "suplementos",
-   "status": "a caminho",
-   "carrier": "Delnext",
-   "items": [
-    {
-     "name": "100% Whey Concentrate 1 kg, Cookies & Cream",
-     "price": 39.98
-    },
-    {
-     "name": "Manteiga de amendoim crocante 1 kg",
-     "price": 6.56
-    },
-    {
-     "name": "Papa de aveia instantânea Good Morning 3 kg, Donut",
-     "price": 16.33
-    }
-   ],
-   "subtotal": 62.87,
-   "discount": 23.37,
-   "shipping": 0,
-   "total": 39.5,
-   "note": "Cupão de 23,37 € usado, portes grátis",
-   "updatedAt": 1794786864473
+ "bodyweight": {
+  "2026-11-15": {
+   "deleted": true,
+   "updatedAt": 1794827086960
   },
+  "2026-11-16": {
+   "date": "2026-11-16",
+   "kg": 62.5,
+   "updatedAt": 1794827086960
+  }
+ },
+ "exerciseNotes": {
+  "A_bench@2026-11-16-video": {
+   "date": "2026-11-16",
+   "exercise": "bench",
+   "findings": [
+    "Amplitude completa: a barra toca no peito em todas as reps, sem ressalto (pausa curta de ~0,3 s no peito).",
+    "Rabo sempre no banco, cabeça apoiada.",
+    "Toque alto no peito (perto das clavículas), em vez da parte de baixo do peito.",
+    "Costas quase planas: pouco arco e pouca retração visível das omoplatas.",
+    "Pés à frente dos joelhos, pouca força das pernas (leg drive).",
+    "Pulso dobrado para trás, sobretudo na mão do lado da câmara: barra alta na mão, perto dos dedos. Coincide com a dor no pulso registada neste treino.",
+    "Velocidade da 3.ª rep (~1 s a subir) parecida com a 2.ª: a RPE real pode ter sido 8 a 8,5 e não 9."
+   ],
+   "id": "A_bench@2026-11-16-video",
+   "kind": "video-review",
+   "note": "Análise do Claude ao vídeo da série de topo.",
+   "set": "Série de topo: 72,5 kg × 3, RPE 9 registada",
+   "slotId": "A_bench",
+   "updatedAt": 1794870554111,
+   "video": "WhatsApp 16/11 22:15, 11 s, filmado de lado a partir dos pés"
+  },
+  "A_row@2026-11-16": {
+   "date": "2026-11-16",
+   "id": "A_row@2026-11-16",
+   "machine": "Life Fitness (Remada): máquina de remada sentada com apoio no peito e braços independentes",
+   "note": "Remada do treino A de 16/11 feita nesta máquina, um braço de cada vez (mesmo que na app esteja como Seated cable row).",
+   "slotId": "A_row",
+   "unilateral": true,
+   "updatedAt": 1794860937725
+  },
+  "bench": {
+   "ex": "bench",
+   "from": "2026-11-16",
+   "id": "bench",
+   "machine": "Banco olímpico Hammer Strength no Supera, sem barras de segurança; há discos de 1,25 kg",
+   "note": "Sem molas nos discos ou com alguém a ajudar na série principal; nunca até à falha neste banco.",
+   "updatedAt": 1794868570116
+  },
+  "pulldown": {
+   "ex": "pulldown",
+   "from": "2026-11-16",
+   "id": "pulldown",
+   "machine": "Life Fitness (Puxada para baixo): máquina de puxada com braços e pegas fixas e apoio para as coxas, em vez da polia com barra",
+   "note": "Pilha de 7,5 em 7,5 kg; o seletor laranja no topo da pilha junta 2,5 ou 5 kg. O peso registado é o total (pilha + seletor).",
+   "updatedAt": 1794861868152
+  },
+  "row_chest": {
+   "ex": "row_chest",
+   "from": "2026-11-16",
+   "id": "row_chest",
+   "machine": "Life Fitness (Remada): máquina de remada sentada com apoio no peito e braços independentes",
+   "note": "Um braço de cada vez. Peso = peso da pilha da máquina; reps contadas por braço.",
+   "unilateral": true,
+   "updatedAt": 1794860937725
+  }
+ },
+ "habits": {
+  "2026-11-16": {
+   "creatine": true,
+   "date": "2026-11-16",
+   "protein": 45,
+   "shake": false,
+   "sleep": null,
+   "updatedAt": 1794827983879
+  }
+ },
+ "purchases": {
   "compra-amazon-2026-11-15": {
-   "id": "compra-amazon-2026-11-15",
-   "date": "2026-11-15",
-   "store": "Amazon",
    "category": "material",
-   "status": "a caminho",
+   "date": "2026-11-15",
    "expected": "2026-11-20",
+   "id": "compra-amazon-2026-11-15",
    "items": [
     {
      "name": "Fitas de pulso Fitgriff (par, 45 cm)",
@@ -54,145 +101,95 @@
      "price": 4.48
     }
    ],
-   "total": 38.46,
    "note": "Sem contar o outro artigo da mesma encomenda",
+   "status": "a caminho",
+   "store": "Amazon",
+   "total": 38.46,
    "updatedAt": 1794786864473
   },
   "compra-auchan-2026-11-16": {
-   "id": "compra-auchan-2026-11-16",
-   "date": "2026-11-16",
-   "store": "Auchan",
    "category": "comida",
-   "status": "recebida",
+   "date": "2026-11-16",
+   "id": "compra-auchan-2026-11-16",
    "items": [
     {
      "name": "Iogurte líquido YoPro 300 g (2 mirtilo, 1 morango e framboesa, 1 baunilha e cookies)",
-     "qty": 4,
-     "price": 7.96
+     "price": 7.96,
+     "qty": 4
     },
     {
+     "estimated": true,
      "name": "Leite Mimosa meio-gordo 6 × 1 L",
-     "price": 5.34,
-     "estimated": true
+     "price": 5.34
     },
     {
+     "estimated": true,
      "name": "Atum posta em azeite Auchan 120 g",
-     "qty": 3,
      "price": 2.97,
-     "estimated": true
+     "qty": 3
     },
     {
+     "estimated": true,
      "name": "Filetes de cavala em óleo de girassol Auchan 90 g",
-     "qty": 3,
      "price": 2.67,
-     "estimated": true
+     "qty": 3
     },
     {
+     "estimated": true,
      "name": "Peito de peru forno a lenha Izidoro 110 g + 30 g grátis",
-     "price": 2.99,
-     "estimated": true
+     "price": 2.99
     },
     {
+     "estimated": true,
      "name": "Queijo flamengo light fatiado Polegar 150 g",
-     "price": 1.89,
-     "estimated": true
+     "price": 1.89
     },
     {
+     "estimated": true,
      "name": "Amêndoas peladas Auchan 150 g",
-     "qty": 2,
      "price": 4.34,
-     "estimated": true
+     "qty": 2
     }
    ],
-   "total": 28.16,
    "note": "Sem fatura: o YoPro estava a 1,99 € na prateleira; os outros preços são estimados para dar o total.",
    "source": "claude",
+   "status": "recebida",
+   "store": "Auchan",
+   "total": 28.16,
    "updatedAt": 1794843667617
-  }
- },
- "stock": {
-  "whey-zumub-atual": {
-   "id": "whey-zumub-atual",
-   "kind": "whey",
-   "name": "Whey Zumub (saco atual)",
-   "sizeG": 1000,
-   "servingG": 30,
-   "perDay": 1,
-   "status": "uso",
-   "openedOn": "2026-11-16",
-   "note": "Assumi o saco cheio a 16/11; se não estiver, usa Ajustar",
-   "updatedAt": 1794786864473
   },
-  "creatina-zumub": {
-   "id": "creatina-zumub",
-   "kind": "creatine",
-   "name": "Creatina Zumub",
-   "sizeG": 1000,
-   "servingG": 3.67,
-   "perDay": 1,
-   "status": "uso",
-   "openedOn": "2026-11-16",
-   "note": "Assumi o frasco cheio a 16/11",
+  "compra-zumub-2026-11-15": {
+   "carrier": "Delnext",
+   "category": "suplementos",
+   "date": "2026-11-15",
+   "discount": 23.37,
+   "id": "compra-zumub-2026-11-15",
+   "items": [
+    {
+     "name": "100% Whey Concentrate 1 kg, Cookies & Cream",
+     "price": 39.98
+    },
+    {
+     "name": "Manteiga de amendoim crocante 1 kg",
+     "price": 6.56
+    },
+    {
+     "name": "Papa de aveia instantânea Good Morning 3 kg, Donut",
+     "price": 16.33
+    }
+   ],
+   "note": "Cupão de 23,37 € usado, portes grátis",
+   "shipping": 0,
+   "status": "a caminho",
+   "store": "Zumub",
+   "subtotal": 62.87,
+   "total": 39.5,
    "updatedAt": 1794786864473
-  },
-  "whey-zumub-cookies": {
-   "id": "whey-zumub-cookies",
-   "kind": "whey",
-   "name": "100% Whey Concentrate Cookies & Cream",
-   "sizeG": 1000,
-   "servingG": 30,
-   "perDay": 1,
-   "status": "encomendado",
-   "purchaseId": "compra-zumub-2026-11-15",
-   "updatedAt": 1794786864473
-  },
-  "manteiga-amendoim-zumub": {
-   "id": "manteiga-amendoim-zumub",
-   "kind": "pb",
-   "name": "Manteiga de amendoim crocante Zumub",
-   "sizeG": 1000,
-   "servingG": 15,
-   "perDay": 1,
-   "status": "encomendado",
-   "purchaseId": "compra-zumub-2026-11-15",
-   "note": "Guarda fora do frigorífico, longe do calor; mexe o óleo antes de usar",
-   "updatedAt": 1794786864473
-  },
-  "aveia-good-morning": {
-   "id": "aveia-good-morning",
-   "kind": "oats",
-   "name": "Papa de aveia Good Morning (Donut)",
-   "sizeG": 3000,
-   "servingG": 45,
-   "perDay": 1,
-   "status": "encomendado",
-   "purchaseId": "compra-zumub-2026-11-15",
-   "note": "No shaker com leite ou água, sem liquidificadora",
-   "updatedAt": 1794786864473
-  }
- },
- "bodyweight": {
-  "2026-11-16": {
-   "date": "2026-11-16",
-   "kg": 62.5,
-   "updatedAt": 1794827086960
-  },
-  "2026-11-15": {
-   "deleted": true,
-   "updatedAt": 1794827086960
-  }
- },
- "habits": {
-  "2026-11-16": {
-   "date": "2026-11-16",
-   "protein": 45,
-   "creatine": true,
-   "sleep": null,
-   "shake": false,
-   "updatedAt": 1794827983879
   }
  },
  "settingsPatch": {
+  "budgetMonthly": 0,
+  "updatedAt": 1794843667617,
   "weekPlan": {
    "0": "descanso",
    "1": "supera",
@@ -201,44 +198,67 @@
    "4": "estadio",
    "5": "descanso",
    "6": "livre"
-  },
-  "updatedAt": 1794843667617,
-  "budgetMonthly": 0
+  }
  },
- "exerciseNotes": {
-  "row_chest": {
-   "id": "row_chest",
-   "ex": "row_chest",
-   "unilateral": true,
-   "from": "2026-11-16",
-   "machine": "Life Fitness (Remada): máquina de remada sentada com apoio no peito e braços independentes",
-   "note": "Um braço de cada vez. Peso = peso da pilha da máquina; reps contadas por braço.",
-   "updatedAt": 1794860937725
+ "stock": {
+  "aveia-good-morning": {
+   "id": "aveia-good-morning",
+   "kind": "oats",
+   "name": "Papa de aveia Good Morning (Donut)",
+   "note": "No shaker com leite ou água, sem liquidificadora",
+   "perDay": 1,
+   "purchaseId": "compra-zumub-2026-11-15",
+   "servingG": 45,
+   "sizeG": 3000,
+   "status": "encomendado",
+   "updatedAt": 1794786864473
   },
-  "A_row@2026-11-16": {
-   "id": "A_row@2026-11-16",
-   "slotId": "A_row",
-   "date": "2026-11-16",
-   "unilateral": true,
-   "machine": "Life Fitness (Remada): máquina de remada sentada com apoio no peito e braços independentes",
-   "note": "Remada do treino A de 16/11 feita nesta máquina, um braço de cada vez (mesmo que na app esteja como Seated cable row).",
-   "updatedAt": 1794860937725
+  "creatina-zumub": {
+   "id": "creatina-zumub",
+   "kind": "creatine",
+   "name": "Creatina Zumub",
+   "note": "Assumi o frasco cheio a 16/11",
+   "openedOn": "2026-11-16",
+   "perDay": 1,
+   "servingG": 3.67,
+   "sizeG": 1000,
+   "status": "uso",
+   "updatedAt": 1794786864473
   },
-  "pulldown": {
-   "id": "pulldown",
-   "ex": "pulldown",
-   "from": "2026-11-16",
-   "machine": "Life Fitness (Puxada para baixo): máquina de puxada com braços e pegas fixas e apoio para as coxas, em vez da polia com barra",
-   "note": "Pilha de 7,5 em 7,5 kg; o seletor laranja no topo da pilha junta 2,5 ou 5 kg. O peso registado é o total (pilha + seletor).",
-   "updatedAt": 1794861868152
+  "manteiga-amendoim-zumub": {
+   "id": "manteiga-amendoim-zumub",
+   "kind": "pb",
+   "name": "Manteiga de amendoim crocante Zumub",
+   "note": "Guarda fora do frigorífico, longe do calor; mexe o óleo antes de usar",
+   "perDay": 1,
+   "purchaseId": "compra-zumub-2026-11-15",
+   "servingG": 15,
+   "sizeG": 1000,
+   "status": "encomendado",
+   "updatedAt": 1794786864473
   },
-  "bench": {
-   "id": "bench",
-   "ex": "bench",
-   "from": "2026-11-16",
-   "machine": "Banco olímpico Hammer Strength no Supera, sem barras de segurança; há discos de 1,25 kg",
-   "note": "Sem molas nos discos ou com alguém a ajudar na série principal; nunca até à falha neste banco.",
-   "updatedAt": 1794868570116
+  "whey-zumub-atual": {
+   "id": "whey-zumub-atual",
+   "kind": "whey",
+   "name": "Whey Zumub (saco atual)",
+   "note": "Assumi o saco cheio a 16/11; se não estiver, usa Ajustar",
+   "openedOn": "2026-11-16",
+   "perDay": 1,
+   "servingG": 30,
+   "sizeG": 1000,
+   "status": "uso",
+   "updatedAt": 1794786864473
+  },
+  "whey-zumub-cookies": {
+   "id": "whey-zumub-cookies",
+   "kind": "whey",
+   "name": "100% Whey Concentrate Cookies & Cream",
+   "perDay": 1,
+   "purchaseId": "compra-zumub-2026-11-15",
+   "servingG": 30,
+   "sizeG": 1000,
+   "status": "encomendado",
+   "updatedAt": 1794786864473
   }
  }
 }

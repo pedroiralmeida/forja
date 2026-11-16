@@ -10,7 +10,7 @@ export const EX = {
       'Pés firmes no chão e empurra o chão com as pernas (leg drive).',
       'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
       'Pulso direito, com a barra na base da palma e não nos dedos. Nas séries pesadas usa as fitas de pulso.',
-      'Desce controlado, sobe com intenção. Barras de segurança sempre montadas.',
+      'Desce controlado, sobe com intenção. Sem barras de segurança no Supera: nunca até à falha, deixa sempre 1 a 2 reps de reserva.',
     ],
   },
   bench_paused: {
@@ -268,7 +268,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.13.1';
+export const APP_VERSION = '1.13.2';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
