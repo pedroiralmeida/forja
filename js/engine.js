@@ -596,8 +596,19 @@ function buildDouble(slot, exId, deload) {
       ? `Primeira vez: escolhe um peso com que consigas entre ${slot.min} e ${slot.max} reps e ainda te sobrem 2. Escreve o peso e as reps que fizeste. Nos próximos treinos a app pede +1 rep de cada vez; quando fizeres ${slot.max} em todas as séries, sobe o peso.`
       : `Primeira vez: ${slot.min} a ${slot.max} reps por série, deixando 2 na reserva. Quando fizeres ${slot.max} em todas as séries, a app sobe o peso.`;
   } else {
-    const ws = workSets(hist[0].entry);
-    const lw = modeWeight(ws);
+    let ws = workSets(hist[0].entry);
+    let lw = modeWeight(ws);
+    // Se foste mudando o peso durante o treino (por exemplo 60 → 50 → 45 kg à procura do peso certo),
+    // o ponto de partida é o peso da última série, não o mais repetido nem o mais pesado.
+    const weights = [...new Set(ws.map((x) => x.w ?? 0))];
+    let adjusted = false;
+    if (weights.length > 1) {
+      const lastW = ws[ws.length - 1].w ?? 0;
+      const lastReps = ws[ws.length - 1].reps || slot.min;
+      lw = lastW;
+      ws = Array.from({ length: slot.sets }, () => ({ w: lastW, reps: lastReps }));
+      adjusted = weights;
+    }
     const allMax = ws.length >= slot.sets && ws.every((s) => s.reps >= slot.max);
     const fail = ws.length < slot.sets || ws.some((s) => s.reps < slot.min);
     let prevFail = false;
@@ -611,6 +622,10 @@ function buildDouble(slot, exId, deload) {
     } else if (fail && prevFail) {
       w = roundW(exId, lw * 0.9);
       note = `Ficaste abaixo de ${slot.min} reps duas vezes seguidas: baixa o peso cerca de 10% e volta a subir.`;
+    } else if (adjusted) {
+      w = lw;
+      reps = Array(slot.sets).fill(clamp(Math.round(ws[0].reps) + 1, slot.min, slot.max));
+      note = `Da última vez foste ajustando o peso (${adjusted.map((x) => fmtNum(x)).join(' → ')} kg). Hoje começa nos ${fmtNum(lw)} kg em todas as séries, a RPE 8 a 9. Se passares das ${slot.max} reps longe do limite, sobe na série seguinte.`;
     } else {
       w = lw;
       reps = Array.from({ length: slot.sets }, (_, i) => clamp((ws[i] ? ws[i].reps : slot.min) + 1, slot.min, slot.max));

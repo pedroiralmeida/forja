@@ -231,6 +231,14 @@
    "machine": "Life Fitness (Puxada para baixo): máquina de puxada com braços e pegas fixas e apoio para as coxas, em vez da polia com barra",
    "note": "Pilha de 7,5 em 7,5 kg; o seletor laranja no topo da pilha junta 2,5 ou 5 kg. O peso registado é o total (pilha + seletor).",
    "updatedAt": 1794861868152
+  },
+  "bench": {
+   "id": "bench",
+   "ex": "bench",
+   "from": "2026-11-16",
+   "machine": "Banco olímpico Hammer Strength no Supera, sem barras de segurança; há discos de 1,25 kg",
+   "note": "Sem molas nos discos ou com alguém a ajudar na série principal; nunca até à falha neste banco.",
+   "updatedAt": 1794868570116
   }
  }
 }
