@@ -5,6 +5,7 @@ import { local, put, setSettings, persistLocal, remove } from './store.js';
 import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, modal } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
+import { setLine, sessionMeta } from './view-workout.js';
 import { esc, fmtNum, fmt1, fmtDateLong, fmtDate, todayISO, parseNum, weekStart, fmtDuration, plural, isoToMs, addDays, now } from './util.js';
 
 const PLACE_NAME = { supera: 'Supera', estadio: 'Estádio' };
@@ -124,21 +125,84 @@ function weekDots(st, today) {
   }).join('')}</div>`;
 }
 
+function clock(ms) {
+  return ms ? new Date(ms).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) : '';
+}
+
+function dayLabel(iso, today) {
+  if (iso === addDays(today, 1)) return 'Amanhã';
+  return weekdayName(iso).replace(/^./, (c) => c.toUpperCase());
+}
+
+// Resumo do treino feito hoje, no lugar do próximo treino
+function doneCard(s) {
+  const work = s.exercises.map((e) => ({ e, sets: e.sets.filter((x) => x.kind !== 'warm') })).filter((x) => x.sets.length);
+  const nSets = work.reduce((a, x) => a + x.sets.length, 0);
+  const bench = E.exerciseHistory('bench').find((h) => h.sessionId === s.id);
+  const prs = E.sessionPRs(s);
+  const dur = s.duration || (s.finishedAt - s.startedAt);
+  return `<section class="done-card">
+    <div class="done-head">
+      <span class="done-badge">${icons.check} Treino terminado</span>
+      <h2>${esc(E.dayTitle(s.day))}</h2>
+      ${s.startedAt && s.finishedAt ? `<p class="muted">Das ${clock(s.startedAt)} às ${clock(s.finishedAt)}</p>` : ''}
+    </div>
+    <div class="summary done-stats">
+      <div class="stat"><span class="num big2">${fmtDuration(dur)}</span><span class="muted">duração</span></div>
+      <div class="stat"><span class="num big2">${nSets}</span><span class="muted">séries</span></div>
+      ${bench && bench.e1rm ? `<div class="stat"><span class="num big2">${fmt1(bench.e1rm)} kg</span><span class="muted">1RM estimado no bench press</span></div>` : ''}
+    </div>
+    ${prs.length ? `<div class="done-prs"><strong>Recordes</strong><ul>${prs.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+    ${sessionMeta(s)}
+    <div class="done-ex">${work.map(({ e, sets }) => `
+      <div class="sess-ex">
+        <h3>${esc(E.exInfo(e.ex, e).name)}</h3>
+        <p class="sess-sets num">${sets.map((x) => `<span class="${x.kind === 'top' ? 'top' : ''}">${esc(setLine(e.ex, x, e))}</span>`).join('')}</p>
+      </div>`).join('')}</div>
+    ${s.notes ? `<p class="sess-notes">${esc(s.notes)}</p>` : ''}
+    <a class="btn secondary" href="#/sessao/${esc(s.id)}">Ver ou editar</a>
+  </section>`;
+}
+
+// Próximos dias com treino; tocar num mostra o plano dele mais abaixo
+function upcomingList(up, today, shown) {
+  if (!up.length) return '<p class="muted">Sem treinos no plano para os próximos dias.</p>';
+  return `<ul class="up-list">${up.map((u) => {
+    const what = u.place
+      ? `<span class="up-what">${esc(E.dayTitle(u.day))}</span>`
+      : '<span class="up-what muted">Reposição, só se faltares a algum treino</span>';
+    const inner = `<span class="up-day">${esc(dayLabel(u.date, today))} <span class="muted">${esc(fmtDate(u.date))}</span></span>${what}`;
+    return `<li>${u.place
+      ? `<button class="up-row ${shown && shown.date === u.date ? 'on' : ''}" data-preview="${u.place}:${u.day}:${u.date}">${inner}</button>`
+      : `<div class="up-row static">${inner}</div>`}</li>`;
+  }).join('')}</ul>`;
+}
+
 export function renderToday(root) {
   const S = E.S();
   if (!S.onboarded) return navigate('#/inicio');
   const today = todayISO();
   const plan = E.planFor(today);
   const sug = plan === 'livre' ? E.suggestPlace(today) : null;
-  const autoPlace = plan === 'estadio' ? 'estadio' : plan === 'livre' && sug.place ? sug.place : 'supera';
+  const active = local.active;
+  // Já treinaste hoje: mostra o resumo e, abaixo, os próximos treinos
+  const doneToday = active ? [] : E.sessions().filter((x) => x.date === today).reverse();
+  const isDone = doneToday.length > 0;
+  const up = isDone ? E.upcomingPlan(today) : [];
+  const nextUp = up.find((u) => u.place);
+  const autoPlace = isDone && nextUp ? nextUp.place
+    : plan === 'estadio' ? 'estadio' : plan === 'livre' && sug.place ? sug.place : 'supera';
   const place = chosenPlace || autoPlace;
   const order = E.dayOrder(place);
   const next = E.nextDay(place);
   const day = chosenDay && order.includes(chosenDay) ? chosenDay : next;
+  const shown = isDone ? (up.find((u) => u.place === place && u.day === day) || up.find((u) => u.place === place) || null) : null;
+  const hoursIso = shown ? shown.date : today;
   const deloadOn = E.isDeloadWeek();
   const session = E.buildSession(day, { deload: deloadOn });
   const tpl = DAYS[day];
-  const hours = E.placeHours(place, today);
+  const hours = E.placeHours(place, hoursIso);
+  const hoursWhen = hoursIso === today ? 'hoje' : hoursIso === addDays(today, 1) ? 'amanhã' : weekdayName(hoursIso);
   const main = session.exercises.find((e) => BENCH_FAMILY.includes(e.ex));
   const mainSets = main ? main.sets.filter((s) => s.kind !== 'warm') : [];
   const W = mainSets.length ? mainSets[0].w : null;
@@ -147,7 +211,6 @@ export function renderToday(root) {
   const sugg = E.deloadSuggestion();
   const showSugg = sugg && local.dismissDeload !== weekStart(today);
   const week = E.weekSummary();
-  const active = local.active;
   const mins = E.estimateMinutes(session);
   const firstEver = E.sessions().length === 0;
   const trainingDay = plan === 'supera' || plan === 'estadio';
@@ -209,12 +272,20 @@ export function renderToday(root) {
       <div class="banner-actions"><button class="btn secondary small" data-act="deload-on">Fazer esta semana</button><button class="btn ghost small" data-act="deload-dismiss">Agora não</button></div></section>`;
   }
 
-  html += `<section class="today-hero">
+  if (isDone) {
+    html += doneToday.map(doneCard).join('');
+    html += `<section class="panel next-panel">
+      <h2 class="panel-title">Próximos treinos</h2>
+      ${upcomingList(up, today, chosenDay || chosenPlace ? shown : null)}
+    </section>`;
+  }
+
+  html += `${isDone ? `<details class="next-details" ${chosenDay || chosenPlace ? 'open' : ''}><summary>${shown ? `Ver o treino de ${esc(dayLabel(shown.date, today).toLowerCase())} em detalhe` : 'Ver os treinos em detalhe'}</summary>` : ''}<section class="today-hero">
     <div class="place-row">
       <div class="seg place-pick" role="tablist" aria-label="Onde treinas">
         ${['supera', 'estadio'].map((pl) => `<button role="tab" class="seg-btn ${pl === place ? 'on' : ''}" data-place="${pl}" aria-selected="${pl === place}">${esc(PLACES[pl].short)}${plan === pl ? ' <small>(plano)</small>' : sug && sug.place === pl ? ' <small>(sugerido)</small>' : ''}</button>`).join('')}
       </div>
-      <p class="place-hours ${hours && !hours.open ? 'closed' : ''}">${hours && hours.always ? 'Parque de calistenia com acesso livre' : hours && hours.open ? `Aberto hoje das ${hours.from} às ${hours.to} <span class="muted">(horário do Google)</span>` : 'Fechado hoje <span class="muted">(horário do Google)</span>'}</p>
+      <p class="place-hours ${hours && !hours.open ? 'closed' : ''}">${hours && hours.always ? 'Parque de calistenia com acesso livre' : hours && hours.open ? `Aberto ${hoursWhen} das ${hours.from} às ${hours.to} <span class="muted">(horário do Google)</span>` : `Fechado ${hoursWhen} <span class="muted">(horário do Google)</span>`}</p>
     </div>
     <div class="day-pick" role="tablist" aria-label="Escolher o treino">
       ${order.map((d) => `<button role="tab" class="day-chip ${d === day ? 'on' : ''}" data-day="${d}" aria-selected="${d === day}">
@@ -250,13 +321,13 @@ export function renderToday(root) {
             <span class="plan-weight">${esc(weightSummary(e))}</span>
           </li>`).join('')}
       </ol>
-      ${active ? '' : `<button class="btn primary block big" data-act="start">Começar treino</button>`}
-      ${!active && trainingDay && !skippedToday && !E.sessions().some((x) => x.date === today) ? `<button class="btn ghost block small skip-btn" data-act="skip-today">Hoje não dá para treinar</button>` : ''}
+      ${active ? '' : `<button class="btn ${isDone ? 'secondary' : 'primary'} block big" data-act="start">${isDone ? 'Começar outro treino hoje' : 'Começar treino'}</button>`}
+      ${!active && trainingDay && !skippedToday && !isDone ? `<button class="btn ghost block small skip-btn" data-act="skip-today">Hoje não dá para treinar</button>` : ''}
     </div>
-  </section>`;
+  </section>${isDone ? '</details>' : ''}`;
 
   html += `<div class="two-col">`;
-  html += habitsCard(today, trainingDay);
+  html += habitsCard(today, trainingDay && !isDone);
   html += `<section class="panel">
     <h2 class="panel-title">Esta semana</h2>
     <p class="week-line"><span class="num big2">${Math.min(week.sessions, week.target)}</span> de ${week.target} treinos${week.status.extra ? ` <span class="tag">+${week.status.extra} extra</span>` : ''}${week.km ? `, <span class="num big2">${fmt1(week.km)}</span> km de corrida` : ''}</p>
@@ -279,6 +350,16 @@ export function renderToday(root) {
   bindProtein(root, today);
 
   root.addEventListener('click', async (e) => {
+    const prev = e.target.closest('[data-preview]');
+    if (prev) {
+      const [pl, d] = prev.dataset.preview.split(':');
+      chosenPlace = pl;
+      chosenDay = d;
+      rerender();
+      const det = document.querySelector('.next-details');
+      if (det) det.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     const placeBtn = e.target.closest('[data-place]');
     if (placeBtn) {
       chosenPlace = placeBtn.dataset.place;

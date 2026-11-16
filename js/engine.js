@@ -201,6 +201,30 @@ export function nextDay(place = 'supera', iso = todayISO()) {
   return core[(core.indexOf(last.day) + 1) % core.length];
 }
 
+// Próximos dias com treino (a partir de amanhã): para cada dia do Supera ou do Estádio no plano,
+// o treino que calha seguindo a rotação; o sábado de reposição aparece com o estado da semana.
+export function upcomingPlan(iso = todayISO(), n = 7) {
+  const ptr = {};
+  for (const place of Object.keys(CORE_DAYS)) {
+    const core = CORE_DAYS[place];
+    const last = sessions().find((s) => core.includes(s.day));
+    ptr[place] = last ? (core.indexOf(last.day) + 1) % core.length : 0;
+  }
+  const out = [];
+  for (let i = 1; i <= n; i++) {
+    const d = addDays(iso, i);
+    const plan = planFor(d);
+    if (plan === 'supera' || plan === 'estadio') {
+      const core = CORE_DAYS[plan];
+      out.push({ date: d, plan, place: plan, day: core[ptr[plan] % core.length] });
+      ptr[plan] = (ptr[plan] + 1) % core.length;
+    } else if (plan === 'livre') {
+      out.push({ date: d, plan, place: null, day: null });
+    }
+  }
+  return out;
+}
+
 export function isExtraDay(day) {
   return EXTRA_DAYS.includes(day);
 }

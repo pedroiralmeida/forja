@@ -446,17 +446,17 @@ async function finish(session, mode) {
 }
 
 // ---------- Detalhe da sessão ----------
-function setLine(exId, s, entry) {
+export function setLine(exId, s, entry) {
   const info = E.exInfo(exId, entry);
   let w = '';
   if (info.kind === 'weighted_bw') w = s.w ? `+${fmtNum(s.w)} kg × ` : '';
   else if (info.kind === 'band') w = `banda ${s.band || ''} × `;
   else if (info.kind !== 'bodyweight' && info.kind !== 'hold' && s.w !== null && s.w !== undefined) w = `${fmtNum(s.w)} × `;
-  if (info.kind === 'hold') return `${s.reps} s`;
-  return `${w}${s.reps}${s.rpe ? ` @${fmtNum(s.rpe)}` : ''}`;
+  if (info.kind === 'hold') return `${fmtNum(s.reps)} s`;
+  return `${w}${fmtNum(s.reps)}${s.rpe ? ` @${fmtNum(s.rpe)}` : ''}`;
 }
 
-function sessionMeta(s) {
+export function sessionMeta(s) {
   const bits = [];
   const c = s.ctx || {};
   if (c.makeup) bits.push('Treino de reposição');

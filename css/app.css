@@ -725,3 +725,28 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .alt-sync summary { cursor: pointer; font-weight: 600; color: var(--link); }
 .update-bar { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 60; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 14px; background: var(--ink); color: var(--bg); box-shadow: 0 6px 24px rgba(0,0,0,.25); font-weight: 600; }
 @media (min-width: 900px) { .update-bar { left: auto; right: 24px; bottom: 24px; max-width: 420px; } }
+
+/* Hoje, depois de treinar: resumo do treino e próximos treinos */
+.done-card { background: var(--surface); border-radius: 20px; padding: 18px; margin-bottom: 14px; box-shadow: inset 4px 0 0 var(--green); }
+.done-head h2 { font-size: 26px; margin-top: 8px; }
+.done-head p { margin: 4px 0 0; font-size: 15px; }
+.done-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 14px;
+  background: color-mix(in srgb, var(--green) 20%, var(--surface)); color: var(--green); }
+.done-badge svg { width: 16px; height: 16px; }
+.done-stats { margin: 14px 0 6px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); gap: 22px; }
+.done-prs { margin: 10px 0; }
+.done-prs ul { margin: 4px 0 0; padding-left: 18px; }
+.done-prs li { margin: 3px 0; font-weight: 600; }
+.done-ex { margin: 6px 0 14px; }
+.done-ex .sess-ex h3 { font-size: 17px; }
+.done-ex .sess-sets span { font-size: 16px; }
+.up-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.up-row { width: 100%; display: grid; gap: 2px; text-align: left; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; font: inherit; }
+.up-row.static { cursor: default; border-style: dashed; }
+.up-row.on { border-color: var(--yellow); box-shadow: inset 0 0 0 1px var(--yellow); }
+.up-day { font-weight: 700; }
+.up-day .muted { font-weight: 400; margin-left: 4px; }
+.up-what { font-size: 15px; color: var(--ink-2); }
+.next-details { margin-bottom: 14px; }
+.next-details > summary { cursor: pointer; color: var(--link); font-weight: 600; padding: 4px 0 12px; }
+.next-details[open] > summary { padding-bottom: 10px; }
