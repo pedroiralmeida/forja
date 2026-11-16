@@ -128,7 +128,7 @@ export const EX = {
       'No fim, os polegares apontam para trás e as mãos ficam ao lado das orelhas (como a pose de mostrar os bíceps). Pausa de 1 segundo.',
       'Se a corda for curta e as mãos não se conseguirem afastar, prende duas cordas no mesmo mosquetão, uma para cada mão.',
       'Na volta, os cotovelos é que se mexem primeiro: junta-os ao centro, à frente da cara, e só depois estica os braços. Volta devagar.',
-      'Peso leve: se tens de inclinar o tronco para trás, está pesado.',
+      'Escolhe o peso que te deixa fazer todas as reps com o tronco parado e a pausa no fim. Se precisas de dar balanço ou inclinar para trás, baixa o peso. A progressão é a de sempre: primeiro mais reps (até 20), depois mais peso.',
     ],
   },
   lateral_raise: {
@@ -268,7 +268,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.9.3';
+export const APP_VERSION = '1.9.4';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
