@@ -1,18 +1,13 @@
-// Guia de refeições: uma sugestão para cada refeição do dia, com o que há em casa,
-// ajustada ao tipo de dia (treino ao fim do dia ou descanso). "Comi isto" regista a proteína.
+// Refeições do dia: registo do que comeste em cada refeição (o que quiseres) e, ao lado, uma sugestão
+// com o que há em casa, ajustada ao tipo de dia. "Comi a sugestão" regista-a de uma vez.
 import * as E from './engine.js';
 import { put, get, list } from './store.js';
 import { rerender } from './ui.js';
-import { WEEKDAYS } from './data.js';
-import { FOODS, foodG, addFoods } from './protein.js';
+import { WEEKDAYS, MEAL_SLOTS } from './data.js';
+import { FOODS, foodG, addFoods, foodPicker, entryChip, mealTotals } from './protein.js';
 import { esc, fmtNum, fmtDate, todayISO, addDays, isoToMs } from './util.js';
 
-const MEALS = [
-  { id: 'pa', name: 'Pequeno-almoço' },
-  { id: 'almoco', name: 'Almoço' },
-  { id: 'lanche', name: 'Lanche' },
-  { id: 'jantar', name: 'Jantar' },
-];
+const MEALS = MEAL_SLOTS.filter((m) => m.id !== 'ceia');
 
 // needs: o que tem de haver em casa. whey/oats/pb vêm do stock; yopro/atum/cavala das compras
 // menos o que já registaste como comido.
@@ -47,7 +42,8 @@ const CEIA = [
 
 const COUNTED = [['yopro', /yopro/i, 'YoPro'], ['atum', /atum/i, 'latas de atum'], ['cavala', /cavala/i, 'latas de cavala']];
 
-let offset = null; // 0 = hoje, 1 = amanhã (por omissão, amanhã a partir das 20h)
+let offset = null; // 0 = hoje, 1 = amanhã (por omissão, amanhã a partir das 23h)
+let openAdd = null; // refeição com "Adicionar alimento" aberto
 
 // Unidades em casa: compradas (registos de compras) menos as registadas como comidas desde a 1.ª compra
 export function pantryCounts(iso = todayISO()) {
@@ -140,17 +136,35 @@ function nextOption(iso, mealId) {
   put('mealPlans', iso, { ...cur, date: iso, choices: { ...(cur.choices || {}), [mealId]: next.id } });
 }
 
+const defaultOffset = () => (new Date().getHours() >= 23 ? 1 : 0);
+
+function suggestionBlock(m, { canEat, eatenThis }) {
+  if (!m.opt) return '';
+  return `<div class="meal-sug">
+    <p class="meal-text"><span class="muted">Sugestão, cerca de ${optionG(m.opt)} g:</span> ${esc(m.opt.text)}</p>
+    ${m.opt.tip ? `<p class="meal-tip muted small">${esc(m.opt.tip)}</p>` : ''}
+    <div class="meal-actions">
+      ${canEat ? (eatenThis ? '<span class="meal-ok">Sugestão registada</span>' : `<button class="btn secondary small" data-meal-eat="${m.id}">Comi a sugestão</button>`) : ''}
+      ${m.count > 1 && !eatenThis ? `<button class="btn ghost small" data-meal-next="${m.id}">Outra sugestão</button>` : ''}
+    </div>
+  </div>`;
+}
+
 export function mealsPanel() {
   const today = todayISO();
-  const off = offset ?? (new Date().getHours() >= 20 ? 1 : 0);
+  const off = offset ?? defaultOffset();
   const iso = addDays(today, off);
   const info = dayInfo(iso);
   const p = planFor(iso);
-  const eaten = off === 0 ? new Set((E.habitsFor(today).foods || []).map((f) => f.meal).filter(Boolean)) : new Set();
+  const h = E.habitsFor(today);
+  const foods = off === 0 ? h.foods || [] : [];
+  const tot = mealTotals({ foods });
   const pc = p.ctx.pantry;
   const pantryLine = COUNTED.filter(([f]) => pc[f] !== null && pc[f] !== undefined).map(([f, , label]) => `${pc[f]} ${label}`).join(', ');
-  const total = p.meals.reduce((a, m) => a + optionG(m.opt), 0);
-  return `<section class="panel meals-panel">
+  const planTotal = p.meals.reduce((a, m) => a + optionG(m.opt), 0);
+  const rows = [...p.meals.filter((m) => m.id !== 'ceia'), p.meals.find((m) => m.id === 'ceia') || { id: 'ceia', name: 'Ceia', opt: null, count: 0, optional: true }];
+  const noMeal = foods.filter((f) => !f.meal);
+  return `<section class="panel meals-panel" id="meals">
     <div class="meals-head">
       <h2 class="panel-title">Refeições</h2>
       <div class="seg meals-seg" role="tablist" aria-label="Dia">
@@ -158,38 +172,50 @@ export function mealsPanel() {
       </div>
     </div>
     <p class="muted meals-day">${esc(info.label)}</p>
-    <ol class="meal-list">${p.meals.map((m) => {
-      const done = eaten.has(m.id);
-      return `<li class="meal ${done ? 'is-done' : ''}">
-        <div class="meal-top"><span class="meal-name">${esc(m.name)}${m.optional ? ' <span class="muted">(se faltar proteína)</span>' : ''}</span><span class="meal-g num">${optionG(m.opt)} g</span></div>
-        <p class="meal-when muted small">${esc(info.times[m.id] || '')}</p>
-        <p class="meal-text">${esc(m.opt.text)}</p>
-        ${m.opt.tip ? `<p class="meal-tip muted small">${esc(m.opt.tip)}</p>` : ''}
+    <ol class="meal-list">${rows.map((m) => {
+      const its = foods.filter((f) => f.meal === m.id);
+      const eatenThis = m.opt && its.some((f) => f.option === m.opt.id);
+      return `<li class="meal ${its.length ? 'has-food' : ''}">
+        <div class="meal-top"><span class="meal-name">${esc(m.name)}</span>${off === 0 && its.length ? `<span class="meal-g num">${fmtNum(tot[m.id] || 0)} g</span>` : ''}</div>
+        <p class="meal-when muted small">${esc(info.times[m.id] || '')}${m.id === 'ceia' && !m.opt ? '. Só se tiveres fome: o plano já chega à meta.' : m.id === 'ceia' ? '. O plano fica abaixo da meta, por isso vale a pena.' : ''}</p>
+        ${off === 0 && its.length ? `<div class="chips meal-eaten">${its.map(entryChip).join('')}</div>` : ''}
+        ${suggestionBlock(m, { canEat: off === 0, eatenThis })}
         ${m.id === 'pa' && hasKind('creatine', iso) ? '<p class="meal-tip muted small">Toma a creatina aqui, para não te esqueceres.</p>' : ''}
-        <div class="meal-actions">
-          ${off === 0 ? (done ? '<span class="meal-ok">Registado</span>' : `<button class="btn secondary small" data-meal-eat="${m.id}">Comi isto</button>`) : ''}
-          ${m.count > 1 && !done ? `<button class="btn ghost small" data-meal-next="${m.id}">Outra opção</button>` : ''}
-        </div>
+        ${off === 0 ? `<details class="meal-add" data-meal-add="${m.id}" ${openAdd === m.id ? 'open' : ''}><summary>${its.length ? 'Juntar mais alimentos' : 'Registar o que comi'}</summary>${foodPicker(m.id)}</details>` : ''}
       </li>`;
     }).join('')}</ol>
-    <p class="meal-total">Com este plano: cerca de <strong class="num">${total} g</strong> de proteína, para uma meta de ${p.target} g.</p>
-    <p class="muted small">Os valores são aproximados. Depois de "Comi isto" podes acertar cada alimento na lista da proteína.${pantryLine ? ` Em casa, pelas contas da app: ${esc(pantryLine)}.` : ''}</p>
+    ${noMeal.length ? `<div class="meal-none"><p class="muted small">Registado sem refeição (antes de a app separar por refeições):</p><div class="chips">${noMeal.map(entryChip).join('')}</div></div>` : ''}
+    <p class="meal-total">${off === 0 ? `Registado hoje: <strong class="num">${fmtNum(h.protein || 0)} g</strong> de ${p.target} g. ` : ''}Seguindo as sugestões: cerca de ${planTotal} g.</p>
+    <p class="muted small">Os valores são aproximados.${pantryLine ? ` Em casa, pelas contas da app: ${esc(pantryLine)}.` : ''}</p>
   </section>`;
 }
 
 export function bindMeals(root) {
   root.addEventListener('click', (e) => {
+    const go = e.target.closest('[data-goto-meals]');
+    if (go) {
+      e.preventDefault();
+      if (offset === 1) { offset = 0; rerender(); }
+      document.getElementById('meals')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     const d = e.target.closest('[data-meals-day]');
     if (d) { offset = Number(d.dataset.mealsDay); rerender(); return; }
+    const sum = e.target.closest('.meal-add > summary');
+    if (sum) {
+      const det = sum.parentElement;
+      openAdd = det.open ? null : det.dataset.mealAdd; // o clique acontece antes de abrir/fechar
+      return;
+    }
     const today = todayISO();
-    const off = offset ?? (new Date().getHours() >= 20 ? 1 : 0);
+    const off = offset ?? defaultOffset();
     const iso = addDays(today, off);
     const nx = e.target.closest('[data-meal-next]');
     if (nx) { nextOption(iso, nx.dataset.mealNext); rerender(); return; }
     const eat = e.target.closest('[data-meal-eat]');
     if (eat && off === 0) {
       const m = planFor(today).meals.find((x) => x.id === eat.dataset.mealEat);
-      if (m) addFoods(today, m.opt.items, { meal: m.id, option: m.opt.id }, m.name);
+      if (m && m.opt) addFoods(today, m.opt.items, { meal: m.id, option: m.opt.id }, `${m.name} (sugestão)`);
     }
   });
 }

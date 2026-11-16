@@ -1,5 +1,5 @@
 // Arranque: navegação, tema, service worker e sincronização
-import { load, local, settings, onChange, syncNow, syncConfigured, loadInbox, snapshotSettings, noteVersion, put } from './store.js';
+import { load, local, settings, onChange, syncNow, syncConfigured, loadInbox, snapshotSettings, noteVersion, put, persistLocal } from './store.js';
 import * as E from './engine.js';
 import { APP_VERSION } from './data.js';
 import { setRouter, icons, toast, buildRest, requestWakeLock, unlockAudio, header } from './ui.js';
@@ -31,14 +31,31 @@ nav.innerHTML = `
   <div class="tabs">${TABS.map((t) => `<a class="tab" data-tab="${t.id}" href="${t.href}">${t.icon}<span class="tab-label">${t.label}</span></a>`).join('')}</div>
   <div class="nav-sync" data-sync aria-live="polite"></div>`;
 
+// Tema: escolha deste dispositivo (botão no canto ou Definições) ou, sem escolha, o das definições
+const SUN = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>';
+const MOON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11Z"/></svg>';
+const isDark = () => {
+  const t = local.theme || settings().theme || 'auto';
+  return t === 'dark' || (t === 'auto' && !matchMedia('(prefers-color-scheme: light)').matches);
+};
+const themeFab = document.body.appendChild(Object.assign(document.createElement('button'), { className: 'theme-fab', type: 'button' }));
 function applyTheme() {
-  const t = settings().theme || 'auto';
+  const t = local.theme || settings().theme || 'auto';
   document.documentElement.dataset.theme = t;
-  const dark = t === 'dark' || (t === 'auto' && !matchMedia('(prefers-color-scheme: light)').matches);
+  const dark = isDark();
   document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#1C2026' : '#EEF0F2');
+  themeFab.innerHTML = dark ? SUN : MOON;
+  themeFab.setAttribute('aria-label', dark ? 'Desligar o modo escuro' : 'Ligar o modo escuro');
+  themeFab.title = dark ? 'Modo claro' : 'Modo escuro';
 }
+themeFab.addEventListener('click', () => {
+  local.theme = isDark() ? 'light' : 'dark';
+  persistLocal();
+  applyTheme();
+});
 applyTheme();
 matchMedia('(prefers-color-scheme: light)').addEventListener('change', applyTheme);
+window.addEventListener('forja-theme', applyTheme);
 
 function setActiveTab(tab) {
   nav.querySelectorAll('.tab').forEach((a) => {

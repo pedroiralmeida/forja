@@ -777,3 +777,31 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .meal-ok { color: var(--green); font-weight: 700; font-size: 14px; }
 .meal.is-done .meal-text { color: var(--ink-2); }
 .meal-total { margin: 12px 0 4px; }
+.meal-eaten { margin: 6px 0 4px; }
+.meal-sug { margin-top: 6px; }
+.meal.has-food .meal-sug .meal-text { font-size: 15px; }
+.meal-add { margin-top: 8px; }
+.meal-add > summary { cursor: pointer; color: var(--link); font-weight: 600; padding: 4px 0; }
+.meal-add .food-pick { margin-top: 8px; }
+.meal-none { margin: 10px 0; }
+.eaten-group + .eaten-group { margin-top: 8px; }
+.prot-sum { width: 100%; margin: 2px 0 0; }
+.prot-adjust { width: 100%; margin-top: 4px; }
+.prot-adjust > summary { cursor: pointer; color: var(--ink-2); font-size: 14px; padding: 4px 0; }
+.chip.meal-pick { min-width: 0; font-family: inherit; font-size: 14px; }
+
+/* Botão do modo escuro, no canto inferior direito */
+.theme-fab {
+  position: fixed; z-index: 40; right: 14px; bottom: calc(var(--nav-h) + 14px + env(safe-area-inset-bottom));
+  width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: 0 4px 14px rgba(0,0,0,.22);
+}
+.theme-fab:hover { background: var(--surface-2); }
+.theme-fab:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inset-bottom)); }
+#view { padding-bottom: calc(var(--nav-h) + 72px + env(safe-area-inset-bottom)); }
+@media (min-width: 900px) {
+  .theme-fab { right: 24px; bottom: 24px; }
+  body.has-rest .theme-fab { bottom: 96px; }
+  .update-bar { bottom: 80px; }
+}

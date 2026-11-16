@@ -101,7 +101,7 @@ function habitsCard(today, trainingDay) {
       </div>
       <div class="daily-row">
         <div class="daily-label">Proteína <span class="muted">aprox.</span></div>
-        <div class="daily-value">${proteinBlock(h, target)}</div>
+        <div class="daily-value">${proteinBlock(h, target, { compact: true })}</div>
       </div>
       <div class="daily-row">
         <div class="daily-label">Creatina</div>

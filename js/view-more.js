@@ -2,7 +2,7 @@
 import { EX, GUIDE, ALL_PLATES, MU_STAGES, DAYS, PLAN_TYPES, WEEKDAYS } from './data.js';
 import * as E from './engine.js';
 import {
-  local, setSettings, list, put, remove, exportJSON, importJSON, resetAll, connectSync, disconnectSync, syncNow, dataSize, state, COLLS,
+  local, persistLocal, setSettings, list, put, remove, exportJSON, importJSON, resetAll, connectSync, disconnectSync, syncNow, dataSize, state, COLLS,
 } from './store.js';
 import { icons, navigate, rerender, toast, header, segmented, confirmDialog, downloadFile, startRest, unlockAudio } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
@@ -198,7 +198,7 @@ export function renderSettings(root) {
       </section>
       <section class="panel">
         <h2 class="panel-title">Aspeto</h2>
-        <div class="field"><span>Tema</span>${segmented('theme', [{ value: 'auto', label: 'Automático' }, { value: 'dark', label: 'Escuro' }, { value: 'light', label: 'Claro' }], S.theme)}</div>
+        <div class="field"><span>Tema</span>${segmented('theme', [{ value: 'auto', label: 'Automático' }, { value: 'dark', label: 'Escuro' }, { value: 'light', label: 'Claro' }], local.theme || S.theme)}</div>
       </section>
       ${overrides.length ? `<section class="panel"><h2 class="panel-title">Exercícios trocados</h2><ul class="rec-list">${overrides.map((o) => {
         const slot = E.slotById(o.slotId);
@@ -233,7 +233,9 @@ export function renderSettings(root) {
       theme: f.theme.value,
       baseline: { ...S.baseline, bench: { w: w || S.baseline.bench.w, reps: reps || S.baseline.bench.reps, rpe: Number(f.bw_rpe.value) }, pullups: parseNum(f.pullups.value) ?? S.baseline.pullups },
     });
-    document.documentElement.dataset.theme = f.theme.value;
+    local.theme = f.theme.value;
+    persistLocal();
+    window.dispatchEvent(new Event('forja-theme'));
     toast('Definições guardadas', { timeout: 1500 });
   };
   f.addEventListener('change', apply);
