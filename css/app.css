@@ -757,3 +757,23 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .reminder li { margin: 3px 0; }
 .reminder .link { font-size: 14px; }
 .hero-reminder { grid-column: 1 / -1; margin: 4px 0 0; font-size: 15px; padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--yellow) 14%, var(--surface)); }
+
+/* Guia de refeições */
+.meals-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.meals-head .panel-title { margin-bottom: 0; }
+.meals-seg .seg-btn { min-height: 34px; padding: 4px 14px; font-size: 15px; }
+.meals-day { margin: 8px 0 4px; }
+.meal-list { list-style: none; margin: 0; padding: 0; }
+.meal { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.meal:last-child { border-bottom: 0; }
+.meal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.meal-name { font-weight: 700; font-size: 17px; }
+.meal-g { font-weight: 700; color: var(--ink-2); white-space: nowrap; }
+.meal-when { margin: 1px 0 4px; }
+.meal-text { margin: 0 0 4px; }
+.meal-tip { margin: 2px 0 4px; }
+.meal-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.meal-actions:empty { display: none; }
+.meal-ok { color: var(--green); font-weight: 700; font-size: 14px; }
+.meal.is-done .meal-text { color: var(--ink-2); }
+.meal-total { margin: 12px 0 4px; }

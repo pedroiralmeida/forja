@@ -6,6 +6,7 @@ import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, m
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
 import { setLine, sessionMeta } from './view-workout.js';
+import { mealsPanel, bindMeals } from './meals.js';
 import { esc, fmtNum, fmt1, fmtDateLong, fmtDate, todayISO, parseNum, weekStart, fmtDuration, plural, isoToMs, addDays, now } from './util.js';
 
 const PLACE_NAME = { supera: 'Supera', estadio: 'Estádio' };
@@ -358,9 +359,11 @@ export function renderToday(root) {
     <a class="link" href="#/progresso">Ver progresso</a>
   </section>`;
   html += `</div>`;
+  html += mealsPanel();
 
   root.innerHTML = html;
   bindProtein(root, today);
+  bindMeals(root);
 
   root.addEventListener('click', async (e) => {
     const prev = e.target.closest('[data-preview]');

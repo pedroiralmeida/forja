@@ -23,6 +23,8 @@ export const FOODS = [
   { id: 'skyr', name: 'Skyr', portion: '1 copo', g: 16 },
   { id: 'leite', name: 'Leite', portion: '1 copo (250 ml)', g: 8 },
   { id: 'amendoas', name: 'Amêndoas', portion: 'um punhado (30 g)', g: 6 },
+  { id: 'aveia', name: 'Aveia instantânea', portion: '45 g', g: 6 },
+  { id: 'manteiga_amendoim', name: 'Manteiga de amendoim', portion: '1 colher (15 g)', g: 4 },
   { id: 'pao', name: 'Pão', portion: '1 carcaça', g: 5 },
   { id: 'arroz', name: 'Arroz', portion: '1 prato', g: 4 },
   { id: 'massa', name: 'Massa', portion: '1 prato', g: 7 },
@@ -43,7 +45,7 @@ let mult = 1;
 const r1 = (x) => Math.round(x * 10) / 10;
 const multLabel = (m) => (MULTS.find(([v]) => v === m) || [m, fmtNum(m)])[1];
 
-function foodG(f) {
+export function foodG(f) {
   return f.g === null ? (E.S().wheyProtein || 21) : f.g;
 }
 
@@ -135,6 +137,22 @@ function addFood(iso, f, qty, gOverride) {
   save(iso, { protein: total, foods: [...(h.foods || []), entry] },
     `${qty !== 1 ? `${multLabel(qty)} × ` : ''}${f.name}: +${fmtNum(g)} g. Hoje: ${fmtNum(total)} g`,
     (cur) => ({ protein: r1(Math.max(0, (cur.protein || 0) - g)), foods: (cur.foods || []).filter((x) => x.id !== entry.id) }));
+}
+
+// Regista vários alimentos de uma vez (por exemplo, uma refeição do guia), com um só "Desfazer"
+export function addFoods(iso, items, meta = {}, label = 'Refeição') {
+  const h = E.habitsFor(iso);
+  const at = Date.now();
+  const entries = items.map(([fid, qty]) => {
+    const f = FOODS.find((x) => x.id === fid);
+    return f ? { id: uid(), food: f.id, name: f.name, portion: f.portion || null, qty, g: r1(foodG(f) * qty), at, ...meta } : null;
+  }).filter(Boolean);
+  if (!entries.length) return;
+  const add = r1(entries.reduce((a, e) => a + e.g, 0));
+  const total = r1((h.protein || 0) + add);
+  const ids = new Set(entries.map((e) => e.id));
+  save(iso, { protein: total, foods: [...(h.foods || []), ...entries] }, `${label}: +${fmtNum(add)} g. Hoje: ${fmtNum(total)} g`,
+    (cur) => ({ protein: r1(Math.max(0, (cur.protein || 0) - add)), foods: (cur.foods || []).filter((x) => !ids.has(x.id)) }));
 }
 
 export function bindProtein(root, iso) {

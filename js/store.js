@@ -14,8 +14,9 @@ const API = 'https://api.github.com';
 // revisions: versões anteriores de treinos editados; meta: versões da app e dispositivos usados;
 // exerciseNotes: notas sobre como um exercício é feito (ex.: um braço de cada vez, que máquina), copiadas para os treinos.
 // reminders: lembretes de técnica para mostrar nos próximos treinos de um exercício, até os esconderes.
+// mealPlans: opção escolhida em cada refeição do guia de refeições, por dia.
 export const COLLS = ['sessions', 'bodyweight', 'waist', 'shoulders', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock',
-  'days', 'settingsHistory', 'revisions', 'meta', 'exerciseNotes', 'reminders'];
+  'days', 'settingsHistory', 'revisions', 'meta', 'exerciseNotes', 'reminders', 'mealPlans'];
 
 function emptyState() {
   return {
