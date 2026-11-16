@@ -156,15 +156,27 @@ window.addEventListener('online', () => syncConfigured() && syncNow());
 // Service worker: funciona offline e avisa quando há versão nova
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('./sw.js').then((reg) => {
-    const prompt = (w) => toast('Há uma versão nova da app.', { action: { label: 'Atualizar', fn: () => w.postMessage('skipWaiting') }, timeout: 0 });
-    if (reg.waiting && navigator.serviceWorker.controller) prompt(reg.waiting);
+    // Versão nova pronta: fora de um treino, atualiza sozinha; durante um treino, mostra um aviso fixo
+    // (para não recarregar a meio de uma série).
+    const ready = (w) => {
+      if (!navigator.serviceWorker.controller) return;
+      if (!local.active) { w.postMessage('skipWaiting'); return; }
+      const bar = document.getElementById('update-bar') || document.body.appendChild(Object.assign(document.createElement('div'), { id: 'update-bar' }));
+      bar.className = 'update-bar';
+      bar.innerHTML = '<span>Há uma versão nova da app.</span><button class="btn primary small">Atualizar</button>';
+      bar.querySelector('button').onclick = () => w.postMessage('skipWaiting');
+    };
+    if (reg.waiting) ready(reg.waiting);
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
       if (!nw) return;
       nw.addEventListener('statechange', () => {
-        if (nw.state === 'installed' && navigator.serviceWorker.controller) prompt(nw);
+        if (nw.state === 'installed') ready(nw);
       });
     });
+    // Procura versões novas ao abrir, ao voltar à app e de hora a hora
+    reg.update().catch(() => {});
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
     setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
   }).catch((e) => console.warn('SW', e));
   let refreshing = false;
