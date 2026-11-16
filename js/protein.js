@@ -24,7 +24,6 @@ export const FOODS = [
   { id: 'leite', name: 'Leite', portion: '1 copo (250 ml)', g: 8 },
   { id: 'amendoas', name: 'Amêndoas', portion: 'um punhado (30 g)', g: 6 },
   { id: 'pao', name: 'Pão', portion: '1 carcaça', g: 5 },
-  { id: 'planta', name: 'Planta (para barrar)', portion: 'no pão', g: 0 },
   { id: 'arroz', name: 'Arroz', portion: '1 prato', g: 4 },
   { id: 'massa', name: 'Massa', portion: '1 prato', g: 7 },
   { id: 'batata', name: 'Batata', portion: '1 prato', g: 3 },
