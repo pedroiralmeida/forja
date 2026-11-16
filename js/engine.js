@@ -1,5 +1,7 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import { EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES } from './data.js';
+import {
+  EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, CORE_DAYS, EXTRA_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES, MISS_REASONS, APP_VERSION,
+} from './data.js';
 import { state, list, get } from './store.js';
 import {
   uid, now, todayISO, addDays, daysBetween, weekStart, isoToMs, roundTo, clamp, mean, linreg, fmtNum, fmt1, fmtSigned, fmtDate, DAY_MS,
@@ -83,6 +85,14 @@ export function bodyweightEntries() {
   return list('bodyweight').sort((a, b) => a.date.localeCompare(b.date));
 }
 
+// Registo de pesagem: guarda também as pesagens anteriores desse dia (readings)
+export function bodyweightRecord(date, kg, ctx = '') {
+  const cur = state.bodyweight[date];
+  const prev = cur && (cur.deleted ? cur.was : cur);
+  const old = prev ? (prev.readings || [{ kg: prev.kg, at: prev.at || prev.updatedAt || null, ctx: prev.ctx || '' }]) : [];
+  return { date, kg, at: now(), ctx, readings: [...old, { kg, at: now(), ctx }].slice(-10) };
+}
+
 export function bodyweightAt(iso) {
   const e = bodyweightEntries().filter((b) => b.date <= iso);
   if (e.length) return e[e.length - 1].kg;
@@ -157,7 +167,9 @@ export function currentBenchE1RM() {
   const recent = pts.slice(-5);
   let v = Math.max(...recent.map((p) => p.e1rm));
   const lastDate = pts[pts.length - 1].date;
-  if (daysBetween(lastDate, todayISO()) > 21) v *= 0.95;
+  const gap = daysBetween(lastDate, todayISO());
+  if (gap > 21) v *= 0.95;
+  else if (gap > 10) v *= 0.975;
   return v;
 }
 
@@ -171,23 +183,191 @@ export function dayOrder(place = 'supera') {
   return PLACE_DAYS[place] || PLACE_DAYS.supera;
 }
 
-// Próximo dia da rotação de um sítio (Supera: A, B, C; Estádio: E1, E2)
-export function nextDay(place = 'supera') {
-  const order = dayOrder(place);
-  const last = sessions().find((s) => order.includes(s.day));
-  if (!last) return order[0];
-  return order[(order.indexOf(last.day) + 1) % order.length];
+// Próximo treino de um sítio. Supera: alterna A e B; o C (extra) só aparece quando
+// o A e o B dessa semana já estão feitos. Estádio: alterna E1 e E2.
+// Treinos falhados não se perdem: segue-se sempre do último que fizeste.
+export function nextDay(place = 'supera', iso = todayISO()) {
+  const core = CORE_DAYS[place] || dayOrder(place);
+  const ws = weekStart(iso);
+  const week = sessions().filter((s) => s.date >= ws && s.date <= addDays(ws, 6));
+  const extra = dayOrder(place).filter((d) => EXTRA_DAYS.includes(d));
+  if (extra.length && core.every((d) => week.some((s) => s.day === d))) {
+    const doneExtra = extra.filter((d) => week.some((s) => s.day === d));
+    const left = extra.filter((d) => !doneExtra.includes(d));
+    if (left.length) return left[0];
+  }
+  const last = sessions().find((s) => core.includes(s.day));
+  if (!last) return core[0];
+  return core[(core.indexOf(last.day) + 1) % core.length];
+}
+
+export function isExtraDay(day) {
+  return EXTRA_DAYS.includes(day);
+}
+
+// Plano em vigor num dia: para dias passados usa a cópia das definições guardada nesse dia
+// (ou a mais antiga), para o histórico não mudar quando mudas o plano.
+export function weekPlanOn(iso = todayISO()) {
+  if (iso >= todayISO()) return S().weekPlan || {};
+  const snaps = list('settingsHistory').filter((r) => r.settings && r.settings.weekPlan).sort((a, b) => a.date.localeCompare(b.date));
+  if (!snaps.length) return S().weekPlan || {};
+  const before = snaps.filter((r) => r.date <= iso);
+  return (before.length ? before[before.length - 1] : snaps[0]).settings.weekPlan;
 }
 
 export function planFor(iso = todayISO()) {
   const dow = new Date(isoToMs(iso)).getDay();
-  const plan = S().weekPlan || {};
+  const plan = weekPlanOn(iso);
   return plan[dow] || plan[String(dow)] || 'descanso';
 }
 
-export function weekTarget() {
-  const plan = S().weekPlan || {};
-  return Object.values(plan).filter((v) => v === 'supera' || v === 'estadio').length;
+function planCounts(plan) {
+  const c = { supera: 0, estadio: 0 };
+  for (const v of Object.values(plan || {})) if (c[v] !== undefined) c[v]++;
+  return c;
+}
+
+// Treinos obrigatórios por semana (dias de Supera e de Estádio no plano)
+export function weekTarget(iso = todayISO()) {
+  const c = planCounts(weekPlanOn(iso));
+  return c.supera + c.estadio;
+}
+
+// Primeiro dia que conta para faltas (dia em que configuraste a app)
+export function trackingStart() {
+  const b = S().baseline || {};
+  const first = sessions().length ? sessions()[sessions().length - 1].date : null;
+  return [b.date, first].filter(Boolean).sort()[0] || todayISO();
+}
+
+export function dayNote(iso) {
+  return get('days', iso);
+}
+
+export function reasonLabel(v) {
+  const r = MISS_REASONS.find((x) => x.value === v);
+  return r ? r.label : v === 'nao-registado' ? 'Treinou sem registar' : v === 'sem-motivo' ? 'Sem motivo registado' : v || '';
+}
+
+// Estado de uma semana (segunda a domingo).
+// done conta treinos registados e dias marcados como "treinei mas não registei".
+export function weekStatus(iso = todayISO()) {
+  const ws = weekStart(iso);
+  const we = addDays(ws, 6);
+  const today = todayISO();
+  const plan = weekPlanOn(iso);
+  const planned = planCounts(plan);
+  const target = planned.supera + planned.estadio;
+  const ss = sessions().filter((s) => s.date >= ws && s.date <= we);
+  const byPlace = { supera: 0, estadio: 0 };
+  for (const s of ss) {
+    const pl = DAYS[s.day] && DAYS[s.day].place;
+    if (pl) byPlace[pl]++;
+  }
+  const days = [];
+  let unlogged = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(ws, i);
+    const p = planFor(d);
+    const daySessions = ss.filter((s) => s.date === d);
+    const note = dayNote(d);
+    let status;
+    if (daySessions.length) status = p === 'supera' || p === 'estadio' ? 'feito' : 'extra';
+    else if (note && note.reason === 'nao-registado') { status = 'feito'; unlogged++; if (byPlace[p] !== undefined) byPlace[p]++; }
+    else if (p === 'supera' || p === 'estadio') {
+      if (d < trackingStart()) status = 'antes';
+      else if (d < today || (d === today && note && note.skip)) status = 'falhado';
+      else status = 'por-fazer';
+    } else status = d < today ? 'livre' : 'por-fazer';
+    days.push({ date: d, plan: p, status, sessions: daySessions.map((s) => s.id), note: note || null });
+  }
+  const done = ss.length + unlogged;
+  // Em dívida até agora: dias de treino que já passaram (ou marcados "hoje não dá") menos treinos feitos, por sítio
+  const owed = { supera: 0, estadio: 0 };
+  for (const d of days) if (owed[d.plan] !== undefined && (d.status === 'falhado' || d.status === 'feito')) owed[d.plan]++;
+  for (const k of Object.keys(owed)) owed[k] = Math.max(0, owed[k] - byPlace[k]);
+  const deficit = { supera: Math.max(0, planned.supera - byPlace.supera), estadio: Math.max(0, planned.estadio - byPlace.estadio) };
+  const missed = days.filter((d) => d.status === 'falhado');
+  const remainingPlanned = days.filter((d) => d.status === 'por-fazer' && (d.plan === 'supera' || d.plan === 'estadio')).length;
+  return { week: ws, plan, planned, target, done, byPlace, deficit, owed, missed, days, remainingPlanned, extra: Math.max(0, done - target) };
+}
+
+// Sábado (dia de reposição): obrigatório se a semana ainda não chegou aos treinos obrigatórios,
+// opcional se já chegou. Sugere o sítio que ficou a faltar; se não faltar nenhum, até ao primeiro
+// muscle-up o Estádio tem prioridade, depois o Supera.
+export function suggestPlace(iso = todayISO()) {
+  const w = weekStatus(iso);
+  const muDone = milestoneMap().mu1.achieved;
+  const order = muDone ? ['supera', 'estadio'] : ['estadio', 'supera'];
+  const mandatory = w.done < w.target;
+  const short = w.target - w.done;
+  const place = order.find((p) => w.deficit[p] > 0) || order[0];
+  return { place, mandatory, short, planned: w.planned, done: w.byPlace, week: w };
+}
+
+// Dias de treino que passaram sem registo nem motivo (para a app perguntar o que aconteceu)
+export function missedDays(iso = todayISO()) {
+  const from = [addDays(iso, -13), trackingStart()].sort()[1];
+  const out = [];
+  const trained = new Set(sessions().map((s) => s.date));
+  for (let d = addDays(iso, -1); d >= from; d = addDays(d, -1)) {
+    const p = planFor(d);
+    if (p !== 'supera' && p !== 'estadio') continue;
+    if (trained.has(d) || dayNote(d)) continue;
+    out.push({ date: d, plan: p });
+  }
+  return out;
+}
+
+export function daysSinceLastSession(iso = todayISO()) {
+  const ss = sessions();
+  return ss.length ? daysBetween(ss[0].date, iso) : null;
+}
+
+// Contexto guardado com cada treino: o que a app sugeria, como estava a semana, etc.
+export function sessionContext({ day, place, suggestedDay, suggestedPlace } = {}) {
+  const iso = todayISO();
+  const w = weekStatus(iso);
+  const plan = planFor(iso);
+  const bws = bodyweightEntries();
+  return {
+    plan,
+    place,
+    suggestedPlace,
+    suggestedDay,
+    chosenByHand: day !== suggestedDay || place !== suggestedPlace,
+    weekDoneBefore: w.done,
+    weekTarget: w.target,
+    makeup: plan === 'livre' ? w.done < w.target : plan !== place && w.deficit[place] > 0 && (plan === 'supera' || plan === 'estadio'),
+    extra: plan === 'descanso' || plan === 'corrida' || (plan === 'livre' && w.done >= w.target),
+    daysSinceLast: daysSinceLastSession(iso),
+    bodyweight: bws.length ? bws[bws.length - 1].kg : null,
+    benchE1rm: Math.round(currentBenchE1RM() * 10) / 10,
+    muStage: muStage(),
+    deloadWeek: isDeloadWeek(iso),
+    appVersion: APP_VERSION,
+    tzOffset: new Date().getTimezoneOffset(),
+    weekday: new Date().getDay(),
+  };
+}
+
+// Cumprimento do plano nas últimas semanas
+export function adherence(weeks = 8, iso = todayISO()) {
+  const start = trackingStart();
+  const out = [];
+  for (let i = weeks - 1; i >= 0; i--) {
+    const d = addDays(weekStart(iso), -7 * i);
+    if (addDays(d, 6) < start) continue;
+    const w = weekStatus(d);
+    // Semana em que começaste a usar a app depois dos dias de treino: não conta
+    if (!w.done && !w.days.some((x) => (x.plan === 'supera' || x.plan === 'estadio') && x.status !== 'antes')) continue;
+    out.push(w);
+  }
+  const reasons = {};
+  for (const n of list('days')) {
+    if (n.reason && n.reason !== 'nao-registado') reasons[n.reason] = (reasons[n.reason] || 0) + 1;
+  }
+  return { weeks: out, reasons };
 }
 
 // Horário de um sítio num dia: { open: bool, from, to }
@@ -198,26 +378,6 @@ export function placeHours(place, iso = todayISO()) {
   const dow = new Date(isoToMs(iso)).getDay();
   const h = p.hours[dow];
   return h ? { open: true, from: h[0], to: h[1] } : { open: false };
-}
-
-// Dia livre: sugere o sítio onde faltou treino esta semana.
-// Até ao primeiro muscle-up, o Estádio tem prioridade; depois, o Supera.
-export function suggestPlace(iso = todayISO()) {
-  const plan = S().weekPlan || {};
-  const planned = { supera: 0, estadio: 0 };
-  for (const v of Object.values(plan)) if (planned[v] !== undefined) planned[v]++;
-  const ws = weekStart(iso);
-  const done = { supera: 0, estadio: 0 };
-  for (const s of sessions()) {
-    if (s.date < ws || s.date > addDays(ws, 6)) continue;
-    const pl = DAYS[s.day] && DAYS[s.day].place;
-    if (pl) done[pl]++;
-  }
-  const def = { supera: planned.supera - done.supera, estadio: planned.estadio - done.estadio };
-  const muDone = milestoneMap().mu1.achieved;
-  const order = muDone ? ['supera', 'estadio'] : ['estadio', 'supera'];
-  const place = order.find((p) => def[p] > 0) || null;
-  return { place, planned, done };
 }
 
 export function dayTitle(day) {
@@ -327,7 +487,14 @@ export function deloadSuggestion() {
   const deloads = list('deloadWeeks').filter((d) => d.on).map((d) => d.week).sort();
   const lastDeload = deloads.length ? deloads[deloads.length - 1] : null;
   const from = lastDeload ? addDays(lastDeload, 7) : weekStart(programStart());
-  const weeksTrained = Math.floor(daysBetween(from, thisWeek) / 7) + 1;
+  // Conta as semanas seguidas com treino a sério (2 ou mais). Uma semana com 0 ou 1 treino
+  // (por faltas, férias ou doença) já serve de descanso e recomeça a contagem.
+  let weeksTrained = 0;
+  for (let wk = from; wk <= thisWeek; wk = addDays(wk, 7)) {
+    const n = sessions().filter((s) => s.date >= wk && s.date <= addDays(wk, 6)).length;
+    if (wk < thisWeek && n <= 1) weeksTrained = 0;
+    else weeksTrained++;
+  }
   if (weeksTrained >= S().deloadEvery) {
     return { reason: `Esta é a semana ${weeksTrained} seguida de treino. Uma semana mais leve agora ajuda-te a recuperar e a voltar mais forte.` };
   }
@@ -501,6 +668,16 @@ function buildSkill(slot, deload) {
       note: i === 0 ? `Fase ${stage.n} do muscle-up (${stage.name.toLowerCase()}). Aquece os pulsos primeiro. Escreve as reps que fizeste de facto (0 se falhaste) e descansa 2 min entre séries.` : '',
       sets: Array.from({ length: n }, () => setObj('work', null, null, { tReps: range, ...(band ? { band } : {}) })),
     };
+  }).map((e) => ({ ...e, prescribed: prescribedOf(e.sets) }));
+}
+
+// Cópia do que a app receitou, guardada com o treino para comparar mais tarde com o que fizeste
+function prescribedOf(sets) {
+  return sets.map((x) => {
+    const o = { kind: x.kind, w: x.w ?? null, reps: x.reps ?? null };
+    if (x.tReps) o.tReps = x.tReps;
+    if (x.band) o.band = x.band;
+    return o;
   });
 }
 
@@ -521,7 +698,7 @@ export function buildEntry(slot, deload) {
   else if (slot.mode === 'reps') r = buildReps(slot, exId, deload);
   else if (slot.mode === 'hold') r = buildHold(slot);
   else r = buildDouble(slot, exId, deload);
-  return [{ key: slot.id, slotId: slot.id, ex: exId, mode: slot.mode, target: r.target, note: r.note, sets: r.sets }];
+  return [{ key: slot.id, slotId: slot.id, ex: exId, mode: slot.mode, target: r.target, note: r.note, sets: r.sets, prescribed: prescribedOf(r.sets) }];
 }
 
 export function buildSession(day, { deload = false } = {}) {
@@ -771,9 +948,9 @@ export function runs() {
 export function weekSummary(iso = todayISO()) {
   const ws = weekStart(iso);
   const we = addDays(ws, 6);
-  const ss = sessions().filter((s) => s.date >= ws && s.date <= we);
+  const w = weekStatus(iso);
   const rr = runs().filter((r) => r.date >= ws && r.date <= we);
-  return { sessions: ss.length, km: rr.reduce((a, r) => a + (r.km || 0), 0), runs: rr.length };
+  return { sessions: w.done, target: w.target, status: w, km: rr.reduce((a, r) => a + (r.km || 0), 0), runs: rr.length };
 }
 
 // ---------- Compras e stock ----------
@@ -906,7 +1083,8 @@ export function trainedExercises() {
 
 // ---------- CSV ----------
 export function exportCSV() {
-  const rows = [['data', 'dia', 'exercicio', 'serie', 'tipo', 'peso_kg', 'reps', 'rpe', 'banda', 'deload']];
+  const rows = [['data', 'hora', 'dia', 'sitio', 'exercicio', 'serie', 'tipo', 'peso_kg', 'reps', 'rpe', 'banda', 'deload', 'reposicao', 'esforco_treino', 'energia']];
+  const hhmm = (ms) => (ms ? new Date(ms).toTimeString().slice(0, 5) : '');
   for (const s of sessions().slice().reverse()) {
     for (const e of s.exercises) {
       const name = exInfo(e.ex, e).name;
@@ -914,7 +1092,9 @@ export function exportCSV() {
       for (const set of e.sets) {
         if (!set.done) continue;
         i++;
-        rows.push([s.date, s.day || '', name, i, set.kind, set.w ?? '', set.reps ?? '', set.rpe ?? '', set.band ?? '', s.deload ? 'sim' : '']);
+        const c = s.ctx || {};
+        const f = s.feedback || {};
+        rows.push([s.date, hhmm(set.doneAt), s.day || '', (DAYS[s.day] && DAYS[s.day].place) || '', name, i, set.kind, set.w ?? '', set.reps ?? '', set.rpe ?? '', set.band ?? '', s.deload ? 'sim' : '', c.makeup ? 'sim' : c.extra ? 'extra' : '', f.srpe ?? '', f.energy ?? '']);
       }
     }
   }

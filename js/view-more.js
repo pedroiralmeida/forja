@@ -2,13 +2,14 @@
 import { EX, GUIDE, ALL_PLATES, MU_STAGES, DAYS, PLAN_TYPES, WEEKDAYS } from './data.js';
 import * as E from './engine.js';
 import {
-  local, setSettings, list, put, remove, exportJSON, importJSON, resetAll, connectSync, disconnectSync, syncNow,
+  local, setSettings, list, put, remove, exportJSON, importJSON, resetAll, connectSync, disconnectSync, syncNow, dataSize, state, COLLS,
 } from './store.js';
 import { icons, navigate, rerender, toast, header, segmented, confirmDialog, downloadFile, startRest, unlockAudio } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { esc, fmtNum, fmt1, todayISO, parseNum } from './util.js';
 
-export const APP_VERSION = '1.5.0';
+import { APP_VERSION } from './data.js';
+export { APP_VERSION };
 
 export function renderMore(root) {
   const s = local.sync;
@@ -303,6 +304,24 @@ export function renderSync(root) {
 }
 
 // ---------- Dados ----------
+// O que está guardado, coleção a coleção (incluindo o que foi apagado e se mantém no histórico)
+function historyTable() {
+  const names = {
+    sessions: 'Treinos', bodyweight: 'Pesagens', waist: 'Cintura', habits: 'Hábitos por dia', runs: 'Corridas', milestones: 'Marcos',
+    deloadWeeks: 'Semanas de deload', overrides: 'Exercícios trocados', purchases: 'Compras', stock: 'Stock', days: 'Notas de dias (faltas)',
+    settingsHistory: 'Versões do plano e definições', revisions: 'Versões antigas de treinos', meta: 'Versões da app e dispositivos',
+  };
+  const rows = COLLS.map((c) => {
+    const all = Object.values(state[c] || {});
+    const del = all.filter((r) => r && r.deleted).length;
+    return `<tr><td>${esc(names[c] || c)}</td><td class="num">${all.length - del}</td><td class="num muted">${del || ''}</td></tr>`;
+  }).join('');
+  const kb = dataSize() / 1024;
+  return `<details class="data-details"><summary>O que está guardado (${kb < 1024 ? `${Math.round(kb)} KB` : `${fmt1(kb / 1024)} MB`})</summary>
+    <table class="table"><thead><tr><th>Tipo</th><th>Registos</th><th>Apagados</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="muted small">Nada se perde: o que apagas fica guardado como apagado, os treinos editados guardam a versão anterior e o plano semanal fica registado sempre que muda. Tudo isto vai no backup JSON e na sincronização.</p></details>`;
+}
+
 export function renderData(root) {
   const n = E.sessions().length;
   root.innerHTML = `
@@ -310,6 +329,7 @@ export function renderData(root) {
     <section class="panel">
       <h2 class="panel-title">Exportar</h2>
       <p class="muted">${n} treinos, ${E.bodyweightEntries().length} pesagens e ${E.runs().length} corridas.</p>
+      ${historyTable()}
       <div class="row-actions">
         <button class="btn secondary" data-act="json">Exportar backup (JSON)</button>
         <button class="btn secondary" data-act="csv">Exportar séries (CSV)</button>

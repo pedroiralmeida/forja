@@ -42,6 +42,16 @@ export const EX = {
     note: 'regista só o peso extra: 0 sem peso; depois cinto de lastro ou mochila com peso',
     cues: ['Começa com os braços estendidos e omoplatas ativas.', 'Queixo acima da barra em todas as reps; nada de meias reps.'],
   },
+  pullup_slow: {
+    name: 'Elevações com descida lenta', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
+    note: 'só o peso do corpo; 3 segundos a descer',
+    cues: ['Sobe normal, queixo acima da barra.', 'Desce em 3 segundos, contados, até aos braços estendidos.', 'Quando fizeres 8 reps em todas as séries, passa para elevações arqueiro (troca o exercício).'],
+  },
+  archer_pull: {
+    name: 'Elevações arqueiro', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
+    note: 'reps por cada lado',
+    cues: ['Pega larga. Puxa para um lado, com o outro braço quase esticado a ajudar.', 'Alterna os lados; regista as reps de cada lado.', 'Dá força de um braço sem precisares de pesos.'],
+  },
   pullup: {
     name: 'Elevações', kind: 'bodyweight', tier: 'secondary', group: 'costas',
     cues: ['Braços totalmente estendidos em baixo.', 'Queixo acima da barra.'],
@@ -62,8 +72,8 @@ export const EX = {
     cues: ['Pequeno balanço controlado (kip) é permitido.', 'Puxa a barra em direção às ancas, inclinando o tronco para trás.', 'É esta altura que cria espaço para passares por cima da barra.'],
   },
   sbd: {
-    name: 'Straight bar dips', kind: 'weighted_bw', tier: 'secondary', group: 'tríceps',
-    note: 'fundos em cima da barra reta; peso extra se houver',
+    name: 'Straight bar dips', kind: 'bodyweight', tier: 'secondary', group: 'tríceps',
+    note: 'fundos em cima da barra reta, só com o peso do corpo',
     cues: ['Em cima da barra, desce até ela tocar perto do umbigo/peito.', 'Inclina o tronco à frente e empurra até aos braços estendidos.', 'É a parte de cima do muscle-up.'],
   },
   dips: {
@@ -148,7 +158,7 @@ export const DAYS = {
   },
   C: {
     label: 'Supera C', title: 'Força e técnica', place: 'supera',
-    blurb: 'Supino com pausa para ganhar força a sair do peito.',
+    blurb: 'Treino extra: supino com pausa para ganhar força a sair do peito.',
     slots: [
       { id: 'C_pause', ex: 'bench_paused', mode: 'double', sets: 4, min: 3, max: 5, startPct: 0.73 },
       { id: 'C_incl', ex: 'incline_db', mode: 'double', sets: 3, min: 8, max: 12 },
@@ -160,11 +170,11 @@ export const DAYS = {
   },
   E1: {
     label: 'Estádio 1', title: 'Muscle-up e força', place: 'estadio',
-    blurb: 'Muscle-up primeiro, depois elevações com peso e dips na barra.',
+    blurb: 'Muscle-up primeiro, depois elevações com descida lenta e dips na barra. Sem pesos: vais a pé.',
     slots: [
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
-      { id: 'E1_wpull', ex: 'weighted_pullup', mode: 'double', sets: 4, min: 5, max: 8, startAdded: 0 },
-      { id: 'E1_sbd', ex: 'sbd', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
+      { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 4, min: 5, max: 8 },
+      { id: 'E1_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
       { id: 'E1_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
@@ -174,13 +184,46 @@ export const DAYS = {
     slots: [
       { id: 'E2_skill', mode: 'skill', focus: 'main' },
       { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
-      { id: 'E2_sbd', ex: 'sbd', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
+      { id: 'E2_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
       { id: 'E2_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
 };
 
 export const PLACE_DAYS = { supera: ['A', 'B', 'C'], estadio: ['E1', 'E2'] };
+// Treinos base de cada sítio (alternam semana a semana). O C só entra como treino extra,
+// quando o A e o B dessa semana já estão feitos.
+export const CORE_DAYS = { supera: ['A', 'B'], estadio: ['E1', 'E2'] };
+export const EXTRA_DAYS = ['C'];
+
+// Motivos para um treino falhado (ficam guardados no histórico)
+export const MISS_REASONS = [
+  { value: 'trabalho', label: 'Trabalho' },
+  { value: 'cansaco', label: 'Cansaço ou sono' },
+  { value: 'doente', label: 'Doente' },
+  { value: 'dor', label: 'Dor ou lesão' },
+  { value: 'compromisso', label: 'Compromisso' },
+  { value: 'tempo', label: 'Chuva ou frio' },
+  { value: 'vontade', label: 'Sem vontade' },
+  { value: 'outro', label: 'Outro' },
+];
+
+export const PAIN_SPOTS = [
+  { value: 'pulso', label: 'Pulso' },
+  { value: 'cotovelo', label: 'Cotovelo' },
+  { value: 'ombro', label: 'Ombro' },
+  { value: 'costas', label: 'Costas' },
+  { value: 'outro', label: 'Outro' },
+];
+
+export const CONDITIONS = [
+  { value: 'seco', label: 'Seco' },
+  { value: 'molhado', label: 'Barra molhada' },
+  { value: 'frio', label: 'Frio' },
+  { value: 'calor', label: 'Calor' },
+  { value: 'escuro', label: 'Pouca luz' },
+  { value: 'cheio', label: 'Cheio de gente' },
+];
 
 // Horários segundo o Google (nov. 2026). Índice = dia da semana JS (0 = domingo).
 export const PLACES = {
@@ -196,10 +239,12 @@ export const PLACES = {
 export const PLAN_TYPES = [
   { value: 'supera', label: 'Supera' },
   { value: 'estadio', label: 'Estádio' },
-  { value: 'livre', label: 'Livre (repor o que faltou)' },
+  { value: 'livre', label: 'Reposição (obrigatório só se faltaste)' },
   { value: 'corrida', label: 'Corrida' },
   { value: 'descanso', label: 'Descanso' },
 ];
+
+export const APP_VERSION = '1.6.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -249,7 +294,7 @@ export const MU_STAGES = [
 
 // Marcos do muscle-up. Detetados automaticamente a partir dos registos.
 export const MILESTONES = [
-  { id: 'pull10', label: '10 elevações seguidas', ex: ['pullup', 'weighted_pullup'], reps: 10, baseline: true },
+  { id: 'pull10', label: '10 elevações seguidas', ex: ['pullup', 'pullup_slow', 'weighted_pullup'], reps: 10, baseline: true },
   { id: 'c2b5', label: '5 chest-to-bar seguidas', ex: ['c2b', 'explosive_pull'], reps: 5 },
   { id: 'sbd8', label: '8 straight bar dips', ex: ['sbd'], reps: 8 },
   { id: 'neg3', label: '3 negativas controladas', ex: ['mu_negative'], reps: 3 },
@@ -290,7 +335,7 @@ export const ALL_PLATES = [25, 20, 15, 10, 5, 2.5, 2, 1.25, 1, 0.5];
 export const DEFAULT_SETTINGS = {
   onboarded: false,
   daysPerWeek: 3,
-  weekPlan: { 0: 'descanso', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'supera', 6: 'livre' },
+  weekPlan: { 0: 'descanso', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'descanso', 6: 'livre' },
   bar: 20,
   plates: [25, 20, 15, 10, 5, 2.5, 1.25],
   dbStep: 2,
@@ -317,14 +362,17 @@ export const GUIDE = [
     title: 'Como funciona o plano',
     body: `
 <p>Há dois sítios. No <strong>Supera</strong> fazes o supino e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, elevações e dips na barra reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
-<p>Por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; sábado livre; descanso ao domingo. O sábado serve para repor um treino que tenha falhado durante a semana; se não faltou nada, corre ou descansa.</p>
-<p><strong>Semanas em que só dá para 4 treinos:</strong> enquanto não tiveres o primeiro muscle-up, faz 2 no Supera e 2 no Estádio. Aprender uma técnica precisa de repetição frequente, e um treino de supino a menos atrasa-te pouco: a rotação A, B, C continua de onde ficou. Depois do primeiro muscle-up, inverte: 3 no Supera e 1 no Estádio chegam para o manter e melhorar. No sábado livre, a app sugere sozinha o sítio certo.</p>
+<p><strong>A semana tem 4 treinos obrigatórios:</strong> Supera à segunda e à quarta, Estádio à terça e à quinta. Sexta e domingo são de descanso (à sexta há o grupo de jovens).</p>
+<p><strong>O sábado depende da semana.</strong> Se fizeste os 4 treinos, é opcional: treinas se te apetecer, ou descansas. Se faltaste a algum, é obrigatório e a app diz-te onde ir (o sítio que ficou a faltar). Ao sábado o Supera abre das 9h às 20h30.</p>
+<p><strong>Se faltares a um treino</strong>, não o perdes: a app segue sempre a ordem e retoma onde ficaste. Regista o motivo quando a app perguntar; fica no histórico. Se faltares a dois na mesma semana, o sábado repõe só um: nunca faças dois treinos no mesmo dia para compensar. Depois de uma pausa longa, a app baixa um pouco os pesos do supino.</p>
+<p><strong>Ordem dos treinos.</strong> No Supera alternas o A (pesado) e o B (volume). O C (supino com pausa) é o treino extra: aparece quando já fizeste o A e o B nessa semana, por exemplo num sábado opcional. No Estádio alternas o 1 e o 2.</p>
+<p><strong>Sábado opcional: onde?</strong> Enquanto não tiveres o primeiro muscle-up, a app sugere o Estádio (aprender uma técnica pede repetição frequente). Depois, sugere o Supera.</p>
 <p><strong>Dias com pouco tempo:</strong> se só tiveres 20 minutos, vai ao Estádio fazer apenas o bloco de muscle-up. É melhor do que saltar o treino.</p>
 <p><strong>Supera A, pesado.</strong> Uma série principal de supino de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
 <p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>
-<p><strong>Supera C, força e técnica.</strong> Supino com 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
+<p><strong>Supera C, força e técnica (extra).</strong> Supino com 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
 <p>Todos os treinos acabam com 1 minuto de dead hang (pendurado na barra), para alongar e melhorar a pegada.</p>
-<p><strong>Estádio 1 e 2.</strong> Começam sempre pelo muscle-up, enquanto estás fresco. Os exercícios mudam sozinhos à medida que cumpres os marcos. Se correres no mesmo dia, corre depois, nunca antes.</p>`,
+<p><strong>Estádio 1 e 2.</strong> Só com o peso do corpo: como vais a pé, não levas pesos. A força vem de reps mais difíceis (descida lenta, depois elevações arqueiro) e não de peso extra. Começam sempre pelo muscle-up, enquanto estás fresco. Os exercícios mudam sozinhos à medida que cumpres os marcos. Se correres no mesmo dia, corre depois, nunca antes.</p>`,
   },
   {
     id: 'supino',

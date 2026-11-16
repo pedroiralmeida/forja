@@ -23,6 +23,7 @@ function calendar() {
   const trained = new Set(E.sessions().map((s) => s.date));
   const ran = new Map();
   for (const r of E.runs()) ran.set(r.date, (ran.get(r.date) || 0) + (r.km || 0));
+  const from = E.trackingStart();
   let cells = '';
   for (let w = 0; w < 16; w++) {
     for (let d = 0; d < 7; d++) {
@@ -30,14 +31,35 @@ function calendar() {
       const future = iso > today;
       const t = trained.has(iso);
       const km = ran.get(iso);
-      const label = `${fmtDate(iso, { weekday: 'short', day: 'numeric', month: 'short' })}${t ? ': treino' : ''}${km ? `${t ? ' e' : ':'} ${fmt1(km)} km` : ''}`;
-      cells += `<span class="cal-cell ${t ? 't' : ''} ${km ? 'r' : ''} ${future ? 'f' : ''} ${iso === today ? 'today' : ''}" style="grid-column:${w + 1};grid-row:${d + 1}" title="${esc(label)}"></span>`;
+      const p = E.planFor(iso);
+      const note = E.dayNote(iso);
+      const unlogged = note && note.reason === 'nao-registado';
+      const miss = !t && !unlogged && !future && iso < today && iso >= from && (p === 'supera' || p === 'estadio');
+      const label = `${fmtDate(iso, { weekday: 'short', day: 'numeric', month: 'short' })}${t || unlogged ? ': treino' : ''}${miss ? `: falhado${note && note.reason ? ` (${E.reasonLabel(note.reason).toLowerCase()})` : ''}` : ''}${km ? `${t ? ' e' : ':'} ${fmt1(km)} km` : ''}`;
+      cells += `<span class="cal-cell ${t || unlogged ? 't' : ''} ${miss ? 'm' : ''} ${km ? 'r' : ''} ${future ? 'f' : ''} ${iso === today ? 'today' : ''}" style="grid-column:${w + 1};grid-row:${d + 1}" title="${esc(label)}"></span>`;
     }
   }
   const last8 = E.sessions().filter((s) => s.date >= addDays(weekStart(today), -49)).length;
   return `<div class="cal" role="img" aria-label="Treinos nas últimas 16 semanas">${cells}</div>
-    <div class="cal-legend"><span><i class="cal-cell t"></i> treino</span><span><i class="cal-cell r"></i> corrida</span></div>
-    <p class="muted">Média das últimas 8 semanas: ${fmt1(last8 / 8)} treinos por semana.</p>`;
+    <div class="cal-legend"><span><i class="cal-cell t"></i> treino</span><span><i class="cal-cell m"></i> falhado</span><span><i class="cal-cell r"></i> corrida</span></div>
+    <p class="muted">Média das últimas 8 semanas: ${fmt1(last8 / 8)} treinos por semana.</p>
+    ${adherenceBlock()}`;
+}
+
+// Cumprimento do plano semana a semana (treinos obrigatórios)
+function adherenceBlock() {
+  const a = E.adherence(8);
+  if (!a.weeks.length) return '';
+
+  const past = a.weeks.filter((w) => addDays(w.week, 6) < todayISO());
+  const missed = a.weeks.reduce((n, w) => n + w.missed.length, 0);
+  const reasons = Object.entries(a.reasons).sort((x, y) => y[1] - x[1]);
+  return `<h3 class="sub-title">Semanas</h3>
+    <ul class="adh-list">${a.weeks.slice().reverse().map((w) => `
+      <li><span class="adh-week">${esc(fmtDate(w.week))}</span>
+        <span class="adh-dots">${Array.from({ length: Math.max(w.target, w.done) }, (_, i) => `<i class="${i < w.done ? (i >= w.target ? 'x' : 'on') : ''}"></i>`).join('')}</span>
+        <span class="num">${w.done} de ${w.target}</span>${w.missed.length ? `<span class="muted small">${w.missed.length} falhado${w.missed.length > 1 ? 's' : ''}</span>` : ''}</li>`).join('')}</ul>
+    <p class="muted small">${past.length ? `Semanas completas: ${past.filter((w) => w.done >= w.target).length} de ${past.length}. ` : ''}${missed ? `Treinos falhados nestas semanas: ${missed}.` : 'Sem treinos falhados.'}${reasons.length ? ` Motivos: ${reasons.map(([r, n]) => `${E.reasonLabel(r).toLowerCase()} (${n})`).join(', ')}.` : ''}</p>`;
 }
 
 function milestonesBlock() {

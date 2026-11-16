@@ -59,7 +59,7 @@ export function toast(msg, { action, timeout = 3500 } = {}) {
 }
 
 // ---------- Janelas ----------
-export function modal({ title = '', body = '', actions = [{ label: 'Fechar', value: null }], onMount, wide = false } = {}) {
+export function modal({ title = '', body = '', actions = [{ label: 'Fechar', value: null }], onMount, wide = false, autofocus = true } = {}) {
   return new Promise((resolve) => {
     const root = document.getElementById('modal-root');
     const wrap = document.createElement('div');
@@ -98,7 +98,7 @@ export function modal({ title = '', body = '', actions = [{ label: 'Fechar', val
     document.addEventListener('keydown', onKey);
     root.appendChild(wrap);
     if (onMount) onMount(wrap, done);
-    const first = wrap.querySelector('input, select, textarea') || wrap.querySelector('.modal-actions .primary') || wrap.querySelector('button');
+    const first = (autofocus && wrap.querySelector('input, select, textarea')) || wrap.querySelector('.modal-actions .primary') || wrap.querySelector('button');
     if (first) setTimeout(() => first.focus(), 30);
   });
 }

@@ -1,5 +1,5 @@
 // Treino em curso, edição de sessões passadas e detalhe de uma sessão
-import { EX, DAYS, BAND_LEVELS } from './data.js';
+import { EX, DAYS, BAND_LEVELS, PAIN_SPOTS, CONDITIONS } from './data.js';
 import * as E from './engine.js';
 import { local, persistLocal, put, get, remove, syncNow } from './store.js';
 import {
@@ -321,19 +321,69 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
   });
 }
 
+// Guarda só as séries feitas; o que ficou por fazer vai para "skipped" (fica no histórico,
+// mas não conta para pesos, recordes nem marcos).
 function cleanSession(session) {
   const c = structuredClone(session);
+  const skippedEx = [];
   c.exercises = c.exercises
-    .map((e) => ({ ...e, sets: e.sets.filter((s) => s.done).map(({ auto, ...rest }) => rest) }))
-    .filter((e) => e.sets.length);
+    .map((e) => {
+      const left = e.sets.filter((s) => !s.done && s.kind !== 'warm').length;
+      return { ...e, sets: e.sets.filter((s) => s.done).map(({ auto, ...rest }) => rest), ...(left ? { skippedSets: left } : {}) };
+    })
+    .filter((e) => {
+      if (e.sets.length) return true;
+      skippedEx.push({ ex: e.ex, slotId: e.slotId || null, name: e.name, target: e.target, prescribed: e.prescribed || null });
+      return false;
+    });
+  if (skippedEx.length) c.skippedExercises = [...(c.skippedExercises || []), ...skippedEx];
   return c;
+}
+
+// Perguntas rápidas no fim do treino (todas opcionais)
+function feedbackForm(session) {
+  const place = DAYS[session.day] && DAYS[session.day].place;
+  const chips = (name, opts, multi) => `<div class="chips" data-group="${name}" data-multi="${multi ? 1 : 0}">${opts.map((o) => `<button type="button" class="chip" data-v="${o.value}">${esc(o.label)}</button>`).join('')}</div>`;
+  return `<div class="fb">
+    <div class="field"><span>Esforço do treino (1 = muito fácil, 10 = máximo)</span>${chips('srpe', [4, 5, 6, 7, 8, 9, 10].map((n) => ({ value: n, label: String(n) })))}</div>
+    <div class="field"><span>Energia hoje</span>${chips('energy', [{ value: 1, label: 'Muito baixa' }, { value: 2, label: 'Baixa' }, { value: 3, label: 'Normal' }, { value: 4, label: 'Boa' }, { value: 5, label: 'Ótima' }])}</div>
+    <div class="field"><span>Dor ou desconforto</span>${chips('pain', [{ value: 'nenhuma', label: 'Nenhuma' }, ...PAIN_SPOTS], true)}</div>
+    ${place === 'estadio' ? `<div class="field"><span>Condições no parque</span>${chips('cond', CONDITIONS, true)}</div>` : ''}
+    <label class="field"><span>Notas</span><textarea class="input" data-notes rows="2" maxlength="500" placeholder="Ex.: pulso esquerdo a incomodar no supino">${esc(session.notes || '')}</textarea></label>
+  </div>`;
+}
+
+function bindFeedback(wrap, out) {
+  wrap.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-group] .chip');
+    if (!b) return;
+    const g = b.parentElement;
+    const name = g.dataset.group;
+    const multi = g.dataset.multi === '1';
+    const v = isNaN(Number(b.dataset.v)) ? b.dataset.v : Number(b.dataset.v);
+    if (multi) {
+      if (v === 'nenhuma') g.querySelectorAll('.chip').forEach((x) => x !== b && x.classList.remove('on'));
+      else g.querySelector('[data-v="nenhuma"]')?.classList.remove('on');
+      b.classList.toggle('on');
+      out[name] = [...g.querySelectorAll('.chip.on')].map((x) => x.dataset.v);
+    } else {
+      const on = !b.classList.contains('on');
+      g.querySelectorAll('.chip').forEach((x) => x.classList.remove('on'));
+      if (on) b.classList.add('on');
+      out[name] = on ? v : null;
+    }
+  });
+  const ta = wrap.querySelector('[data-notes]');
+  if (ta) ta.addEventListener('input', () => { out.notes = ta.value; });
 }
 
 async function finish(session, mode) {
   const clean = cleanSession(session);
   const nSets = clean.exercises.reduce((a, e) => a + e.sets.filter((s) => s.kind !== 'warm').length, 0);
   if (mode === 'edit') {
-    put('sessions', clean.id, { ...clean, finishedAt: editing.finishedAt || now() });
+    const prev = get('sessions', clean.id);
+    if (prev) put('revisions', `${clean.id}@${now()}`, { coll: 'sessions', key: clean.id, at: now(), data: prev });
+    put('sessions', clean.id, { ...clean, finishedAt: editing.finishedAt || now(), edits: ((prev && prev.edits) || 0) + 1, editedAt: now() });
     editing = null;
     toast('Alterações guardadas');
     navigate(`#/sessao/${clean.id}`);
@@ -351,14 +401,21 @@ async function finish(session, mode) {
     return;
   }
   const pending = session.exercises.reduce((a, e) => a + e.sets.filter((s) => !s.done && s.kind !== 'warm').length, 0);
+  const fb = {};
   const ok = await modal({
     title: 'Terminar treino',
-    body: `<p>${nSets} séries feitas em ${fmtDuration(Date.now() - session.startedAt)}.${pending ? ` Há ${pending} séries por marcar; não ficam guardadas.` : ''}</p>`,
+    body: `<p>${nSets} séries feitas em ${fmtDuration(Date.now() - session.startedAt)}.${pending ? ` Há ${pending} séries por marcar; ficam no histórico como não feitas.` : ''}</p>${feedbackForm(session)}`,
     actions: [{ label: 'Voltar', value: false }, { label: 'Guardar treino', value: true, kind: 'primary' }],
+    onMount: (wrap) => bindFeedback(wrap, fb),
+    autofocus: false,
   });
   if (!ok) return;
   clean.finishedAt = now();
   clean.duration = clean.finishedAt - clean.startedAt;
+  if (fb.notes !== undefined) clean.notes = fb.notes.trim();
+  const { notes, ...rest } = fb;
+  clean.feedback = { srpe: null, energy: null, pain: [], cond: [], ...rest, at: now() };
+  if (clean.feedback.srpe) clean.load = Math.round(clean.feedback.srpe * (clean.duration / 60000));
   put('sessions', clean.id, clean);
   local.active = null;
   persistLocal();
@@ -380,6 +437,22 @@ function setLine(exId, s, entry) {
   return `${w}${s.reps}${s.rpe ? ` @${fmtNum(s.rpe)}` : ''}`;
 }
 
+function sessionMeta(s) {
+  const bits = [];
+  const c = s.ctx || {};
+  if (c.makeup) bits.push('Treino de reposição');
+  else if (c.extra) bits.push('Treino extra');
+  const f = s.feedback || {};
+  if (f.srpe) bits.push(`Esforço ${f.srpe}/10`);
+  if (f.energy) bits.push(`Energia ${f.energy}/5`);
+  const pain = (f.pain || []).filter((p) => p !== 'nenhuma');
+  if (pain.length) bits.push(`Dor: ${pain.map((p) => (PAIN_SPOTS.find((x) => x.value === p) || { label: p }).label.toLowerCase()).join(', ')}`);
+  if ((f.cond || []).length) bits.push(f.cond.map((v) => (CONDITIONS.find((x) => x.value === v) || { label: v }).label).join(', '));
+  const skipped = (s.skippedExercises || []).length + s.exercises.reduce((a, e) => a + (e.skippedSets || 0), 0);
+  if (skipped) bits.push(`${skipped} ${skipped === 1 ? 'série ou exercício ficou' : 'séries ou exercícios ficaram'} por fazer`);
+  return bits.length ? `<p class="sess-meta muted">${bits.map(esc).join('. ')}.</p>` : '';
+}
+
 export function renderSession(root, { id, fresh }) {
   const s = get('sessions', id);
   if (!s) {
@@ -399,6 +472,7 @@ export function renderSession(root, { id, fresh }) {
     </section>
     ${prs.length ? `<section class="panel prs"><h2 class="panel-title">Recordes</h2><ul>${prs.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></section>` : fresh ? '<p class="muted">Sem recordes hoje; o que conta é a consistência.</p>' : ''}
     ${s.deload ? '<p class="muted">Semana de deload.</p>' : ''}
+    ${sessionMeta(s)}
     <section class="panel">
       ${s.exercises.map((e) => `
         <div class="sess-ex">

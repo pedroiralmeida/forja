@@ -1,19 +1,24 @@
 // Estado da app: guardado no dispositivo e, opcionalmente, sincronizado num gist privado do GitHub.
 import { DEFAULT_SETTINGS } from './data.js';
-import { now, uid, debounce } from './util.js';
+import { now, uid, debounce, todayISO } from './util.js';
 
 const KEY = 'forja.state.v1';
 const LOCAL_KEY = 'forja.local.v1';
 const FILE = 'forja-dados.json';
 const API = 'https://api.github.com';
 
-export const COLLS = ['sessions', 'bodyweight', 'waist', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock'];
+// Coleções guardadas. As últimas servem sobretudo o histórico:
+// days: notas por dia (treino falhado e motivo, "hoje não dá");
+// settingsHistory: cópia das definições em cada dia em que mudaram (o plano semanal incluído);
+// revisions: versões anteriores de treinos editados; meta: versões da app e dispositivos usados.
+export const COLLS = ['sessions', 'bodyweight', 'waist', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock',
+  'days', 'settingsHistory', 'revisions', 'meta'];
 
 function emptyState() {
   return {
     v: 1,
     settings: { ...structuredClone(DEFAULT_SETTINGS), updatedAt: 0 },
-    sessions: {}, bodyweight: {}, waist: {}, habits: {}, runs: {}, milestones: {}, deloadWeeks: {}, overrides: {}, purchases: {}, stock: {},
+    ...Object.fromEntries(COLLS.map((c) => [c, {}])),
   };
 }
 
@@ -107,14 +112,22 @@ export function getSaveError() {
   return saveError;
 }
 
+// Cada registo guarda quando foi criado (createdAt) e alterado (updatedAt).
 export function put(coll, key, rec) {
-  state[coll][key] = { ...rec, updatedAt: now() };
+  const prev = state[coll][key];
+  const t = now();
+  const createdAt = (prev && !prev.deleted && prev.createdAt) || rec.createdAt || t;
+  state[coll][key] = { ...rec, createdAt, updatedAt: t };
   persist();
   return state[coll][key];
 }
 
+// Apagar deixa uma marca (para a sincronização não o ressuscitar) com o conteúdo antigo em "was",
+// para o histórico não se perder.
 export function remove(coll, key) {
-  state[coll][key] = { deleted: true, updatedAt: now() };
+  const prev = state[coll][key];
+  const was = prev && !prev.deleted ? prev : prev && prev.was ? prev.was : undefined;
+  state[coll][key] = { deleted: true, deletedAt: now(), updatedAt: now(), ...(was ? { was } : {}) };
   persist();
 }
 
@@ -134,6 +147,36 @@ export function settings() {
 export function setSettings(patch) {
   state.settings = { ...state.settings, ...patch, updatedAt: now() };
   persist();
+  snapshotSettings();
+}
+
+// Guarda uma cópia das definições (com o plano semanal) no dia em que mudam.
+// Assim a app sabe que plano estava em vigor em cada dia do passado.
+export function snapshotSettings() {
+  if (!state.settings.onboarded) return false;
+  const { updatedAt, ...cur } = state.settings;
+  const snaps = Object.values(state.settingsHistory).filter((r) => r && !r.deleted).sort((a, b) => a.date.localeCompare(b.date));
+  const last = snaps[snaps.length - 1];
+  if (last && stable(last.settings) === stable(cur)) return false;
+  const day = todayISO();
+  put('settingsHistory', day, { date: day, settings: structuredClone(cur) });
+  return true;
+}
+
+// Regista a versão da app e o tipo de dispositivo na primeira vez que aparecem
+export function noteVersion(version) {
+  const key = 'v' + version;
+  if (!state.meta[key]) put('meta', key, { kind: 'version', version, firstSeen: now(), deviceId: local.deviceId });
+  const dkey = 'device-' + local.deviceId;
+  if (!state.meta[dkey]) {
+    const mobile = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+    put('meta', dkey, { kind: 'device', deviceId: local.deviceId, firstSeen: now(), mobile, ua: navigator.userAgent.slice(0, 160) });
+  }
+}
+
+// Tamanho aproximado dos dados guardados (bytes)
+export function dataSize() {
+  try { return new Blob([JSON.stringify(state)]).size; } catch (e) { return JSON.stringify(state).length; }
 }
 
 // Junta dois estados: por registo, ganha o que foi alterado mais recentemente.
@@ -202,9 +245,15 @@ export async function loadInbox({ force = false } = {}) {
     const incoming = { settings: { updatedAt: -1 } };
     for (const c of COLLS) if (inbox[c] && typeof inbox[c] === 'object') incoming[c] = inbox[c];
     const merged = merge(state, incoming);
+    const sp = inbox.settingsPatch;
+    if (sp && typeof sp === 'object' && (sp.updatedAt || 0) > (merged.settings.updatedAt || 0)) {
+      const { updatedAt, ...patch } = sp;
+      merged.settings = { ...merged.settings, ...patch, updatedAt };
+    }
     if (stable(merged) === stable(state)) return false;
     state = merged;
     saveRaw();
+    snapshotSettings();
     emit('remote');
     scheduleSync();
     return true;
@@ -310,7 +359,9 @@ export async function syncNow() {
           saveRaw();
           emit('remote');
         }
-        if (!remote || mergedStr !== stable(normalize(remote))) await writeGist(id, merged);
+        snapshotSettings();
+        const toWrite = state;
+        if (!remote || stable(toWrite) !== stable(normalize(remote))) await writeGist(id, toWrite);
       }
       local.sync.lastSync = now();
       local.sync.lastError = '';

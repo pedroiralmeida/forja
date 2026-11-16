@@ -5,7 +5,7 @@ import { icons, rerender, toast, header, confirmDialog } from './ui.js';
 import { lineChart, barChart } from './charts.js';
 import { proteinBlock, bindProtein } from './protein.js';
 import {
-  esc, fmtNum, fmt1, fmtSigned, fmtDate, todayISO, addDays, weekStart, parseNum, isoToMs, uid, plural,
+  esc, fmtNum, fmt1, fmtSigned, fmtDate, todayISO, addDays, weekStart, parseNum, isoToMs, uid, plural, now,
 } from './util.js';
 
 function habitsWeek() {
@@ -172,14 +172,14 @@ export function renderBody(root) {
       const kg = parseNum(f.kg.value);
       const date = f.date.value || today;
       if (!kg || kg < 30 || kg > 250) return toast('Escreve o peso em kg, por exemplo 64,2');
-      put('bodyweight', date, { date, kg });
+      put('bodyweight', date, E.bodyweightRecord(date, kg, 'corpo'));
       toast('Peso guardado');
       rerender();
     } else if (f.dataset.form === 'waist') {
       const cm = parseNum(f.cm.value);
       const date = f.date.value || today;
       if (!cm || cm < 40 || cm > 160) return toast('Escreve a cintura em cm, por exemplo 76,5');
-      put('waist', date, { date, cm });
+      put('waist', date, { date, cm, at: now() });
       toast('Cintura guardada');
       rerender();
     } else if (f.dataset.form === 'run') {
@@ -187,7 +187,7 @@ export function renderBody(root) {
       const min = parseNum(f.min.value);
       if (!km || km <= 0 || km > 300) return toast('Escreve a distância em km.');
       const id = uid();
-      put('runs', id, { id, date: f.date.value || today, km, min: min || null });
+      put('runs', id, { id, date: f.date.value || today, km, min: min || null, at: now() });
       toast(`Corrida registada: ${fmt1(km)} km`);
       rerender();
     }

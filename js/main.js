@@ -1,5 +1,6 @@
 // Arranque: navegação, tema, service worker e sincronização
-import { load, local, settings, onChange, syncNow, syncConfigured, loadInbox } from './store.js';
+import { load, local, settings, onChange, syncNow, syncConfigured, loadInbox, snapshotSettings, noteVersion } from './store.js';
+import { APP_VERSION } from './data.js';
 import { setRouter, icons, toast, buildRest, requestWakeLock, unlockAudio, header } from './ui.js';
 import { renderToday, renderOnboarding } from './view-today.js';
 import { renderWorkout, renderSession } from './view-workout.js';
@@ -10,6 +11,10 @@ import { renderStock } from './view-stock.js';
 import { esc } from './util.js';
 
 load();
+// Histórico: versão da app, dispositivo e definições em vigor hoje
+try {
+  if (settings().onboarded) { noteVersion(APP_VERSION); snapshotSettings(); }
+} catch (e) { console.error(e); }
 
 const TABS = [
   { id: 'today', href: '#/hoje', label: 'Hoje', icon: icons.today },

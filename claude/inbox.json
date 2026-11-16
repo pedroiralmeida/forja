@@ -140,5 +140,17 @@
    "shake": false,
    "updatedAt": 1794827983879
   }
+ },
+ "settingsPatch": {
+  "weekPlan": {
+   "0": "descanso",
+   "1": "supera",
+   "2": "estadio",
+   "3": "supera",
+   "4": "estadio",
+   "5": "descanso",
+   "6": "livre"
+  },
+  "updatedAt": 1794830056379
  }
 }

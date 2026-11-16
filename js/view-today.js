@@ -1,11 +1,43 @@
 // Ecrã "Hoje" e configuração inicial
-import { DAYS, PLACES, MU_STAGES } from './data.js';
+import { DAYS, PLACES, MU_STAGES, MISS_REASONS, WEEKDAYS } from './data.js';
 import * as E from './engine.js';
 import { local, put, setSettings, persistLocal, remove } from './store.js';
-import { icons, navigate, rerender, toast, header, segmented, requestWakeLock } from './ui.js';
+import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, modal } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
-import { esc, fmtNum, fmt1, fmtDateLong, todayISO, parseNum, weekStart, fmtDuration, plural } from './util.js';
+import { esc, fmtNum, fmt1, fmtDateLong, fmtDate, todayISO, parseNum, weekStart, fmtDuration, plural, isoToMs, addDays, now } from './util.js';
+
+const PLACE_NAME = { supera: 'Supera', estadio: 'Estádio' };
+
+function weekdayName(iso) {
+  return WEEKDAYS[new Date(isoToMs(iso)).getDay()].toLowerCase();
+}
+
+// Escolha do motivo de uma falta (guardado em days/<data>)
+async function askReason(iso, { skip = false } = {}) {
+  const p = E.planFor(iso);
+  const res = await modal({
+    title: skip ? 'Hoje não dá para treinar' : `Treino de ${weekdayName(iso)} (${PLACE_NAME[p] || ''})`,
+    body: `<p>${skip ? 'Fica registado. ' : ''}O que aconteceu?</p>
+      <div class="chips reason-chips">${MISS_REASONS.map((r) => `<button class="chip" data-reason="${r.value}">${esc(r.label)}</button>`).join('')}
+      ${skip ? '' : '<button class="chip" data-reason="nao-registado">Treinei mas não registei</button>'}</div>
+      <label class="field"><span>Nota (opcional)</span><input class="input" data-note maxlength="200" placeholder="${skip ? 'Ex.: reunião até tarde' : 'Ex.: estava com dor no pulso'}"></label>`,
+    actions: [{ label: 'Cancelar', value: null }],
+    autofocus: false,
+    onMount: (wrap, done) => {
+      wrap.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-reason]');
+        if (b) done({ reason: b.dataset.reason, note: wrap.querySelector('[data-note]').value.trim() });
+      });
+    },
+  });
+  if (!res) return false;
+  put('days', iso, {
+    date: iso, plan: p, reason: res.reason, note: res.note || '', missed: res.reason !== 'nao-registado', skip, decidedAt: now(),
+    decidedBefore: skip, weekdayName: weekdayName(iso),
+  });
+  return true;
+}
 
 let chosenDay = null;
 let chosenPlace = null;
@@ -73,6 +105,18 @@ function habitsCard(today, trainingDay) {
   </section>`;
 }
 
+// Os 7 dias da semana: feito, falhado, por fazer, descanso
+function weekDots(st, today) {
+  const lbl = { feito: 'feito', extra: 'treino extra', falhado: 'falhado', 'por-fazer': 'por fazer', livre: 'sem treino', antes: 'antes de começares' };
+  return `<div class="week-dots" aria-label="Dias desta semana">${st.days.map((d) => {
+    const t = d.plan === 'supera' || d.plan === 'estadio';
+    const kind = d.status === 'feito' || d.status === 'extra' ? 'done' : d.status === 'falhado' ? 'miss' : t || d.plan === 'livre' ? 'todo' : 'rest';
+    const letter = WEEKDAYS[new Date(isoToMs(d.date)).getDay()].slice(0, 3);
+    const what = d.plan === 'livre' ? 'reposição' : PLACE_NAME[d.plan] || d.plan;
+    return `<span class="wd ${kind} ${d.date === today ? 'today' : ''} ${d.plan === 'livre' ? 'flex' : ''}" title="${esc(`${fmtDate(d.date)}: ${what}, ${lbl[d.status] || ''}`)}"><i>${letter}</i></span>`;
+  }).join('')}</div>`;
+}
+
 export function renderToday(root) {
   const S = E.S();
   if (!S.onboarded) return navigate('#/inicio');
@@ -111,15 +155,35 @@ export function renderToday(root) {
     </section>`;
   }
 
-  if (!active && plan === 'corrida') {
+  const noteToday = E.dayNote(today);
+  const skippedToday = trainingDay && noteToday && noteToday.skip && !E.sessions().some((x) => x.date === today);
+  const missed = E.missedDays(today);
+
+  if (!active && missed.length) {
+    const m = missed[0];
+    html += `<section class="banner miss-banner"><div><strong>${esc(weekdayName(m.date).replace(/^./, (c) => c.toUpperCase()))}, ${esc(fmtDate(m.date))}: treino do ${PLACE_NAME[m.plan]} sem registo</strong>
+      <p>Faltar acontece; a app retoma onde ficaste${E.planFor(addDays(weekStart(today), 5)) === 'livre' ? ' e o sábado serve para repor' : ''}. Diz o que aconteceu, para ficar no histórico.</p></div>
+      <div class="banner-actions"><button class="btn secondary small" data-act="miss-reason" data-date="${m.date}">Registar motivo</button><button class="btn ghost small" data-act="miss-none" data-date="${m.date}">Sem motivo</button></div></section>`;
+  }
+
+  if (!active && skippedToday) {
+    const st = E.weekStatus(today);
+    html += `<section class="banner"><div><strong>Hoje fica sem treino</strong><p>Motivo: ${esc(E.reasonLabel(noteToday.reason))}${noteToday.note ? ` (${esc(noteToday.note)})` : ''}. ${st.done + st.remainingPlanned < st.target ? 'Repões no sábado: a app diz-te onde ir.' : ''}</p></div><button class="btn secondary small" data-act="unskip">Afinal vou treinar</button></section>`;
+  } else if (!active && plan === 'corrida') {
     html += `<section class="banner"><div><strong>Dia de corrida</strong><p>No teu plano, hoje é para correr. Regista a corrida em Corpo. Se quiseres treinar na mesma, escolhe abaixo.</p></div><a class="btn secondary small" href="#/corpo">Registar corrida</a></section>`;
   } else if (!active && plan === 'livre') {
-    const nm = { supera: 'Supera', estadio: 'Estádio' };
-    html += sug.place
-      ? `<section class="banner"><div><strong>Dia livre: repõe o que faltou</strong><p>Esta semana fizeste ${sug.done[sug.place]} de ${sug.planned[sug.place]} treinos no ${nm[sug.place]}. Sugestão para hoje: ${nm[sug.place]}.</p></div></section>`
-      : `<section class="banner"><div><strong>Dia livre</strong><p>Já fizeste todos os treinos desta semana. Corre ou descansa; se quiseres treinar na mesma, escolhe abaixo.</p></div><a class="btn secondary small" href="#/corpo">Registar corrida</a></section>`;
+    const w = sug.week;
+    if (sug.mandatory) {
+      const lost = sug.short - 1;
+      html += `<section class="banner must-banner"><div><strong>Hoje é obrigatório</strong><p>Esta semana fizeste ${w.done} de ${w.target} treinos. Hoje repões no ${PLACE_NAME[sug.place]}.${lost > 0 ? ` ${lost === 1 ? 'O outro treino em falta fica' : `Os outros ${lost} treinos em falta ficam`} por esta semana: não faças dois treinos no mesmo dia para compensar.` : ''}</p></div></section>`;
+    } else {
+      html += `<section class="banner"><div><strong>Hoje é opcional</strong><p>Já fizeste os ${w.target} treinos desta semana${w.extra ? ` e mais ${w.extra}` : ''}. Se te apetecer, ${PLACE_NAME[sug.place]}${sug.place === 'supera' ? ' (o C, treino extra)' : ''}; se não, descansa ou corre. As duas opções estão certas.</p></div><a class="btn secondary small" href="#/corpo">Registar corrida</a></section>`;
+    }
   } else if (!active && plan === 'descanso') {
-    html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano. Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
+    const st = E.weekStatus(today);
+    const tomorrow = addDays(today, 1);
+    const satMust = E.planFor(tomorrow) === 'livre' && st.done < st.target && tomorrow <= addDays(st.week, 6);
+    html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano.${satMust ? ` Amanhã é obrigatório: falta${st.target - st.done > 1 ? 'm' : ''} ${st.target - st.done} treino${st.target - st.done > 1 ? 's' : ''} esta semana.` : ''} Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
   }
 
   const stockSug = E.stockSuggestions(today).filter((s) => s.level !== 'info' || s.purchase).slice(0, 2);
@@ -147,7 +211,7 @@ export function renderToday(root) {
     </div>
     <div class="day-pick" role="tablist" aria-label="Escolher o treino">
       ${order.map((d) => `<button role="tab" class="day-chip ${d === day ? 'on' : ''}" data-day="${d}" aria-selected="${d === day}">
-        <span class="day-letter">${d}</span><span class="day-name">${esc(DAYS[d].title)}</span>${d === next ? '<span class="day-next">a seguir</span>' : ''}</button>`).join('')}
+        <span class="day-letter">${d}</span><span class="day-name">${esc(DAYS[d].title)}</span>${d === next ? '<span class="day-next">a seguir</span>' : E.isExtraDay(d) ? '<span class="day-next extra">extra</span>' : ''}</button>`).join('')}
     </div>
     <div class="hero-main">
       <div class="hero-head">
@@ -180,6 +244,7 @@ export function renderToday(root) {
           </li>`).join('')}
       </ol>
       ${active ? '' : `<button class="btn primary block big" data-act="start">Começar treino</button>`}
+      ${!active && trainingDay && !skippedToday && !E.sessions().some((x) => x.date === today) ? `<button class="btn ghost block small skip-btn" data-act="skip-today">Hoje não dá para treinar</button>` : ''}
     </div>
   </section>`;
 
@@ -187,7 +252,17 @@ export function renderToday(root) {
   html += habitsCard(today, trainingDay);
   html += `<section class="panel">
     <h2 class="panel-title">Esta semana</h2>
-    <p class="week-line"><span class="num big2">${week.sessions}</span> de ${E.weekTarget()} treinos${week.km ? `, <span class="num big2">${fmt1(week.km)}</span> km de corrida` : ''}</p>
+    <p class="week-line"><span class="num big2">${Math.min(week.sessions, week.target)}</span> de ${week.target} treinos${week.status.extra ? ` <span class="tag">+${week.status.extra} extra</span>` : ''}${week.km ? `, <span class="num big2">${fmt1(week.km)}</span> km de corrida` : ''}</p>
+    ${weekDots(week.status, today)}
+    ${(() => {
+      const st = week.status;
+      const def = Object.entries(st.owed).filter(([, n]) => n > 0);
+      const left = st.target - st.done;
+      if (left <= 0 || !def.length) return '';
+      const sat = st.days.find((d) => d.plan === 'livre' && d.date >= today);
+      const owed = def.reduce((a, [, n]) => a + n, 0);
+      return `<p class="muted small">Falta repor: ${def.map(([pl, n]) => `${n} no ${PLACE_NAME[pl]}`).join(' e ')}.${sat ? (owed > 1 ? ' O sábado repõe um; o resto fica por esta semana.' : ' O sábado serve para isso.') : ''}</p>`;
+    })()}
     ${goalMeters(E.goals(), true)}
     <a class="link" href="#/progresso">Ver progresso</a>
   </section>`;
@@ -215,9 +290,21 @@ export function renderToday(root) {
     const a = act.dataset.act;
     if (a === 'start') {
       local.active = E.buildSession(day, { deload: deloadOn });
+      local.active.ctx = E.sessionContext({ day, place, suggestedDay: next, suggestedPlace: autoPlace });
       persistLocal();
       requestWakeLock();
       navigate('#/treino');
+    } else if (a === 'skip-today') {
+      if (await askReason(today, { skip: true })) rerender();
+    } else if (a === 'unskip') {
+      remove('days', today);
+      rerender();
+    } else if (a === 'miss-reason') {
+      if (await askReason(act.dataset.date)) { toast('Motivo guardado'); rerender(); }
+    } else if (a === 'miss-none') {
+      const d = act.dataset.date;
+      put('days', d, { date: d, plan: E.planFor(d), reason: 'sem-motivo', note: '', missed: true, skip: false, decidedAt: now() });
+      rerender();
     } else if (a === 'creatine') {
       const h = E.habitsFor(today);
       put('habits', today, { ...h, creatine: !h.creatine });
@@ -250,7 +337,7 @@ export function renderToday(root) {
       toast('Escreve o peso em kg, por exemplo 64,2');
       return;
     }
-    put('bodyweight', today, { date: today, kg });
+    put('bodyweight', today, E.bodyweightRecord(today, kg, 'hoje'));
     toast('Peso guardado');
     rerender();
   });
@@ -281,7 +368,7 @@ export function renderOnboarding(root) {
         <label class="field"><span>Peso corporal</span><span class="with-unit"><input name="bw" inputmode="decimal" value="${fmtNum(b.bw)}" class="input num"><i>kg</i></span></label>
       </div>
       <div class="field"><span>O ginásio tem discos de 1,25 kg?</span>${segmented('small', [{ value: 'yes', label: 'Sim' }, { value: 'no', label: 'Não, o mais pequeno é 2,5 kg' }], S.plates.includes(1.25) ? 'yes' : 'no')}</div>
-      <p class="muted small">Plano semanal por defeito: Supera à segunda, quarta e sexta; Estádio à terça e quinta; sábado livre para repor o que faltar. Mudas em Mais → Definições.</p>
+      <p class="muted small">Plano semanal por defeito: 4 treinos (Supera à segunda e quarta, Estádio à terça e quinta). O sábado é obrigatório se faltares a algum, senão é opcional. Sexta e domingo de descanso. Mudas em Mais → Definições.</p>
       <button class="btn primary block big">Começar</button>
       <p class="muted center small">Já usas a Forja noutro dispositivo? <a href="#/mais/sync">Liga a sincronização</a> em vez de recomeçar.</p>
     </form>
@@ -303,7 +390,7 @@ export function renderOnboarding(root) {
       plates,
       baseline: { date: today, bench: { w, reps, rpe: Number(f.rpe.value) }, pullups, bw },
     });
-    put('bodyweight', today, { date: today, kg: bw });
+    put('bodyweight', today, E.bodyweightRecord(today, bw, 'inicio'));
     toast(`Pronto. 1RM estimado de partida: ${fmt1(E.e1rm(w, reps, Number(f.rpe.value)))} kg`, { timeout: 5000 });
     navigate('#/hoje');
   });
