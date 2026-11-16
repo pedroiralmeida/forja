@@ -69,12 +69,233 @@
  },
  "habits": {
   "2026-11-16": {
+   "createdAt": 1794843634797,
    "creatine": true,
    "date": "2026-11-16",
-   "protein": 45,
+   "foods": [
+    {
+     "at": 1794819600000,
+     "food": "banana",
+     "g": 1,
+     "id": "claude-1611-07",
+     "meal": "pa",
+     "name": "Banana",
+     "portion": "1 banana",
+     "qty": 1,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794819600000,
+     "food": "leite",
+     "g": 9.6,
+     "id": "claude-1611-02",
+     "meal": "pa",
+     "name": "Leite",
+     "note": "cerca de 300 ml, com a whey",
+     "portion": "1 copo (250 ml)",
+     "qty": 1.2,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794819600000,
+     "food": "pera",
+     "g": 0.5,
+     "id": "claude-1611-06",
+     "meal": "pa",
+     "name": "Pera",
+     "portion": "1 pera",
+     "qty": 1,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794819600000,
+     "food": "pao",
+     "g": 5,
+     "id": "claude-1611-03",
+     "meal": "pa",
+     "name": "Pão",
+     "note": "carcaça com requeijão",
+     "portion": "1 carcaça",
+     "qty": 1,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794819600000,
+     "food": "pao",
+     "g": 2.5,
+     "id": "claude-1611-05",
+     "meal": "pa",
+     "name": "Pão",
+     "note": "uma fatia, com Planta",
+     "portion": "1 carcaça",
+     "qty": 0.5,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794819600000,
+     "food": "requeijao",
+     "g": 5,
+     "id": "claude-1611-04",
+     "meal": "pa",
+     "name": "Requeijão",
+     "note": "na carcaça, cerca de 50 g",
+     "portion": "100 g",
+     "qty": 0.5,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794819600000,
+     "food": "whey",
+     "g": 21,
+     "id": "claude-1611-01",
+     "meal": "pa",
+     "name": "Whey",
+     "note": "com leite no shaker",
+     "portion": "1 dose",
+     "qty": 1,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794835800000,
+     "food": "arroz",
+     "g": 4,
+     "id": "claude-1611-10",
+     "meal": "almoco",
+     "name": "Arroz",
+     "portion": "1 prato",
+     "qty": 1,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794835800000,
+     "food": "bife_peru",
+     "g": 50,
+     "id": "claude-1611-08",
+     "meal": "almoco",
+     "name": "Bife de peru",
+     "portion": "1 bife",
+     "qty": 2,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794835800000,
+     "food": "brocolos",
+     "g": 3,
+     "id": "claude-1611-11",
+     "meal": "almoco",
+     "name": "Brócolos",
+     "portion": "1 porção",
+     "qty": 1,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794835800000,
+     "food": "ovo",
+     "g": 12,
+     "id": "claude-1611-09",
+     "meal": "almoco",
+     "name": "Ovo",
+     "portion": "1 ovo",
+     "qty": 2,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794835800000,
+     "food": "pera",
+     "g": 1,
+     "id": "claude-1611-12",
+     "meal": "almoco",
+     "name": "Pera",
+     "note": "duas pêras pequenas",
+     "portion": "1 pera",
+     "qty": 2,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794850200000,
+     "food": "banana",
+     "g": 1,
+     "id": "claude-1611-14",
+     "meal": "lanche",
+     "name": "Banana",
+     "portion": "1 banana",
+     "qty": 1,
+     "source": "claude, a partir da descrição do Pedro (hora aproximada)"
+    },
+    {
+     "at": 1794850200000,
+     "food": "yopro",
+     "g": 25,
+     "id": "mwjuxvzogv74ws",
+     "loggedAt": 1794869471796,
+     "meal": "lanche",
+     "name": "YoPro",
+     "portion": "1 unidade",
+     "qty": 1
+    },
+    {
+     "at": 1794868200000,
+     "food": "brocolos",
+     "g": 3,
+     "id": "mwjuyz4adytg36",
+     "loggedAt": 1794869522506,
+     "meal": "jantar",
+     "name": "Brócolos",
+     "portion": "1 porção",
+     "qty": 1
+    },
+    {
+     "at": 1794868200000,
+     "food": "pao",
+     "g": 2.5,
+     "id": "mwjuy71mc1nnu8",
+     "loggedAt": 1794869486122,
+     "meal": "jantar",
+     "name": "Pão",
+     "note": "meio pão, com Planta",
+     "portion": "1 carcaça",
+     "qty": 0.5
+    },
+    {
+     "at": 1794868200000,
+     "food": "salmao_peq",
+     "g": 18,
+     "id": "mwjv1haowcazvd",
+     "loggedAt": 1794869639376,
+     "meal": "jantar",
+     "name": "Salmão, posta pequena",
+     "portion": "1 posta pequena (~90 g cru)",
+     "qty": 1
+    },
+    {
+     "at": 1794868200000,
+     "food": "sopa",
+     "g": 3,
+     "id": "mwjuyr607ufx4q",
+     "loggedAt": 1794869512200,
+     "meal": "jantar",
+     "name": "Sopa de legumes",
+     "portion": "1 prato",
+     "qty": 1
+    },
+    {
+     "at": 1794869100000,
+     "food": "pera",
+     "g": 0.5,
+     "id": "mwjuyioksiz22x",
+     "loggedAt": 1794869501204,
+     "meal": "jantar",
+     "name": "Pera",
+     "note": "sobremesa",
+     "portion": "1 pera",
+     "qty": 1
+    }
+   ],
+   "protein": 167.6,
+   "proteinNote": "Dia reconstruído por refeição pelo Claude a 16/11 às 23h45, a partir do que o Pedro descreveu.",
    "shake": false,
    "sleep": null,
-   "updatedAt": 1794827983879
+   "updatedAt": 1794872438278
   }
  },
  "purchases": {
