@@ -57,6 +57,40 @@
    "total": 38.46,
    "note": "Sem contar o outro artigo da mesma encomenda",
    "updatedAt": 1794786864473
+  },
+  "compra-auchan-2026-11-16": {
+   "id": "compra-auchan-2026-11-16",
+   "date": "2026-11-16",
+   "store": "Auchan",
+   "category": "comida",
+   "status": "recebida",
+   "items": [
+    {
+     "name": "Iogurte líquido YoPro 300 g × 4 (2 mirtilo, 1 morango e framboesa, 1 baunilha e cookies)",
+     "price": 7.96
+    },
+    {
+     "name": "Leite Mimosa meio-gordo 6 × 1 L"
+    },
+    {
+     "name": "Atum posta em azeite Auchan 120 g × 3"
+    },
+    {
+     "name": "Filetes de cavala em óleo de girassol Auchan 90 g × 3"
+    },
+    {
+     "name": "Peito de peru forno a lenha Izidoro 140 g"
+    },
+    {
+     "name": "Queijo flamengo light fatiado Polegar 150 g"
+    },
+    {
+     "name": "Amêndoas peladas Auchan 150 g × 2"
+    }
+   ],
+   "total": null,
+   "note": "YoPro a 1,99 € cada (promoção). Falta o total do talão.",
+   "updatedAt": 1794840879818
   }
  },
  "stock": {

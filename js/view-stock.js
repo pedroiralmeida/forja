@@ -53,7 +53,7 @@ function purchaseRow(p) {
       <span class="purchase-date">${esc(fmtDate(p.date))}</span>
       <b>${esc(p.store)}</b>
       <span class="tag">${esc(cat)}</span>
-      <span class="num purchase-total">${money(p.total)}</span>
+      <span class="num purchase-total">${p.total == null ? '<span class="muted small">total por registar</span>' : money(p.total)}</span>
     </div>
     <ul class="purchase-items">${(p.items || []).map((i) => `<li><span>${esc(i.name)}</span><span class="num muted">${i.price !== undefined ? money(i.price) : ''}</span></li>`).join('')}</ul>
     ${p.discount ? `<p class="muted small">Desconto de ${money(p.discount)}${p.note ? `. ${esc(p.note)}` : ''}</p>` : p.note ? `<p class="muted small">${esc(p.note)}</p>` : ''}
