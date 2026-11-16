@@ -20,7 +20,7 @@ function habitsWeek() {
       <span class="hw-name">${esc(fmtDate(d, { weekday: 'narrow' }))}</span>
       <span class="hw-prot" title="Proteína: ${fmtNum(h.protein || 0)} g"><i style="height:${Math.round(p * 100)}%"></i></span>
       <span class="hw-crea ${h.creatine ? 'on' : ''}" title="Creatina ${h.creatine ? 'tomada' : 'não registada'}">${h.creatine ? icons.check : ''}</span>
-      <span class="hw-sleep num" title="Sono">${h.sleep ? fmtNum(h.sleep) + 'h' : '—'}</span>
+      <span class="hw-sleep num ${E.sleepOk(h) === false ? 'bad' : ''}" title="Sono">${h.sleep ? fmtNum(h.sleep) + 'h' : E.sleepOk(h) === true ? '7h+' : E.sleepOk(h) === false ? '−7h' : '—'}</span>
     </div>`;
   }
   return `<div class="hw">${cells}</div>
@@ -233,7 +233,10 @@ export function renderBody(root) {
       rerender();
     };
     const sl = e.target.closest('[data-sleep]');
-    if (sl) return habit({ sleep: h.sleep === Number(sl.dataset.sleep) ? null : Number(sl.dataset.sleep) });
+    if (sl) {
+      const v = h.sleep === Number(sl.dataset.sleep) ? null : Number(sl.dataset.sleep);
+      return habit({ sleep: v, sleepOk: v === null ? null : v >= 7 });
+    }
     const act = e.target.closest('[data-act]');
     if (act && act.dataset.act === 'creatine') return habit({ creatine: !h.creatine });
     if (act && act.dataset.act === 'shake') return habit({ shake: !h.shake });

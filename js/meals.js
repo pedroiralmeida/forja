@@ -4,10 +4,10 @@ import * as E from './engine.js';
 import { put, get, list } from './store.js';
 import { rerender } from './ui.js';
 import { WEEKDAYS, MEAL_SLOTS } from './data.js';
-import { FOODS, foodG, addFoods, foodPicker, entryChip, mealTotals } from './protein.js';
+import { FOODS, foodG, addFoods, foodPicker, entryChip, mealTotals, normMeal } from './protein.js';
 import { esc, fmtNum, fmtDate, todayISO, addDays, isoToMs } from './util.js';
 
-const MEALS = MEAL_SLOTS.filter((m) => m.id !== 'ceia');
+const MEALS = MEAL_SLOTS;
 
 // needs: o que tem de haver em casa. whey/oats/pb vêm do stock; yopro/atum/cavala das compras
 // menos o que já registaste como comido.
@@ -32,13 +32,6 @@ const OPTIONS = {
     { id: 'ja-casa', text: 'O que houver em casa: 1 a 2 palmas da mão de carne ou peixe, sopa, legumes e um pouco de pão, arroz ou batata.', items: [['carne', 1], ['sopa', 1], ['pao', 0.5]] },
   ],
 };
-
-// Só aparece se o plano do dia ficar abaixo da meta de proteína
-const CEIA = [
-  { id: 'ce-shake', text: 'Leite com whey no shaker.', items: [['leite', 1.2], ['whey', 1]], needs: ['whey'] },
-  { id: 'ce-yopro', text: 'Um YoPro.', items: [['yopro', 1]], needs: ['yopro'] },
-  { id: 'ce-leite', text: 'Um copo de leite e um punhado de amêndoas.', items: [['leite', 1], ['amendoas', 1]] },
-];
 
 const COUNTED = [['yopro', /yopro/i, 'YoPro'], ['atum', /atum/i, 'latas de atum'], ['cavala', /cavala/i, 'latas de cavala']];
 
@@ -95,7 +88,7 @@ function dayInfo(iso) {
     : 'dia de descanso';
   return {
     plan, train, label: `${wd}, ${fmtDate(iso)}: ${what}.`,
-    times: { pa: 'de manhã', almoco: 'por volta das 13h', lanche: train ? 'por volta das 17h, 2 h antes do treino' : 'a meio da tarde', jantar: train ? 'depois do treino' : 'por volta das 20h', ceia: 'antes de dormir' },
+    times: { pa: 'de manhã', almoco: 'por volta das 13h', lanche: train ? 'por volta das 17h, 2 h antes do treino' : 'a meio da tarde', jantar: train ? 'depois do treino' : 'por volta das 20h' },
   };
 }
 
@@ -110,25 +103,15 @@ function planFor(iso) {
     const opt = list_.find((o) => o.id === saved[m.id]) || list_[(dayN + mi) % list_.length];
     return { ...m, opt, count: list_.length };
   });
-  const wheyUsed = meals.some((m) => m.opt.items.some(([f]) => f === 'whey'));
   const planned = meals.reduce((a, m) => a + optionG(m.opt), 0);
-  const target = E.proteinTarget();
-  let ceia = null;
-  if (planned < target) {
-    const opts = CEIA.filter((o) => available(o, ctx) && !(wheyUsed && o.items.some(([f]) => f === 'whey')));
-    const opt = opts.find((o) => o.id === saved.ceia) || opts[0];
-    if (opt) ceia = { id: 'ceia', name: 'Ceia', opt, count: opts.length, optional: true };
-  }
-  return { meals: ceia ? [...meals, ceia] : meals, planned, target, ctx };
+  return { meals, planned, target: E.proteinTarget(), ctx };
 }
 
 function nextOption(iso, mealId) {
   const p = planFor(iso);
   const m = p.meals.find((x) => x.id === mealId);
   if (!m) return;
-  const pool = mealId === 'ceia'
-    ? CEIA.filter((o) => available(o, p.ctx))
-    : OPTIONS[mealId].filter((o) => available(o, p.ctx));
+  const pool = OPTIONS[mealId].filter((o) => available(o, p.ctx));
   if (pool.length < 2) return;
   const i = pool.findIndex((o) => o.id === m.opt.id);
   const next = pool[(i + 1) % pool.length];
@@ -162,7 +145,7 @@ export function mealsPanel() {
   const pc = p.ctx.pantry;
   const pantryLine = COUNTED.filter(([f]) => pc[f] !== null && pc[f] !== undefined).map(([f, , label]) => `${pc[f]} ${label}`).join(', ');
   const planTotal = p.meals.reduce((a, m) => a + optionG(m.opt), 0);
-  const rows = [...p.meals.filter((m) => m.id !== 'ceia'), p.meals.find((m) => m.id === 'ceia') || { id: 'ceia', name: 'Ceia', opt: null, count: 0, optional: true }];
+  const rows = p.meals;
   const noMeal = foods.filter((f) => !f.meal);
   return `<section class="panel meals-panel" id="meals">
     <div class="meals-head">
@@ -173,11 +156,11 @@ export function mealsPanel() {
     </div>
     <p class="muted meals-day">${esc(info.label)}</p>
     <ol class="meal-list">${rows.map((m) => {
-      const its = foods.filter((f) => f.meal === m.id);
+      const its = foods.filter((f) => normMeal(f.meal) === m.id);
       const eatenThis = m.opt && its.some((f) => f.option === m.opt.id);
       return `<li class="meal ${its.length ? 'has-food' : ''}">
         <div class="meal-top"><span class="meal-name">${esc(m.name)}</span>${off === 0 && its.length ? `<span class="meal-g num">${fmtNum(tot[m.id] || 0)} g</span>` : ''}</div>
-        <p class="meal-when muted small">${esc(info.times[m.id] || '')}${m.id === 'ceia' && !m.opt ? '. Só se tiveres fome: o plano já chega à meta.' : m.id === 'ceia' ? '. O plano fica abaixo da meta, por isso vale a pena.' : ''}</p>
+        <p class="meal-when muted small">${esc(info.times[m.id] || '')}</p>
         ${off === 0 && its.length ? `<div class="chips meal-eaten">${its.map(entryChip).join('')}</div>` : ''}
         ${suggestionBlock(m, { canEat: off === 0, eatenThis })}
         ${m.id === 'pa' && hasKind('creatine', iso) ? '<p class="meal-tip muted small">Toma a creatina aqui, para não te esqueceres.</p>' : ''}
@@ -185,7 +168,7 @@ export function mealsPanel() {
       </li>`;
     }).join('')}</ol>
     ${noMeal.length ? `<div class="meal-none"><p class="muted small">Registado sem refeição (antes de a app separar por refeições):</p><div class="chips">${noMeal.map(entryChip).join('')}</div></div>` : ''}
-    <p class="meal-total">${off === 0 ? `Registado hoje: <strong class="num">${fmtNum(h.protein || 0)} g</strong> de ${p.target} g. ` : ''}Seguindo as sugestões: cerca de ${planTotal} g.</p>
+    <p class="meal-total">${off === 0 ? `Registado hoje: <strong class="num">${fmtNum(h.protein || 0)} g</strong> de ${p.target} g. ` : ''}Seguindo as sugestões: cerca de ${planTotal} g.${planTotal < p.target ? ' Fica abaixo da meta: reforça o lanche ou o jantar, por exemplo com leite e whey.' : ''}</p>
     <p class="muted small">Os valores são aproximados.${pantryLine ? ` Em casa, pelas contas da app: ${esc(pantryLine)}.` : ''}</p>
   </section>`;
 }

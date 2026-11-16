@@ -110,6 +110,17 @@ function habitsCard(today, trainingDay) {
           <span class="muted small">${esc(E.S().creatineNote || '1 medida por dia')}${E.creatineStreak() > 1 ? `, ${E.creatineStreak()} dias seguidos` : ''}</span>
         </div>
       </div>
+      ${(() => {
+        const ok = E.sleepOk(h);
+        return `<div class="daily-row">
+        <div class="daily-label">Sono <span class="muted">esta noite</span></div>
+        <div class="daily-value sleep-pick">
+          <button class="toggle sleep-bad ${ok === false ? 'on' : ''}" data-act="sleep-ok" data-v="0" aria-pressed="${ok === false}">Menos de 7 h</button>
+          <button class="toggle sleep-good ${ok === true ? 'on' : ''}" data-act="sleep-ok" data-v="1" aria-pressed="${ok === true}">7 h ou mais</button>
+          ${h.sleep ? `<span class="muted small">${fmtNum(h.sleep)} h registadas em Corpo</span>` : ''}
+        </div>
+      </div>`;
+      })()}
     </div>
   </section>`;
 }
@@ -356,6 +367,10 @@ export function renderToday(root) {
       return `<p class="muted small">Falta repor: ${def.map(([pl, n]) => `${n} no ${PLACE_NAME[pl]}`).join(' e ')}.${sat ? (owed > 1 ? ' O sábado repõe um; o resto fica por esta semana.' : ' O sábado serve para isso.') : ''}</p>`;
     })()}
     ${goalMeters(E.goals(), true)}
+    ${(() => {
+      const sw = E.sleepWeek(today);
+      return sw.logged ? `<p class="muted small">Sono: ${sw.good} de ${sw.logged} ${sw.logged === 1 ? 'noite' : 'noites'} com 7 h ou mais esta semana.</p>` : '';
+    })()}
     <a class="link" href="#/progresso">Ver progresso</a>
   </section>`;
   html += `</div>`;
@@ -418,6 +433,13 @@ export function renderToday(root) {
     } else if (a === 'miss-none') {
       const d = act.dataset.date;
       put('days', d, { date: d, plan: E.planFor(d), reason: 'sem-motivo', note: '', missed: true, skip: false, decidedAt: now() });
+      rerender();
+    } else if (a === 'sleep-ok') {
+      const h = E.habitsFor(today);
+      const v = act.dataset.v === '1';
+      const cur = E.sleepOk(h);
+      const patch = cur === v ? { sleepOk: null, sleep: null } : { sleepOk: v, sleep: h.sleep !== null && h.sleep !== undefined && (h.sleep >= 7) !== v ? null : h.sleep ?? null };
+      put('habits', today, { ...h, ...patch, sleepAt: patch.sleepOk === null ? null : now() });
       rerender();
     } else if (a === 'creatine') {
       const h = E.habitsFor(today);

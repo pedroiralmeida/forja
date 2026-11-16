@@ -365,6 +365,8 @@ export function sessionContext({ day, place, suggestedDay, suggestedPlace } = {}
     makeup: plan === 'livre' ? w.done < w.target : plan !== place && w.deficit[place] > 0 && (plan === 'supera' || plan === 'estadio'),
     extra: plan === 'descanso' || plan === 'corrida' || (plan === 'livre' && w.done >= w.target),
     daysSinceLast: daysSinceLastSession(iso),
+    sleepOk: sleepOk(get('habits', iso)),
+    sleepHours: (get('habits', iso) || {}).sleep ?? null,
     bodyweight: bws.length ? bws[bws.length - 1].kg : null,
     benchE1rm: Math.round(currentBenchE1RM() * 10) / 10,
     muStage: muStage(),
@@ -1043,6 +1045,25 @@ export function proteinTarget() {
 
 export function habitsFor(iso) {
   return get('habits', iso) || { date: iso, protein: 0, creatine: false, sleep: null, shake: false };
+}
+
+// Sono: "bom" = 7 h ou mais. Vem do botão simples (sleepOk) ou das horas, se as registaste.
+export function sleepOk(h) {
+  if (!h) return null;
+  if (h.sleepOk === true || h.sleepOk === false) return h.sleepOk;
+  return h.sleep !== null && h.sleep !== undefined ? h.sleep >= 7 : null;
+}
+
+export function sleepWeek(iso = todayISO()) {
+  const ws = weekStart(iso);
+  let good = 0;
+  let bad = 0;
+  for (let d = ws; d <= iso; d = addDays(d, 1)) {
+    const v = sleepOk(get('habits', d));
+    if (v === true) good++;
+    else if (v === false) bad++;
+  }
+  return { good, bad, logged: good + bad };
 }
 
 export function creatineStreak() {

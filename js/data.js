@@ -268,7 +268,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.16.0';
+export const APP_VERSION = '1.17.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -358,7 +358,6 @@ export const MEAL_SLOTS = [
   { id: 'almoco', name: 'Almoço', short: 'Almoço' },
   { id: 'lanche', name: 'Lanche', short: 'Lanche' },
   { id: 'jantar', name: 'Jantar', short: 'Jantar' },
-  { id: 'ceia', name: 'Ceia', short: 'Ceia' },
 ];
 
 export const PURCHASE_CATEGORIES = { comida: 'Comida', suplementos: 'Suplementos', material: 'Material', outro: 'Outro' };

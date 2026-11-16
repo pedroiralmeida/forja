@@ -48,16 +48,19 @@ const r1 = (x) => Math.round(x * 10) / 10;
 const multLabel = (m) => (MULTS.find(([v]) => v === m) || [m, fmtNum(m)])[1];
 export const mealName = (id) => (MEAL_SLOTS.find((m) => m.id === id) || { name: 'Sem refeição' }).name;
 
-// Refeição pela hora: até às 11h pequeno-almoço, até 15h30 almoço, até 19h30 lanche, até 23h30 jantar
+// Refeição pela hora: até às 11h pequeno-almoço, até 15h30 almoço, até 19h30 lanche, depois jantar.
+// Não há ceia: o que se come à noite conta no jantar.
 export function mealAt(d = new Date()) {
   const m = d.getHours() * 60 + d.getMinutes();
-  if (m < 4 * 60) return 'ceia';
+  if (m < 4 * 60) return 'jantar';
   if (m < 11 * 60) return 'pa';
   if (m < 15 * 60 + 30) return 'almoco';
   if (m < 19 * 60 + 30) return 'lanche';
-  if (m < 23 * 60 + 30) return 'jantar';
-  return 'ceia';
+  return 'jantar';
 }
+
+// Registos antigos marcados como ceia passam a contar no jantar
+export const normMeal = (m) => (m === 'ceia' ? 'jantar' : m);
 
 export function foodG(f) {
   return f.g === null ? (E.S().wheyProtein || 21) : f.g;
@@ -94,7 +97,7 @@ export function entryChip(it) {
 export function mealTotals(h) {
   const out = {};
   for (const it of h.foods || []) {
-    const k = it.meal || 'none';
+    const k = normMeal(it.meal) || 'none';
     out[k] = r1((out[k] || 0) + (it.g || 0));
   }
   return out;
@@ -131,7 +134,7 @@ function eatenByMeal(h) {
   if (!items.length) return '';
   const groups = [...MEAL_SLOTS.map((m) => m.id), 'none'];
   return `<div class="eaten">${groups.map((g) => {
-    const its = items.filter((it) => (it.meal || 'none') === g);
+    const its = items.filter((it) => (normMeal(it.meal) || 'none') === g);
     if (!its.length) return '';
     const sum = r1(its.reduce((a, it) => a + (it.g || 0), 0));
     return `<div class="eaten-group"><div class="eaten-head muted small">${esc(mealName(g))}: ${fmtNum(sum)} g</div><div class="chips">${its.map(entryChip).join('')}</div></div>`;
