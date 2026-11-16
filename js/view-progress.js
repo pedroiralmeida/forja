@@ -104,8 +104,9 @@ function shouldersPanel() {
   const weeks = E.sideDeltSets(4);
   const done = weeks.filter((w) => w.sets > 0);
   const avg = done.length ? done.reduce((a, w) => a + w.sets, 0) / done.length : 0;
-  const lat = E.exerciseHistory('lateral_raise');
-  const lastLat = lat.length ? lat[lat.length - 1] : null;
+  const lats = E.SIDE_DELT_EX.map((ex) => E.exerciseHistory(ex).map((h) => ({ ...h, ex }))).flat().sort((a, b) => a.date.localeCompare(b.date));
+  const lastLat = lats.length ? lats[lats.length - 1] : null;
+  const latName = { lateral_raise: 'halteres, peso de cada halter', lateral_machine: 'máquina', lateral_cable: 'polia' };
   const bits = [];
   if (ss) {
     bits.push(`<div class="stat"><span class="num big2">${fmt1(ss.last.cm)} cm</span><span class="muted">perímetro${ss.change !== null ? `, ${ss.change >= 0 ? '+' : ''}${fmt1(ss.change)} cm desde ${esc(fmtDate(ss.first.date))}` : ''}</span></div>`);
@@ -115,7 +116,7 @@ function shouldersPanel() {
   return `<section class="panel">
     <h2 class="panel-title">Ombros largos</h2>
     <div class="stats-row">${bits.join('')}</div>
-    ${lastLat && lastLat.maxW ? `<p class="muted small">Elevações laterais: ${fmtNum(lastLat.maxW)} kg por halter no último treino (${esc(fmtDate(lastLat.date))}).</p>` : ''}
+    ${lastLat && lastLat.maxW ? `<p class="muted small">Elevações laterais no último treino (${esc(fmtDate(lastLat.date))}): ${fmtNum(lastLat.maxW)} kg (${latName[lastLat.ex]}).</p>` : ''}
     <p class="muted small">${ss ? 'Mede os ombros uma vez por mês, em Corpo.' : 'Mede o perímetro dos ombros em Corpo quando tiveres a fita: é o ponto de partida.'} Com o A e o B fazes 7 séries de ombro lateral por semana, 10 se fizeres o C.</p>
   </section>`;
 }
