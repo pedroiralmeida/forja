@@ -53,6 +53,23 @@ function setRow(entry, s, si, ei, label, kind) {
   </div>`;
 }
 
+// Nota no início do treino: como fazer as séries e como funciona a progressão.
+// Aberta nos primeiros treinos; depois fica fechada (toca para abrir).
+function howToSets() {
+  const open = E.sessions().length < 4;
+  return `<details class="howto" ${open ? 'open' : ''}>
+    <summary>Como fazer as séries</summary>
+    <ul>
+      <li><strong>Esforço:</strong> cada série vai até RPE 8 a 9, ou seja, paras quando ainda conseguias mais 1 ou 2 reps. A primeira série também: não te poupes para as outras. No bench press segue o RPE escrito no exercício (série principal a RPE 8, as seguintes a RPE 7); os aquecimentos são leves.</li>
+      <li><strong>Mesmo peso em todas as séries</strong> (fora o bench press do A, que tem uma série principal mais pesada). As reps vão ficar iguais ou descer um pouco (por exemplo 10, 9, 8, 8). É normal: é o cansaço a acumular.</li>
+      <li><strong>A progressão é entre treinos:</strong> cada série compara-se com a mesma série da vez anterior. Com o mesmo peso e o mesmo esforço, tenta +1 rep. Quando chegares ao topo da gama em todas as séries, a app sobe o peso.</li>
+      <li><strong>Escolher o peso (primeira vez):</strong> se passares do topo da gama e ainda estiveres longe de RPE 8, sobe na série seguinte; se não chegares ao mínimo, baixa.</li>
+      <li><strong>Descanso:</strong> respeita o temporizador, que arranca ao marcar a série. Se as reps caírem muito de uma série para a outra, descansa mais.</li>
+      <li><strong>Regista o que fizeste de facto:</strong> peso, reps e RPE. O botão (i) de cada exercício tem as dicas de técnica.</li>
+    </ul>
+  </details>`;
+}
+
 function entryCard(entry, ei, session, mode) {
   const info = E.exInfo(entry.ex, entry);
   const kind = info.kind;
@@ -127,6 +144,7 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
         </div>
         ${mode === 'active' ? `<button class="btn ghost small" data-act="discard">Descartar</button>` : ''}
       </header>
+      ${mode === 'active' ? howToSets() : ''}
       <div class="ex-list">
         ${session.exercises.map((e, i) => entryCard(e, i, session, mode)).join('')}
       </div>
