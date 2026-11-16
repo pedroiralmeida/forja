@@ -119,7 +119,17 @@ export const EX = {
   row_db: { name: 'One-arm dumbbell row', kind: 'dumbbell', tier: 'accessory', group: 'costas', alts: ['row', 'row_chest'], cues: ['Apoio num banco, costas direitas.', 'Puxa o cotovelo em direção à anca.'] },
   row_chest: { name: 'Chest-supported row', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['row', 'row_db'], cues: ['Peito encostado ao apoio; não balances.'] },
   pulldown: { name: 'Lat pulldown', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['pullup', 'row'], cues: ['Puxa a barra até ao peito, cotovelos para baixo.', 'Controla a subida.'] },
-  face_pull: { name: 'Face pulls', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'corda na polia alta, puxar para a cara', alts: ['rear_delt'], cues: ['Corda à altura da cara; puxa separando as mãos.', 'Protege os ombros de tanto empurrar.'] },
+  face_pull: {
+    name: 'Face pulls', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'corda puxada à altura dos olhos', alts: ['rear_delt'],
+    cues: [
+      'Polia à altura dos olhos ou um pouco acima. Puxa a corda em direção aos olhos.',
+      'Agarra a corda com os polegares virados para ti logo desde o início.',
+      'Cotovelos altos, à altura dos ombros ou acima.',
+      'No fim, os polegares apontam para trás e as mãos ficam ao lado das orelhas (como a pose de mostrar os bíceps). Pausa de 1 segundo.',
+      'Se a corda for curta e as mãos não se conseguirem afastar, prende duas cordas no mesmo mosquetão, uma para cada mão.',
+      'Peso leve e volta devagar: se tens de inclinar o tronco para trás, está pesado.',
+    ],
+  },
   lateral_raise: {
     name: 'Dumbbell lateral raises', kind: 'dumbbell', tier: 'accessory', group: 'ombros', note: 'peso de cada halter', alts: ['lateral_cable', 'lateral_machine'],
     cues: ['É o exercício que mais alarga os ombros (trabalha a parte lateral do deltoide).', 'Peso leve, sem balançar: sobe até à altura dos ombros, cotovelos ligeiramente fletidos, e desce devagar.', 'Leva as séries quase até à falha (1 a 2 reps de reserva).'],
@@ -257,7 +267,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.9.1';
+export const APP_VERSION = '1.9.2';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
