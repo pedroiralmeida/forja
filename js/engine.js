@@ -1018,16 +1018,52 @@ export function stockCoverage(iso = todayISO()) {
   return out;
 }
 
+// Valor de um artigo de uma compra (preço total da linha, ou quantidade × preço unitário)
+export function itemValue(i) {
+  if (i.price != null) return Number(i.price) || 0;
+  if (i.unitPrice != null) return (Number(i.unitPrice) || 0) * (Number(i.qty) || 1);
+  return 0;
+}
+
+// Total de uma compra: o total registado ou, se não houver, a soma dos artigos
+export function purchaseTotal(p) {
+  if (p.total != null && p.total !== '') return Number(p.total) || 0;
+  return (p.items || []).reduce((a, i) => a + itemValue(i), 0);
+}
+
+// Gastos de um mês, por categoria. O limite mensal é opcional (0 = sem limite).
 export function monthSpend(iso = todayISO()) {
   const ym = iso.slice(0, 7);
-  let food = 0;
-  let gear = 0;
+  const byCat = {};
+  let total = 0;
+  let count = 0;
   for (const p of purchases()) {
     if ((p.date || '').slice(0, 7) !== ym) continue;
-    if (p.category === 'material') gear += Number(p.total) || 0;
-    else food += Number(p.total) || 0;
+    const v = purchaseTotal(p);
+    byCat[p.category || 'outro'] = (byCat[p.category || 'outro'] || 0) + v;
+    total += v;
+    count++;
   }
-  return { food, gear, budget: S().budgetMonthly || 50 };
+  const gear = byCat.material || 0;
+  const food = total - gear;
+  const day = Number(iso.slice(8, 10));
+  const daysInMonth = new Date(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)), 0).getDate();
+  return { total, food, gear, byCat, count, perWeek: (total / Math.max(1, day)) * 7, daysInMonth, budget: Number(S().budgetMonthly) || 0 };
+}
+
+// Gastos dos últimos meses (o mais recente primeiro)
+export function spendHistory(months = 6, iso = todayISO()) {
+  const out = [];
+  let y = Number(iso.slice(0, 4));
+  let m = Number(iso.slice(5, 7));
+  for (let i = 0; i < months; i++) {
+    const ym = `${y}-${String(m).padStart(2, '0')}`;
+    const r = monthSpend(`${ym}-${i === 0 ? iso.slice(8, 10) : '28'}`);
+    if (r.count || i === 0) out.push({ ym, ...r });
+    m--;
+    if (!m) { m = 12; y--; }
+  }
+  return out;
 }
 
 // Sugestões: o que repor, o que abrir, encomendas a chegar e orçamento
@@ -1060,7 +1096,7 @@ export function stockSuggestions(iso = todayISO()) {
     });
   }
   const m = monthSpend(iso);
-  if (m.food > m.budget) out.push({ level: 'soft', text: `Este mês já gastaste ${fmtNum(m.food)} € em comida e suplementos, acima dos ${fmtNum(m.budget)} € que definiste.` });
+  if (m.budget > 0 && m.food > m.budget) out.push({ level: 'soft', text: `Este mês já gastaste ${fmtNum(m.food)} € em comida e suplementos, acima dos ${fmtNum(m.budget)} € que definiste.` });
   return out;
 }
 

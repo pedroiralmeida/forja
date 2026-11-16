@@ -683,3 +683,21 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .data-details { margin: 6px 0 12px; }
 .data-details summary { cursor: pointer; color: var(--link); font-weight: 600; padding: 4px 0; }
 .data-details .table { margin-top: 8px; }
+
+/* Registar compra */
+.art-details { margin: 4px 0 12px; }
+.art-details summary { cursor: pointer; font-weight: 600; color: var(--link); padding: 4px 0; }
+.art-list { display: grid; gap: 6px; margin: 6px 0; }
+.art-row { display: grid; grid-template-columns: 1fr 54px 92px 32px; gap: 6px; align-items: center; }
+.art-row .input { min-width: 0; }
+.field-check { display: flex; align-items: center; gap: 8px; font-size: 15px; margin: 4px 0 2px; }
+.field-check input { width: 18px; height: 18px; }
+.spend-hist { margin: 4px 0 12px; }
+.spend-hist summary { cursor: pointer; font-weight: 600; color: var(--link); padding: 4px 0; }
+.spend-hist ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; }
+.spend-hist li { display: grid; grid-template-columns: 82px 1fr 78px; gap: 10px; align-items: center; font-size: 14px; }
+.spend-hist li > span:first-child { color: var(--ink-2); }
+.spend-hist .bar { height: 10px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.spend-hist .bar i { display: block; height: 100%; border-radius: 4px; background: var(--yellow); }
+.spend-hist .num { text-align: right; }
+[data-act="add-purchase"] { margin: 6px 0 14px; }

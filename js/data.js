@@ -244,7 +244,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.6.1';
+export const APP_VERSION = '1.7.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -328,7 +328,7 @@ export const STOCK_KINDS = {
   other: { label: 'Outro', servingG: 0, perDay: 0 },
 };
 
-export const PURCHASE_CATEGORIES = { suplementos: 'Suplementos', comida: 'Comida', material: 'Material' };
+export const PURCHASE_CATEGORIES = { comida: 'Comida', suplementos: 'Suplementos', material: 'Material', outro: 'Outro' };
 
 export const ALL_PLATES = [25, 20, 15, 10, 5, 2.5, 2, 1.25, 1, 0.5];
 
@@ -351,7 +351,7 @@ export const DEFAULT_SETTINGS = {
   bwGoal: 'gain',
   proteinPerKg: 1.8,
   wheyProtein: 21,
-  budgetMonthly: 50,
+  budgetMonthly: 0,
   creatineNote: '1 medida por dia',
 };
 

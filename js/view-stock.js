@@ -46,23 +46,138 @@ function itemRow(it, iso) {
   </li>`;
 }
 
+function itemLine(i) {
+  const v = E.itemValue(i);
+  const has = i.price != null || i.unitPrice != null;
+  const qty = Number(i.qty) > 1 ? ` × ${fmtNum(Number(i.qty))}` : '';
+  const unit = Number(i.qty) > 1 && has ? `<span class="muted small"> (${money(v / Number(i.qty))} cada)</span>` : '';
+  return `<li><span>${esc(i.name)}${qty}${unit}</span><span class="num muted">${has ? `${i.estimated ? '≈ ' : ''}${money(v)}` : ''}</span></li>`;
+}
+
 function purchaseRow(p) {
   const cat = E.PURCHASE_CATEGORIES[p.category] || 'Compra';
+  const total = E.purchaseTotal(p);
+  const noTotal = p.total == null && !(p.items || []).some((i) => i.price != null || i.unitPrice != null);
   return `<li class="purchase" data-pid="${esc(p.id)}">
     <div class="purchase-head">
       <span class="purchase-date">${esc(fmtDate(p.date))}</span>
-      <b>${esc(p.store)}</b>
+      <b>${esc(p.store || 'Compra')}</b>
       <span class="tag">${esc(cat)}</span>
-      <span class="num purchase-total">${p.total == null ? '<span class="muted small">total por registar</span>' : money(p.total)}</span>
+      <span class="num purchase-total">${noTotal ? '<span class="muted small">total por registar</span>' : money(total)}</span>
     </div>
-    <ul class="purchase-items">${(p.items || []).map((i) => `<li><span>${esc(i.name)}</span><span class="num muted">${i.price !== undefined ? money(i.price) : ''}</span></li>`).join('')}</ul>
+    ${(p.items || []).length ? `<ul class="purchase-items">${p.items.map(itemLine).join('')}</ul>` : ''}
+    ${(p.items || []).some((i) => i.estimated) ? '<p class="muted small">≈ preço estimado: só o total é exato.</p>' : ''}
     ${p.discount ? `<p class="muted small">Desconto de ${money(p.discount)}${p.note ? `. ${esc(p.note)}` : ''}</p>` : p.note ? `<p class="muted small">${esc(p.note)}</p>` : ''}
     <div class="purchase-foot">
       <span class="muted small">${p.status === 'a caminho' ? `A caminho${p.expected ? `, prevista para ${esc(fmtDate(p.expected))}` : ''}${p.carrier ? ` (${esc(p.carrier)})` : ''}` : 'Recebida'}</span>
       ${p.status === 'a caminho' ? '<button class="btn secondary small" data-act="received">Chegou</button>' : ''}
+      <button class="btn ghost small" data-act="edit-purchase">Editar</button>
       <button class="icon-btn small" data-act="del-purchase" aria-label="Apagar compra">${icons.trash}</button>
     </div>
   </li>`;
+}
+
+// Formulário de compra: só o total chega; os artigos são opcionais
+function artRow(i = {}) {
+  return `<div class="art-row">
+    <input class="input" data-a="name" placeholder="Artigo" value="${esc(i.name || '')}" aria-label="Artigo">
+    <input class="input num" data-a="qty" inputmode="decimal" placeholder="Qtd" value="${i.qty ?? ''}" aria-label="Quantidade">
+    <span class="with-unit"><input class="input num" data-a="price" inputmode="decimal" placeholder="Preço" value="${i.price != null ? fmtNum(i.price) : i.unitPrice != null ? fmtNum(i.unitPrice * (i.qty || 1)) : ''}" aria-label="Preço total da linha"><i>€</i></span>
+    <button type="button" class="icon-btn small" data-art-del aria-label="Tirar artigo">${icons.trash}</button>
+  </div>`;
+}
+
+function purchaseForm(p = {}) {
+  const stores = [...new Set(E.purchases().map((x) => x.store).filter(Boolean))];
+  const cats = Object.entries(E.PURCHASE_CATEGORIES);
+  return `
+    <div class="field-row">
+      <label class="field"><span>Data</span><input class="input" type="date" name="date" value="${esc(p.date || todayISO())}"></label>
+      <label class="field"><span>Loja</span><input class="input" name="store" list="stores-dl" value="${esc(p.store || '')}" placeholder="Ex.: Auchan"><datalist id="stores-dl">${stores.map((x) => `<option value="${esc(x)}">`).join('')}</datalist></label>
+    </div>
+    <div class="field-row">
+      <label class="field"><span>Total pago</span><span class="with-unit"><input class="input num" name="total" inputmode="decimal" value="${p.total != null ? fmtNum(p.total) : ''}" placeholder="0,00"><i>€</i></span></label>
+      <label class="field"><span>Categoria</span><select class="input" name="category">${cats.map(([k, v]) => `<option value="${k}" ${(p.category || 'comida') === k ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></label>
+    </div>
+    <details class="art-details" ${(p.items || []).length ? 'open' : ''}>
+      <summary>Artigos (opcional)</summary>
+      <p class="muted small">Se deixares o total vazio, a app soma os artigos.</p>
+      <div class="art-list">${(p.items || []).map(artRow).join('')}</div>
+      <button type="button" class="btn ghost small" data-art-add>${icons.plus} Artigo</button>
+    </details>
+    <label class="field"><span>Nota (opcional)</span><input class="input" name="note" value="${esc(p.note || '')}" maxlength="200"></label>
+    <label class="field-check"><input type="checkbox" name="onway" ${p.status === 'a caminho' ? 'checked' : ''}> Ainda a caminho (encomenda)</label>`;
+}
+
+async function editPurchase(p = null) {
+  const old = p || {};
+  await modal({
+    title: p ? 'Editar compra' : 'Registar compra',
+    body: purchaseForm(old),
+    autofocus: !p,
+    onMount: (wrap) => {
+      const listEl = wrap.querySelector('.art-list');
+      wrap.addEventListener('click', (e) => {
+        if (e.target.closest('[data-art-add]')) {
+          listEl.insertAdjacentHTML('beforeend', artRow());
+          listEl.lastElementChild.querySelector('[data-a="name"]').focus();
+        }
+        const del = e.target.closest('[data-art-del]');
+        if (del) del.closest('.art-row').remove();
+      });
+    },
+    actions: [
+      { label: 'Cancelar', value: null },
+      {
+        label: p ? 'Guardar' : 'Registar', kind: 'primary', value: true,
+        fn: (wrap) => {
+          const g = (n) => wrap.querySelector(`[name="${n}"]`);
+          const oldItems = old.items || [];
+          const items = [...wrap.querySelectorAll('.art-row')].map((r, idx) => {
+            const name = r.querySelector('[data-a="name"]').value.trim();
+            if (!name) return null;
+            const qty = parseNum(r.querySelector('[data-a="qty"]').value);
+            const price = parseNum(r.querySelector('[data-a="price"]').value);
+            const prev = oldItems[idx] && oldItems[idx].name === name ? oldItems[idx] : null;
+            const samePrice = prev && price != null && Math.abs(E.itemValue(prev) - price) < 0.005;
+            const it = { name };
+            if (qty && qty !== 1) it.qty = qty;
+            if (price != null) it.price = price;
+            if (samePrice && prev.estimated) it.estimated = true;
+            return it;
+          }).filter(Boolean);
+          let total = parseNum(g('total').value);
+          if (total == null && items.some((i) => i.price != null)) total = Math.round(items.reduce((a, i) => a + (i.price || 0), 0) * 100) / 100;
+          if (total == null && !items.length) { toast('Escreve o total ou pelo menos um artigo.'); return false; }
+          const id = old.id || `compra-${uid()}`;
+          const onway = g('onway').checked;
+          put('purchases', id, {
+            ...old, id, date: g('date').value || todayISO(), store: g('store').value.trim() || 'Compra', category: g('category').value,
+            total, items, note: g('note').value.trim(),
+            status: onway ? 'a caminho' : 'recebida', ...(onway ? {} : { receivedOn: old.receivedOn || todayISO() }),
+            source: old.source || 'app',
+          });
+          toast(p ? 'Compra atualizada' : 'Compra registada');
+          setTimeout(rerender, 0);
+        },
+      },
+    ],
+  });
+}
+
+function spendPanel(iso) {
+  const m = E.monthSpend(iso);
+  const hist = E.spendHistory(6, iso);
+  const cats = Object.entries(m.byCat).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  const max = Math.max(1, ...hist.map((h) => h.total));
+  const monthName = (ym) => new Date(Number(ym.slice(0, 4)), Number(ym.slice(5, 7)) - 1, 1).toLocaleDateString('pt-PT', { month: 'long' });
+  return `<div class="stats-row">
+      <div class="stat"><span class="num big2">${money(m.total)}</span><span class="muted">gastos este mês</span></div>
+      <div class="stat"><span class="num big2">${money(m.perWeek)}</span><span class="muted">por semana, em média</span></div>
+    </div>
+    ${cats.length ? `<p class="muted small">${cats.map(([k, v]) => `${esc(E.PURCHASE_CATEGORIES[k] || k)} ${money(v)}`).join(' · ')}</p>` : ''}
+    ${m.budget > 0 ? `<div class="meter thin"><span style="width:${Math.max(1, Math.min(100, (m.food / m.budget) * 100))}%"></span></div><p class="muted small">Comida e suplementos: ${money(m.food)} de ${money(m.budget)}.</p>` : ''}
+    ${hist.length > 1 ? `<details class="spend-hist"><summary>Por mês</summary><ul>${hist.map((h) => `<li><span>${esc(monthName(h.ym))}</span><span class="bar"><i style="width:${(h.total / max) * 100}%"></i></span><span class="num">${money(h.total)}</span></li>`).join('')}</ul></details>` : ''}`;
 }
 
 function itemForm(it = {}) {
@@ -85,8 +200,6 @@ export function renderStock(root) {
   const active = items.filter((i) => i.status !== 'acabou');
   const done = items.filter((i) => i.status === 'acabou');
   const buys = E.purchases();
-  const m = E.monthSpend(iso);
-  const pct = Math.min(100, (m.food / m.budget) * 100);
 
   root.innerHTML = `
     ${header('Compras e stock', { back: '#/mais' })}
@@ -101,13 +214,10 @@ export function renderStock(root) {
       </section>
       <section class="panel">
         <h2 class="panel-title">Compras</h2>
-        <div class="stats-row">
-          <div class="stat"><span class="num big2">${money(m.food)}</span><span class="muted">comida e suplementos este mês, de ${money(m.budget)}</span></div>
-          ${m.gear ? `<div class="stat"><span class="num big2">${money(m.gear)}</span><span class="muted">material este mês</span></div>` : ''}
-        </div>
-        <div class="meter thin"><span style="width:${Math.max(1, pct)}%"></span></div>
+        ${spendPanel(iso)}
+        <button class="btn primary" data-act="add-purchase">${icons.plus} Registar compra</button>
         ${buys.length ? `<ul class="purchase-list">${buys.map(purchaseRow).join('')}</ul>` : '<p class="muted">Sem compras registadas.</p>'}
-        <p class="muted small">O Claude pode registar aqui as tuas compras por ti: basta mandares-lhe a confirmação da encomenda.</p>
+        <p class="muted small">Podes registar só o total, ou artigo a artigo. Se mandares ao Claude uma foto da fatura ou a confirmação da encomenda, ele regista tudo por ti.</p>
       </section>
     </div>`;
 
@@ -169,6 +279,10 @@ export function renderStock(root) {
       for (const s of E.stockItems()) if (s.purchaseId === p.id && s.status === 'encomendado') put('stock', s.id, { ...s, status: 'fechado', receivedOn: iso });
       toast(`Encomenda da ${p.store} recebida`);
       rerender();
+    } else if (act === 'add-purchase') {
+      await editPurchase();
+    } else if (act === 'edit-purchase' && p) {
+      await editPurchase(p);
     } else if (act === 'del-purchase' && p) {
       if (await confirmDialog(`Apagar a compra da ${p.store} de ${fmtDate(p.date)}?`, { ok: 'Apagar', danger: true })) {
         remove('purchases', p.id);

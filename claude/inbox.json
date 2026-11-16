@@ -66,31 +66,48 @@
    "status": "recebida",
    "items": [
     {
-     "name": "Iogurte líquido YoPro 300 g × 4 (2 mirtilo, 1 morango e framboesa, 1 baunilha e cookies)",
+     "name": "Iogurte líquido YoPro 300 g (2 mirtilo, 1 morango e framboesa, 1 baunilha e cookies)",
+     "qty": 4,
      "price": 7.96
     },
     {
-     "name": "Leite Mimosa meio-gordo 6 × 1 L"
+     "name": "Leite Mimosa meio-gordo 6 × 1 L",
+     "price": 5.34,
+     "estimated": true
     },
     {
-     "name": "Atum posta em azeite Auchan 120 g × 3"
+     "name": "Atum posta em azeite Auchan 120 g",
+     "qty": 3,
+     "price": 2.97,
+     "estimated": true
     },
     {
-     "name": "Filetes de cavala em óleo de girassol Auchan 90 g × 3"
+     "name": "Filetes de cavala em óleo de girassol Auchan 90 g",
+     "qty": 3,
+     "price": 2.67,
+     "estimated": true
     },
     {
-     "name": "Peito de peru forno a lenha Izidoro 140 g"
+     "name": "Peito de peru forno a lenha Izidoro 110 g + 30 g grátis",
+     "price": 2.99,
+     "estimated": true
     },
     {
-     "name": "Queijo flamengo light fatiado Polegar 150 g"
+     "name": "Queijo flamengo light fatiado Polegar 150 g",
+     "price": 1.89,
+     "estimated": true
     },
     {
-     "name": "Amêndoas peladas Auchan 150 g × 2"
+     "name": "Amêndoas peladas Auchan 150 g",
+     "qty": 2,
+     "price": 4.34,
+     "estimated": true
     }
    ],
-   "total": null,
-   "note": "YoPro a 1,99 € cada (promoção). Falta o total do talão.",
-   "updatedAt": 1794840879818
+   "total": 28.16,
+   "note": "Sem fatura: o YoPro estava a 1,99 € na prateleira; os outros preços são estimados para dar o total.",
+   "source": "claude",
+   "updatedAt": 1794843667617
   }
  },
  "stock": {
@@ -185,6 +202,7 @@
    "5": "descanso",
    "6": "livre"
   },
-  "updatedAt": 1794830056379
+  "updatedAt": 1794843667617,
+  "budgetMonthly": 0
  }
 }
