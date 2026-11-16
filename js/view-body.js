@@ -3,6 +3,7 @@ import * as E from './engine.js';
 import { put, remove } from './store.js';
 import { icons, rerender, toast, header, confirmDialog } from './ui.js';
 import { lineChart, barChart } from './charts.js';
+import { proteinBlock, bindProtein } from './protein.js';
 import {
   esc, fmtNum, fmt1, fmtSigned, fmtDate, todayISO, addDays, weekStart, parseNum, isoToMs, uid, plural,
 } from './util.js';
@@ -72,15 +73,7 @@ export function renderBody(root) {
         <div class="daily">
           <div class="daily-row">
             <div class="daily-label">Proteína <span class="muted">aprox.</span></div>
-            <div class="daily-value">
-              <div class="protein-line"><span class="num big2">${fmtNum(h.protein || 0)}</span><span class="muted"> de ${E.proteinTarget()} g</span></div>
-              <div class="chips">
-                <button class="chip" data-prot="35">+ refeição (35 g)</button>
-                <button class="chip" data-prot="${E.S().wheyProtein || 21}">+ whey (${E.S().wheyProtein || 21} g)</button>
-                <button class="chip" data-prot="10">+ 10 g</button>
-                ${h.protein ? '<button class="chip ghost" data-prot="-10" aria-label="Tirar 10 gramas">−10</button>' : ''}
-              </div>
-            </div>
+            <div class="daily-value">${proteinBlock(h, E.proteinTarget())}</div>
           </div>
           <div class="daily-row">
             <div class="daily-label">Creatina</div>
@@ -144,6 +137,7 @@ export function renderBody(root) {
         </div>
     </section>`;
 
+  bindProtein(root, today);
   lineChart(root.querySelector('[data-chart="bw"]'), {
     label: 'Peso corporal e média de 7 dias',
     series: [
@@ -171,8 +165,9 @@ export function renderBody(root) {
   });
 
   root.addEventListener('submit', (e) => {
-    e.preventDefault();
     const f = e.target;
+    if (f.dataset.form === 'prot') return;
+    e.preventDefault();
     if (f.dataset.form === 'bw') {
       const kg = parseNum(f.kg.value);
       const date = f.date.value || today;
@@ -199,12 +194,10 @@ export function renderBody(root) {
   });
 
   root.addEventListener('click', async (e) => {
-    const prot = e.target.closest('[data-prot]');
     const habit = (patch) => {
       put('habits', today, { ...E.habitsFor(today), ...patch });
       rerender();
     };
-    if (prot) return habit({ protein: Math.max(0, (h.protein || 0) + Number(prot.dataset.prot)) });
     const sl = e.target.closest('[data-sleep]');
     if (sl) return habit({ sleep: h.sleep === Number(sl.dataset.sleep) ? null : Number(sl.dataset.sleep) });
     const act = e.target.closest('[data-act]');

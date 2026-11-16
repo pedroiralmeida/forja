@@ -637,3 +637,12 @@ select.cell-input.is-empty { color: var(--muted); font: 500 15px/1 var(--f-body)
 .stock-banner { border-left-color: var(--blue); }
 .stock-banner p + p { margin-top: 4px; }
 .purchase-items li span:last-child { white-space: nowrap; }
+
+/* Proteína */
+.prot-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; width: 100%; margin-top: 6px; }
+.prot-form .with-unit { width: 6.5rem; }
+.prot-form .input.num { width: 100%; }
+.prot-ref { width: 100%; margin-top: 6px; }
+.prot-ref summary { cursor: pointer; font-size: 14px; color: var(--link); font-weight: 600; padding: 4px 0; }
+.prot-ref .chips { margin-top: 6px; }
+.prot-ref .chip { font-size: 14px; font-weight: 500; }

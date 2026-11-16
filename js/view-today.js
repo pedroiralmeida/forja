@@ -4,6 +4,7 @@ import * as E from './engine.js';
 import { local, put, setSettings, persistLocal, remove } from './store.js';
 import { icons, navigate, rerender, toast, header, segmented, requestWakeLock } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
+import { proteinBlock, bindProtein } from './protein.js';
 import { esc, fmtNum, fmt1, fmtDateLong, todayISO, parseNum, weekStart, fmtDuration, plural } from './util.js';
 
 let chosenDay = null;
@@ -58,15 +59,7 @@ function habitsCard(today, trainingDay) {
       </div>
       <div class="daily-row">
         <div class="daily-label">Proteína <span class="muted">aprox.</span></div>
-        <div class="daily-value">
-          <div class="protein-line"><span class="num big2">${fmtNum(h.protein)}</span><span class="muted"> de ${target} g</span></div>
-          <div class="meter thin"><span style="width:${Math.max(1, pct)}%"></span></div>
-          <div class="chips">
-            <button class="chip" data-prot="35">+ refeição (35 g)</button>
-            <button class="chip" data-prot="${E.S().wheyProtein || 21}">+ whey (${E.S().wheyProtein || 21} g)</button>
-            ${h.protein ? '<button class="chip ghost" data-prot="-25" aria-label="Tirar 25 gramas">−25</button>' : ''}
-          </div>
-        </div>
+        <div class="daily-value">${proteinBlock(h, target)}</div>
       </div>
       <div class="daily-row">
         <div class="daily-label">Creatina</div>
@@ -200,6 +193,7 @@ export function renderToday(root) {
   html += `</div>`;
 
   root.innerHTML = html;
+  bindProtein(root, today);
 
   root.addEventListener('click', async (e) => {
     const placeBtn = e.target.closest('[data-place]');
@@ -212,13 +206,6 @@ export function renderToday(root) {
     const dayBtn = e.target.closest('[data-day]');
     if (dayBtn) {
       chosenDay = dayBtn.dataset.day;
-      rerender();
-      return;
-    }
-    const prot = e.target.closest('[data-prot]');
-    if (prot) {
-      const h = E.habitsFor(today);
-      put('habits', today, { ...h, protein: Math.max(0, (h.protein || 0) + Number(prot.dataset.prot)) });
       rerender();
       return;
     }
