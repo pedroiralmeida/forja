@@ -4,7 +4,7 @@
 // tier: main | secondary | accessory | skill  (define o descanso por defeito)
 export const EX = {
   bench: {
-    name: 'Supino', kind: 'barbell', tier: 'main', group: 'peito',
+    name: 'Bench press', kind: 'barbell', tier: 'main', group: 'peito',
     cues: [
       'Omoplatas juntas e para baixo antes de tirar a barra.',
       'Pés firmes no chão e empurra o chão com as pernas (leg drive).',
@@ -14,7 +14,7 @@ export const EX = {
     ],
   },
   bench_paused: {
-    name: 'Supino com pausa', kind: 'barbell', tier: 'main', group: 'peito',
+    name: 'Paused bench press', kind: 'barbell', tier: 'main', group: 'peito',
     note: 'pausa de 2 s com a barra parada no peito',
     cues: [
       'A barra fica completamente parada no peito durante 2 segundos.',
@@ -23,51 +23,51 @@ export const EX = {
     ],
   },
   bench_close: {
-    name: 'Supino pegada fechada', kind: 'barbell', tier: 'secondary', group: 'tríceps',
+    name: 'Close-grip bench press', kind: 'barbell', tier: 'secondary', group: 'tríceps',
     note: 'mãos à largura dos ombros',
     cues: ['Mãos à largura dos ombros, cotovelos mais junto ao corpo.', 'Reforça o tríceps para o bloqueio final do supino.'],
   },
   incline_db: {
-    name: 'Supino inclinado com halteres', kind: 'dumbbell', tier: 'accessory', group: 'peito',
+    name: 'Incline dumbbell press', kind: 'dumbbell', tier: 'accessory', group: 'peito',
     note: 'peso de cada halter',
     cues: ['Banco a 30°.', 'Desce até sentires alongamento no peito; sobe sem bater os halteres.'],
   },
   ohp_db: {
-    name: 'Press de ombros com halteres', kind: 'dumbbell', tier: 'accessory', group: 'ombros',
+    name: 'Dumbbell shoulder press', kind: 'dumbbell', tier: 'accessory', group: 'ombros',
     note: 'peso de cada halter',
     cues: ['Sentado ou de pé, abdominais contraídos.', 'Sobe até aos braços quase estendidos, sem arquear a lombar.'],
   },
   weighted_pullup: {
-    name: 'Elevações com peso', kind: 'weighted_bw', tier: 'secondary', group: 'costas',
+    name: 'Weighted pull-ups', kind: 'weighted_bw', tier: 'secondary', group: 'costas',
     note: 'regista só o peso extra: 0 sem peso; depois cinto de lastro ou mochila com peso',
     cues: ['Começa com os braços estendidos e omoplatas ativas.', 'Queixo acima da barra em todas as reps; nada de meias reps.'],
   },
   pullup_slow: {
-    name: 'Elevações com descida lenta', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
+    name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Sobe normal, queixo acima da barra.', 'Desce em 3 segundos, contados, até aos braços estendidos.', 'Quando fizeres 8 reps em todas as séries, passa para elevações arqueiro (troca o exercício).'],
+    cues: ['Sobe normal, queixo acima da barra.', 'Desce em 3 segundos, contados, até aos braços estendidos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).'],
   },
   archer_pull: {
-    name: 'Elevações arqueiro', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
+    name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
     note: 'reps por cada lado',
     cues: ['Pega larga. Puxa para um lado, com o outro braço quase esticado a ajudar.', 'Alterna os lados; regista as reps de cada lado.', 'Dá força de um braço sem precisares de pesos.'],
   },
   pullup: {
-    name: 'Elevações', kind: 'bodyweight', tier: 'secondary', group: 'costas',
+    name: 'Pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas',
     cues: ['Braços totalmente estendidos em baixo.', 'Queixo acima da barra.'],
   },
   c2b: {
-    name: 'Elevações chest-to-bar', kind: 'bodyweight', tier: 'skill', group: 'costas',
+    name: 'Chest-to-bar pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o peito toca na barra',
     cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.'],
   },
   explosive_pull: {
-    name: 'Elevações explosivas', kind: 'bodyweight', tier: 'skill', group: 'costas',
+    name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o mais alto possível, peito à barra',
     cues: ['Rep explosiva desde baixo: tenta que a barra chegue ao peito ou mais abaixo.', 'Poucas reps, todas rápidas. Descansa bem entre séries.'],
   },
   waist_pull: {
-    name: 'Elevações até à barriga', kind: 'bodyweight', tier: 'skill', group: 'costas',
+    name: 'High pull-ups (bar to waist)', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'a barra chega à zona do umbigo',
     cues: ['Pequeno balanço controlado (kip) é permitido.', 'Puxa a barra em direção às ancas, inclinando o tronco para trás.', 'É esta altura que cria espaço para passares por cima da barra.'],
   },
@@ -77,22 +77,22 @@ export const EX = {
     cues: ['Em cima da barra, desce até ela tocar perto do umbigo/peito.', 'Inclina o tronco à frente e empurra até aos braços estendidos.', 'É a parte de cima do muscle-up.'],
   },
   dips: {
-    name: 'Fundos nas paralelas', kind: 'weighted_bw', tier: 'secondary', group: 'tríceps',
+    name: 'Parallel bar dips', kind: 'weighted_bw', tier: 'secondary', group: 'tríceps',
     note: 'peso extra se houver',
     cues: ['Desce até os ombros ficarem ao nível dos cotovelos.', 'Sem dor no ombro: se doer, encurta a amplitude.'],
   },
   mu_negative: {
-    name: 'Negativas de muscle-up', kind: 'bodyweight', tier: 'skill', group: 'skill',
+    name: 'Muscle-up negatives', kind: 'bodyweight', tier: 'skill', group: 'skill',
     note: 'começa por cima da barra e desce em 3–5 s',
     cues: ['Sobe para cima da barra (salto ou caixa).', 'Desce devagar, passando pela transição até aos braços estendidos.', 'Sente onde os pulsos rodam por cima da barra.'],
   },
   mu_band: {
-    name: 'Muscle-up com banda', kind: 'band', tier: 'skill', group: 'skill',
+    name: 'Band-assisted muscle-ups', kind: 'band', tier: 'skill', group: 'skill',
     note: 'banda presa na barra, sob os joelhos ou pés',
     cues: ['Usa a banda mais leve que te deixe fazer reps limpas.', 'Puxa para trás e à volta da barra, não na vertical.', 'Passa os cotovelos por cima depressa.'],
   },
   mu_low_bar: {
-    name: 'Transição em barra baixa', kind: 'bodyweight', tier: 'skill', group: 'skill',
+    name: 'Low bar transitions', kind: 'bodyweight', tier: 'skill', group: 'skill',
     note: 'barra à altura do peito, pés no chão',
     cues: ['Usa as pernas para ajudar e foca-te só na rotação dos pulsos e cotovelos por cima da barra.'],
   },
@@ -104,7 +104,7 @@ export const EX = {
   muscle_up: {
     name: 'Muscle-up', kind: 'bodyweight', tier: 'skill', group: 'skill',
     cues: [
-      'Pegada um pouco mais fechada que nas elevações, pulso por cima da barra.',
+      'Pegada um pouco mais fechada que nos pull-ups, pulso por cima da barra.',
       'Balanço curto e controlado: corpo arqueado atrás, corpo "côncavo" à frente.',
       'Puxa a barra para as ancas e passa os cotovelos por cima depressa.',
       'Evita passar um braço de cada vez (chicken wing).',
@@ -112,31 +112,31 @@ export const EX = {
     ],
   },
   row: {
-    name: 'Remada sentada no cabo', kind: 'machine', tier: 'accessory', group: 'costas',
+    name: 'Seated cable row', kind: 'machine', tier: 'accessory', group: 'costas',
     alts: ['row_db', 'row_chest'],
     cues: ['Peito para fora, puxa os cotovelos para trás.', 'Pausa curta com as omoplatas juntas.'],
   },
-  row_db: { name: 'Remada com halter', kind: 'dumbbell', tier: 'accessory', group: 'costas', alts: ['row', 'row_chest'], cues: ['Apoio num banco, costas direitas.', 'Puxa o cotovelo em direção à anca.'] },
-  row_chest: { name: 'Remada com apoio no peito', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['row', 'row_db'], cues: ['Peito encostado ao apoio; não balances.'] },
-  pulldown: { name: 'Puxada na polia', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['pullup', 'row'], cues: ['Puxa a barra até ao peito, cotovelos para baixo.', 'Controla a subida.'] },
+  row_db: { name: 'One-arm dumbbell row', kind: 'dumbbell', tier: 'accessory', group: 'costas', alts: ['row', 'row_chest'], cues: ['Apoio num banco, costas direitas.', 'Puxa o cotovelo em direção à anca.'] },
+  row_chest: { name: 'Chest-supported row', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['row', 'row_db'], cues: ['Peito encostado ao apoio; não balances.'] },
+  pulldown: { name: 'Lat pulldown', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['pullup', 'row'], cues: ['Puxa a barra até ao peito, cotovelos para baixo.', 'Controla a subida.'] },
   face_pull: { name: 'Face pulls', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'corda na polia alta, puxar para a cara', alts: ['rear_delt'], cues: ['Corda à altura da cara; puxa separando as mãos.', 'Protege os ombros de tanto empurrar.'] },
   lateral_raise: {
-    name: 'Elevações laterais', kind: 'dumbbell', tier: 'accessory', group: 'ombros', note: 'peso de cada halter', alts: ['lateral_cable', 'lateral_machine'],
+    name: 'Dumbbell lateral raises', kind: 'dumbbell', tier: 'accessory', group: 'ombros', note: 'peso de cada halter', alts: ['lateral_cable', 'lateral_machine'],
     cues: ['É o exercício que mais alarga os ombros (trabalha a parte lateral do deltoide).', 'Peso leve, sem balançar: sobe até à altura dos ombros, cotovelos ligeiramente fletidos, e desce devagar.', 'Leva as séries quase até à falha (1 a 2 reps de reserva).'],
   },
   lateral_cable: {
-    name: 'Elevações laterais na polia', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'polia baixa, um braço de cada vez', alts: ['lateral_raise', 'lateral_machine'],
+    name: 'Cable lateral raises', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'polia baixa, um braço de cada vez', alts: ['lateral_raise', 'lateral_machine'],
     cues: ['Polia em baixo, cabo a passar à frente do corpo.', 'A polia mantém o músculo em tensão em todo o movimento.', 'Faz as séries de um braço e depois do outro.'],
   },
   lateral_machine: {
-    name: 'Elevações laterais na máquina', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'há esta máquina no Supera', alts: ['lateral_raise', 'lateral_cable'],
+    name: 'Machine lateral raises', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'há esta máquina no Supera', alts: ['lateral_raise', 'lateral_cable'],
     cues: ['Ajusta o banco para os ombros ficarem alinhados com o eixo da máquina.', 'Sobe até à altura dos ombros, sem encolher os ombros, e desce devagar.', 'É a versão principal no plano: estável e fácil de progredir. Para variar, troca para halteres (o treino C já usa halteres).'],
   },
-  rear_delt: { name: 'Aberturas inversas', kind: 'machine', tier: 'accessory', group: 'ombros', alts: ['face_pull'], cues: ['Máquina ou halteres; braços quase estendidos, abre para trás.'] },
-  triceps_pushdown: { name: 'Extensão de tríceps na polia', kind: 'machine', tier: 'accessory', group: 'tríceps', alts: ['triceps_overhead'], cues: ['Cotovelos colados ao corpo; estende até ao fim.'] },
-  triceps_overhead: { name: 'Extensão de tríceps acima da cabeça', kind: 'machine', tier: 'accessory', group: 'tríceps', alts: ['triceps_pushdown'], cues: ['Cabo ou halter; alongamento total atrás da cabeça.'] },
-  curl: { name: 'Curl de bíceps', kind: 'dumbbell', tier: 'accessory', group: 'bíceps', note: 'peso de cada halter', alts: ['hammer_curl'], cues: ['Sem balançar o tronco; desce até ao fim.'] },
-  hammer_curl: { name: 'Curl martelo', kind: 'dumbbell', tier: 'accessory', group: 'bíceps', note: 'peso de cada halter', alts: ['curl'], cues: ['Palmas viradas uma para a outra.'] },
+  rear_delt: { name: 'Rear delt flyes', kind: 'machine', tier: 'accessory', group: 'ombros', alts: ['face_pull'], cues: ['Máquina ou halteres; braços quase estendidos, abre para trás.'] },
+  triceps_pushdown: { name: 'Triceps pushdown', kind: 'machine', tier: 'accessory', group: 'tríceps', alts: ['triceps_overhead'], cues: ['Cotovelos colados ao corpo; estende até ao fim.'] },
+  triceps_overhead: { name: 'Overhead triceps extension', kind: 'machine', tier: 'accessory', group: 'tríceps', alts: ['triceps_pushdown'], cues: ['Cabo ou halter; alongamento total atrás da cabeça.'] },
+  curl: { name: 'Dumbbell curls', kind: 'dumbbell', tier: 'accessory', group: 'bíceps', note: 'peso de cada halter', alts: ['hammer_curl'], cues: ['Sem balançar o tronco; desce até ao fim.'] },
+  hammer_curl: { name: 'Hammer curls', kind: 'dumbbell', tier: 'accessory', group: 'bíceps', note: 'peso de cada halter', alts: ['curl'], cues: ['Palmas viradas uma para a outra.'] },
 };
 
 export const BAND_LEVELS = ['forte', 'média', 'leve'];
@@ -146,7 +146,7 @@ export const BAND_LEVELS = ['forte', 'média', 'leve'];
 export const DAYS = {
   A: {
     label: 'Supera A', title: 'Pesado', place: 'supera',
-    blurb: 'Série pesada de supino, costas nas máquinas e ombros.',
+    blurb: 'Série pesada de bench press, costas e ombros.',
     slots: [
       { id: 'A_bench', ex: 'bench', mode: 'top_backoff', topReps: 3, topRPE: 8, backSets: 3, backReps: 5, backRPE: 7 },
       { id: 'A_row', ex: 'row', mode: 'double', sets: 4, min: 6, max: 10 },
@@ -158,7 +158,7 @@ export const DAYS = {
   },
   B: {
     label: 'Supera B', title: 'Volume', place: 'supera',
-    blurb: 'Mais reps no supino para construir músculo.',
+    blurb: 'Mais reps no bench press para construir músculo.',
     slots: [
       { id: 'B_bench', ex: 'bench', mode: 'double', sets: 4, min: 6, max: 8, startPct: 0.76 },
       { id: 'B_dips', ex: 'dips', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
@@ -170,7 +170,7 @@ export const DAYS = {
   },
   C: {
     label: 'Supera C', title: 'Força e técnica', place: 'supera',
-    blurb: 'Treino extra: supino com pausa para ganhar força a sair do peito.',
+    blurb: 'Treino extra: paused bench press para ganhar força a sair do peito.',
     slots: [
       { id: 'C_pause', ex: 'bench_paused', mode: 'double', sets: 4, min: 3, max: 5, startPct: 0.73 },
       { id: 'C_incl', ex: 'incline_db', mode: 'double', sets: 3, min: 8, max: 12 },
@@ -183,7 +183,7 @@ export const DAYS = {
   },
   E1: {
     label: 'Estádio 1', title: 'Muscle-up e força', place: 'estadio',
-    blurb: 'Muscle-up primeiro, depois elevações com descida lenta e dips na barra. Sem pesos: vais a pé.',
+    blurb: 'Muscle-up primeiro, depois slow eccentric pull-ups e straight bar dips. Sem pesos: vais a pé.',
     slots: [
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
       { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 4, min: 5, max: 8 },
@@ -193,7 +193,7 @@ export const DAYS = {
   },
   E2: {
     label: 'Estádio 2', title: 'Muscle-up e volume', place: 'estadio',
-    blurb: 'Muscle-up primeiro, depois chest-to-bar e dips na barra.',
+    blurb: 'Muscle-up primeiro, depois chest-to-bar pull-ups e straight bar dips.',
     slots: [
       { id: 'E2_skill', mode: 'skill', focus: 'main' },
       { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
@@ -257,7 +257,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.8.2';
+export const APP_VERSION = '1.9.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -265,7 +265,7 @@ export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Se
 export const MU_STAGES = [
   {
     n: 1, name: 'Fundação',
-    goal: '5 chest-to-bar seguidas, 8 straight bar dips e 3 negativas controladas.',
+    goal: '5 chest-to-bar seguidos, 8 straight bar dips e 3 muscle-up negatives controladas.',
     main: [
       { ex: 'explosive_pull', sets: 5, min: 3, max: 3 },
       { ex: 'mu_negative', sets: 3, min: 2, max: 3 },
@@ -275,7 +275,7 @@ export const MU_STAGES = [
   },
   {
     n: 2, name: 'Explosão e transição',
-    goal: '3 elevações até à barriga e 3 muscle-ups com banda.',
+    goal: '3 high pull-ups até à barriga e 3 band-assisted muscle-ups.',
     main: [
       { ex: 'waist_pull', sets: 5, min: 2, max: 3 },
       { ex: 'mu_band', sets: 4, min: 2, max: 3 },
@@ -307,12 +307,12 @@ export const MU_STAGES = [
 
 // Marcos do muscle-up. Detetados automaticamente a partir dos registos.
 export const MILESTONES = [
-  { id: 'pull10', label: '10 elevações seguidas', ex: ['pullup', 'pullup_slow', 'weighted_pullup'], reps: 10, baseline: true },
-  { id: 'c2b5', label: '5 chest-to-bar seguidas', ex: ['c2b', 'explosive_pull'], reps: 5 },
+  { id: 'pull10', label: '10 pull-ups seguidos', ex: ['pullup', 'pullup_slow', 'weighted_pullup'], reps: 10, baseline: true },
+  { id: 'c2b5', label: '5 chest-to-bar seguidos', ex: ['c2b', 'explosive_pull'], reps: 5 },
   { id: 'sbd8', label: '8 straight bar dips', ex: ['sbd'], reps: 8 },
-  { id: 'neg3', label: '3 negativas controladas', ex: ['mu_negative'], reps: 3 },
-  { id: 'waist3', label: '3 elevações até à barriga', ex: ['waist_pull'], reps: 3 },
-  { id: 'band3', label: '3 muscle-ups com banda', ex: ['mu_band'], reps: 3 },
+  { id: 'neg3', label: '3 muscle-up negatives controladas', ex: ['mu_negative'], reps: 3 },
+  { id: 'waist3', label: '3 high pull-ups até à barriga', ex: ['waist_pull'], reps: 3 },
+  { id: 'band3', label: '3 band-assisted muscle-ups', ex: ['mu_band'], reps: 3 },
   { id: 'mu1', label: 'Primeiro muscle-up', ex: ['muscle_up'], reps: 1, goal: true },
   { id: 'mu3', label: '3 muscle-ups seguidos', ex: ['muscle_up'], reps: 3, bonus: true },
   { id: 'mu5', label: '5 muscle-ups seguidos', ex: ['muscle_up'], reps: 5, bonus: true },
@@ -374,18 +374,18 @@ export const GUIDE = [
     id: 'plano',
     title: 'Como funciona o plano',
     body: `
-<p>Há dois sítios. No <strong>Supera</strong> fazes o supino e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, elevações e dips na barra reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
+<p>Há dois sítios. No <strong>Supera</strong> fazes o bench press e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, pull-ups e straight bar dips reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
 <p><strong>A semana tem 4 treinos obrigatórios:</strong> Supera à segunda e à quarta, Estádio à terça e à quinta. Sexta e domingo são de descanso (à sexta há o grupo de jovens).</p>
 <p><strong>O sábado depende da semana.</strong> Se fizeste os 4 treinos, é opcional: treinas se te apetecer, ou descansas. Se faltaste a algum, é obrigatório e a app diz-te onde ir (o sítio que ficou a faltar). Ao sábado o Supera abre das 9h às 20h30.</p>
 <p><strong>Se faltares a um treino</strong>, não o perdes: a app segue sempre a ordem e retoma onde ficaste. Regista o motivo quando a app perguntar; fica no histórico. Se faltares a dois na mesma semana, o sábado repõe só um: nunca faças dois treinos no mesmo dia para compensar. Depois de uma pausa longa, a app baixa um pouco os pesos do supino.</p>
-<p><strong>Ordem dos treinos.</strong> No Supera alternas o A (pesado) e o B (volume). O C (supino com pausa) é o treino extra: aparece quando já fizeste o A e o B nessa semana, por exemplo num sábado opcional. No Estádio alternas o 1 e o 2.</p>
+<p><strong>Ordem dos treinos.</strong> No Supera alternas o A (pesado) e o B (volume). O C (paused bench press) é o treino extra: aparece quando já fizeste o A e o B nessa semana, por exemplo num sábado opcional. No Estádio alternas o 1 e o 2.</p>
 <p><strong>Sábado opcional: onde?</strong> Enquanto não tiveres o primeiro muscle-up, a app sugere o Estádio (aprender uma técnica pede repetição frequente). Depois, sugere o Supera.</p>
 <p><strong>Dias com pouco tempo:</strong> se só tiveres 20 minutos, vai ao Estádio fazer apenas o bloco de muscle-up. É melhor do que saltar o treino.</p>
-<p><strong>Supera A, pesado.</strong> Uma série principal de supino de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
+<p><strong>Supera A, pesado.</strong> Uma série principal de bench press de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
 <p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>
-<p><strong>Supera C, força e técnica (extra).</strong> Supino com 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
+<p><strong>Supera C, força e técnica (extra).</strong> Paused bench press: 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
 <p>Todos os treinos acabam com 1 minuto de dead hang (pendurado na barra), para alongar e melhorar a pegada.</p>
-<p><strong>Estádio 1 e 2.</strong> Só com o peso do corpo: como vais a pé, não levas pesos. A força vem de reps mais difíceis (descida lenta, depois elevações arqueiro) e não de peso extra. Começam sempre pelo muscle-up, enquanto estás fresco. Os exercícios mudam sozinhos à medida que cumpres os marcos. Se correres no mesmo dia, corre depois, nunca antes.</p>`,
+<p><strong>Estádio 1 e 2.</strong> Só com o peso do corpo: como vais a pé, não levas pesos. A força vem de reps mais difíceis (slow eccentric pull-ups, depois archer pull-ups) e não de peso extra. Começam sempre pelo muscle-up, enquanto estás fresco. Os exercícios mudam sozinhos à medida que cumpres os marcos. Se correres no mesmo dia, corre depois, nunca antes.</p>`,
   },
   {
     id: 'supino',
@@ -401,8 +401,8 @@ export const GUIDE = [
     title: 'Ombros largos',
     body: `
 <p>O que faz os ombros parecerem largos é sobretudo a parte <strong>lateral do deltoide</strong> (o músculo redondo do ombro), mais as costas largas e uma cintura que não cresce. A parte da frente do ombro já trabalha muito com o supino e os dips, por isso não precisas de mais press de ombros.</p>
-<p><strong>No plano:</strong> elevações laterais na máquina do Supera no A (3 séries) e no B (4 séries), e com halteres no C (3 séries) quando o fizeres. Para variar, troca entre máquina, halteres e polia em "trocar exercício". Os face pulls (A) e as aberturas inversas (C) trabalham a parte de trás do ombro. As elevações e a puxada no Estádio e no Supera alargam as costas.</p>
-<p><strong>Como fazer as laterais:</strong> peso leve, 12 a 20 reps, sem balançar, e quase até à falha. Sobe o peso só quando fizeres 20 reps em todas as séries. A máquina mantém o movimento estável e é mais fácil de progredir; os halteres e a polia servem para variar.</p>
+<p><strong>No plano:</strong> machine lateral raises no Supera no A (3 séries) e no B (4 séries), e dumbbell lateral raises no C (3 séries) quando o fizeres. Para variar, troca entre máquina, halteres e polia em "trocar exercício". Os face pulls (A) e os rear delt flyes (C) trabalham a parte de trás do ombro. Os pull-ups no Estádio e o lat pulldown no Supera alargam as costas.</p>
+<p><strong>Como fazer as lateral raises:</strong> peso leve, 12 a 20 reps, sem balançar, e quase até à falha. Sobe o peso só quando fizeres 20 reps em todas as séries. A máquina mantém o movimento estável e é mais fácil de progredir; os halteres e a polia servem para variar.</p>
 <p><strong>Medir:</strong> uma vez por mês, mede o perímetro dos ombros com a fita: de pé, braços relaxados ao lado do corpo, a fita à volta da parte mais larga dos ombros, sem encher o peito. A app mostra a evolução e a relação entre ombros e cintura (quanto maior, mais em V).</p>
 <p><strong>Expectativas:</strong> a largura dos ossos (clavículas) não muda. O músculo cresce devagar: meio centímetro a um centímetro de perímetro por mês já é bom progresso.</p>`,
   },
@@ -410,8 +410,8 @@ export const GUIDE = [
     id: 'muscleup',
     title: 'Muscle-up na barra',
     body: `
-<p>Com 10 elevações já tens força suficiente. O que falta é altura (puxar a barra até à barriga) e a transição (rodar os pulsos e passar os cotovelos por cima da barra).</p>
-<p><strong>Pegada:</strong> um pouco mais fechada que nas elevações, com o pulso por cima da barra. Tirar o polegar de volta da barra ajuda alguns.</p>
+<p>Com 10 pull-ups já tens força suficiente. O que falta é altura (puxar a barra até à barriga) e a transição (rodar os pulsos e passar os cotovelos por cima da barra).</p>
+<p><strong>Pegada:</strong> um pouco mais fechada que nos pull-ups, com o pulso por cima da barra. Tirar o polegar de volta da barra ajuda alguns.</p>
 <p><strong>Balanço:</strong> um balanço curto e controlado (kip) é legítimo para aprender. Corpo arqueado atrás, corpo "côncavo" à frente e puxa nesse momento.</p>
 <p><strong>Direção:</strong> puxa a barra para as ancas, para trás e à volta, não em linha reta para cima. Quando a barra passar o peito, inclina o tronco à frente e passa os cotovelos por cima depressa.</p>
 <p>Evita passar um braço de cada vez (chicken wing): carrega o ombro e o cotovelo de forma desigual. Se o cotovelo ou o ombro doerem, para e reduz o volume.</p>`,
@@ -463,7 +463,7 @@ export const GUIDE = [
 <dt>Chest-to-bar</dt><dd>Elevação em que o peito toca na barra.</dd>
 <dt>Straight bar dips</dt><dd>Fundos feitos em cima de uma barra reta; é a parte de cima do muscle-up.</dd>
 <dt>Negativa</dt><dd>Fazer só a descida de um exercício, devagar.</dd>
-<dt>Kip</dt><dd>Balanço do corpo para ganhar impulso nas elevações e no muscle-up.</dd>
+<dt>Kip</dt><dd>Balanço do corpo para ganhar impulso nos pull-ups e no muscle-up.</dd>
 <dt>Face pull</dt><dd>Puxar uma corda na polia em direção à cara; trabalha a parte de trás do ombro.</dd>
 <dt>Leg drive</dt><dd>Empurrar o chão com os pés durante o supino.</dd>
 <dt>Excedente calórico</dt><dd>Comer mais energia do que gastas, o que é necessário para ganhar peso.</dd>

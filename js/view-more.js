@@ -149,7 +149,7 @@ export function renderSettings(root) {
               <select name="plan_${d}" class="input">${PLAN_TYPES.map((t) => `<option value="${t.value}" ${(S.weekPlan || {})[d] === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}</select>
             </label>`).join('')}
           </div>
-          <p class="muted small">Supera: supino e máquinas (rotação A, B, C). Estádio: muscle-up, elevações e dips na barra (rotação E1, E2).</p>
+          <p class="muted small">Supera: bench press e máquinas (rotação A, B, C). Estádio: muscle-up, pull-ups e straight bar dips (rotação E1, E2).</p>
         </div>
         <label class="field"><span>Fase do muscle-up</span>
           <select name="muStage" class="input">
@@ -161,13 +161,13 @@ export function renderSettings(root) {
       </section>
       <section class="panel">
         <h2 class="panel-title">Ponto de partida</h2>
-        <p class="muted small">Usado até haver treinos registados no supino.</p>
+        <p class="muted small">Usado até haver treinos registados no bench press.</p>
         <div class="field-row">
-          <label class="field"><span>Supino</span><span class="with-unit"><input name="bw_w" inputmode="decimal" class="input num" value="${fmtNum(b.bench.w)}"><i>kg</i></span></label>
+          <label class="field"><span>Bench press</span><span class="with-unit"><input name="bw_w" inputmode="decimal" class="input num" value="${fmtNum(b.bench.w)}"><i>kg</i></span></label>
           <label class="field"><span>Reps</span><input name="bw_reps" inputmode="numeric" class="input num" value="${b.bench.reps}"></label>
           <label class="field"><span>RPE</span><select name="bw_rpe" class="input">${[10, 9.5, 9, 8.5, 8, 7].map((r) => `<option value="${r}" ${r === b.bench.rpe ? 'selected' : ''}>${fmtNum(r)}</option>`).join('')}</select></label>
         </div>
-        <label class="field"><span>Elevações seguidas</span><input name="pullups" inputmode="numeric" class="input num" value="${b.pullups}"></label>
+        <label class="field"><span>Pull-ups seguidos</span><input name="pullups" inputmode="numeric" class="input num" value="${b.pullups}"></label>
       </section>
       <section class="panel">
         <h2 class="panel-title">Material</h2>
@@ -181,7 +181,7 @@ export function renderSettings(root) {
       <section class="panel">
         <h2 class="panel-title">Descansos</h2>
         <div class="field-row">
-          ${[['main', 'Supino'], ['secondary', 'Elevações e dips'], ['accessory', 'Acessórios'], ['skill', 'Muscle-up']].map(([k, l]) => `
+          ${[['main', 'Bench press'], ['secondary', 'Pull-ups e dips'], ['accessory', 'Acessórios'], ['skill', 'Muscle-up']].map(([k, l]) => `
             <label class="field"><span>${l}</span><select name="rest_${k}" class="input">${[60, 90, 120, 150, 180, 210, 240, 300].map((t) => `<option value="${t}" ${S.rest[k] === t ? 'selected' : ''}>${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}</option>`).join('')}</select></label>`).join('')}
         </div>
         <label class="check line"><input type="checkbox" name="sound" ${S.sound ? 'checked' : ''}><span>Som no fim do descanso</span></label>

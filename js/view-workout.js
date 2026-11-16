@@ -349,7 +349,7 @@ function feedbackForm(session) {
     <div class="field"><span>Energia hoje</span>${chips('energy', [{ value: 1, label: 'Muito baixa' }, { value: 2, label: 'Baixa' }, { value: 3, label: 'Normal' }, { value: 4, label: 'Boa' }, { value: 5, label: 'Ótima' }])}</div>
     <div class="field"><span>Dor ou desconforto</span>${chips('pain', [{ value: 'nenhuma', label: 'Nenhuma' }, ...PAIN_SPOTS], true)}</div>
     ${place === 'estadio' ? `<div class="field"><span>Condições no parque</span>${chips('cond', CONDITIONS, true)}</div>` : ''}
-    <label class="field"><span>Notas</span><textarea class="input" data-notes rows="2" maxlength="500" placeholder="Ex.: pulso esquerdo a incomodar no supino">${esc(session.notes || '')}</textarea></label>
+    <label class="field"><span>Notas</span><textarea class="input" data-notes rows="2" maxlength="500" placeholder="Ex.: pulso esquerdo a incomodar no bench press">${esc(session.notes || '')}</textarea></label>
   </div>`;
 }
 
@@ -468,7 +468,7 @@ export function renderSession(root, { id, fresh }) {
     <section class="panel summary">
       <div class="stat"><span class="num big2">${fmtDuration(s.duration || (s.finishedAt - s.startedAt))}</span><span class="muted">duração</span></div>
       <div class="stat"><span class="num big2">${nSets}</span><span class="muted">séries</span></div>
-      ${benchBest && benchBest.e1rm ? `<div class="stat"><span class="num big2">${fmt1(benchBest.e1rm)} kg</span><span class="muted">1RM estimado no supino</span></div>` : ''}
+      ${benchBest && benchBest.e1rm ? `<div class="stat"><span class="num big2">${fmt1(benchBest.e1rm)} kg</span><span class="muted">1RM estimado no bench press</span></div>` : ''}
     </section>
     ${prs.length ? `<section class="panel prs"><h2 class="panel-title">Recordes</h2><ul>${prs.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></section>` : fresh ? '<p class="muted">Sem recordes hoje; o que conta é a consistência.</p>' : ''}
     ${s.deload ? '<p class="muted">Semana de deload.</p>' : ''}

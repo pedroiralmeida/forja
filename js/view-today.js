@@ -199,7 +199,7 @@ export function renderToday(root) {
   }
 
   if (firstEver && place === 'supera') {
-    html += `<section class="banner"><div><strong>Primeiro treino no Supera</strong><p>Vê se há discos de 1,25 kg (se não houver, tira-os em Mais → Definições), cinto de lastro e barras de segurança para o supino.</p></div></section>`;
+    html += `<section class="banner"><div><strong>Primeiro treino no Supera</strong><p>Vê se há discos de 1,25 kg (se não houver, tira-os em Mais → Definições), cinto de lastro e barras de segurança para o bench press.</p></div></section>`;
   }
 
   if (deloadOn) {
@@ -358,10 +358,10 @@ export function renderOnboarding(root) {
   <div class="onboard">
     <div class="onboard-mark">${barbellSVG(platesFor(80, 20, [25, 20, 15, 10, 5, 2.5, 1.25]))}</div>
     <h1 class="onboard-title">Forja</h1>
-    <p class="onboard-lead">O teu plano para o muscle-up e para os 100 kg no supino. Confirma o ponto de partida; os pesos de cada treino são calculados a partir daqui.</p>
+    <p class="onboard-lead">O teu plano para o muscle-up e para os 100 kg no bench press. Confirma o ponto de partida; os pesos de cada treino são calculados a partir daqui.</p>
     <form class="form" data-form="onboard">
       <fieldset>
-        <legend>Supino: a tua melhor série recente</legend>
+        <legend>Bench press: a tua melhor série recente</legend>
         <div class="field-row">
           <label class="field"><span>Peso</span><span class="with-unit"><input name="w" inputmode="decimal" value="${fmtNum(b.bench.w)}" class="input num"><i>kg</i></span></label>
           <label class="field"><span>Reps</span><input name="reps" inputmode="numeric" value="${b.bench.reps}" class="input num"></label>
@@ -371,7 +371,7 @@ export function renderOnboarding(root) {
         </div>
       </fieldset>
       <div class="field-row">
-        <label class="field"><span>Elevações seguidas</span><input name="pullups" inputmode="numeric" value="${b.pullups}" class="input num"></label>
+        <label class="field"><span>Pull-ups seguidos</span><input name="pullups" inputmode="numeric" value="${b.pullups}" class="input num"></label>
         <label class="field"><span>Peso corporal</span><span class="with-unit"><input name="bw" inputmode="decimal" value="${fmtNum(b.bw)}" class="input num"><i>kg</i></span></label>
       </div>
       <div class="field"><span>O ginásio tem discos de 1,25 kg?</span>${segmented('small', [{ value: 'yes', label: 'Sim' }, { value: 'no', label: 'Não, o mais pequeno é 2,5 kg' }], S.plates.includes(1.25) ? 'yes' : 'no')}</div>
@@ -388,7 +388,7 @@ export function renderOnboarding(root) {
     const reps = parseNum(f.reps.value);
     const bw = parseNum(f.bw.value);
     const pullups = parseNum(f.pullups.value) || 0;
-    if (!w || !reps || reps > 20) return toast('Confirma o peso e as reps do supino.');
+    if (!w || !reps || reps > 20) return toast('Confirma o peso e as reps do bench press.');
     if (!bw || bw < 30) return toast('Confirma o teu peso corporal.');
     const today = todayISO();
     const plates = f.small.value === 'yes' ? [25, 20, 15, 10, 5, 2.5, 1.25] : [25, 20, 15, 10, 5, 2.5];

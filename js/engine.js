@@ -503,7 +503,7 @@ export function deloadSuggestion() {
     const last3 = Math.max(...wk.slice(-3).map((x) => x[1]));
     const prev3 = Math.max(...wk.slice(-6, -3).map((x) => x[1]));
     if (last3 <= prev3 + 0.5) {
-      return { reason: 'O teu 1RM estimado no supino não sobe há 3 semanas. Uma semana de deload costuma desbloquear.' };
+      return { reason: 'O teu 1RM estimado no bench press não sobe há 3 semanas. Uma semana de deload costuma desbloquear.' };
     }
   }
   return null;
@@ -802,14 +802,14 @@ export function goals() {
   const coreDone = core.filter((x) => m[x.id].achieved).length;
   return [
     {
-      id: 'b80x6', title: 'Supino 80 kg × 6', color: 'blue', done: best80 >= 6,
+      id: 'b80x6', title: 'Bench press 80 kg × 6', color: 'blue', done: best80 >= 6,
       progress: best80 >= 6 ? 1 : prog(TARGET_80x6),
       big: best80 ? `80 × ${best80}` : '—',
       detail: best80 >= 6 ? 'Objetivo cumprido.' : `Melhor série com 80 kg ou mais: ${best80 ? best80 + ' reps' : 'ainda nenhuma'}. Precisas de um 1RM estimado de cerca de ${fmt1(TARGET_80x6)} kg.`,
       target: TARGET_80x6,
     },
     {
-      id: 'b100', title: 'Supino 100 kg × 1', color: 'red', done: best100,
+      id: 'b100', title: 'Bench press 100 kg × 1', color: 'red', done: best100,
       progress: best100 ? 1 : prog(100),
       big: `${fmt1(E)} kg`,
       detail: best100 ? 'Objetivo cumprido.' : `1RM estimado atual. Série mais pesada até agora: ${fmtNum(heaviest)} kg.`,

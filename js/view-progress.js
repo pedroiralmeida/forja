@@ -106,7 +106,7 @@ function shouldersPanel() {
   const avg = done.length ? done.reduce((a, w) => a + w.sets, 0) / done.length : 0;
   const lats = E.SIDE_DELT_EX.map((ex) => E.exerciseHistory(ex).map((h) => ({ ...h, ex }))).flat().sort((a, b) => a.date.localeCompare(b.date));
   const lastLat = lats.length ? lats[lats.length - 1] : null;
-  const latName = { lateral_raise: 'halteres, peso de cada halter', lateral_machine: 'máquina', lateral_cable: 'polia' };
+  const latName = { lateral_raise: 'dumbbells, peso de cada halter', lateral_machine: 'machine', lateral_cable: 'cable' };
   const bits = [];
   if (ss) {
     bits.push(`<div class="stat"><span class="num big2">${fmt1(ss.last.cm)} cm</span><span class="muted">perímetro${ss.change !== null ? `, ${ss.change >= 0 ? '+' : ''}${fmt1(ss.change)} cm desde ${esc(fmtDate(ss.first.date))}` : ''}</span></div>`);
@@ -116,7 +116,7 @@ function shouldersPanel() {
   return `<section class="panel">
     <h2 class="panel-title">Ombros largos</h2>
     <div class="stats-row">${bits.join('')}</div>
-    ${lastLat && lastLat.maxW ? `<p class="muted small">Elevações laterais no último treino (${esc(fmtDate(lastLat.date))}): ${fmtNum(lastLat.maxW)} kg (${latName[lastLat.ex]}).</p>` : ''}
+    ${lastLat && lastLat.maxW ? `<p class="muted small">Lateral raises no último treino (${esc(fmtDate(lastLat.date))}): ${fmtNum(lastLat.maxW)} kg (${latName[lastLat.ex]}).</p>` : ''}
     <p class="muted small">${ss ? 'Mede os ombros uma vez por mês, em Corpo.' : 'Mede o perímetro dos ombros em Corpo quando tiveres a fita: é o ponto de partida.'} Com o A e o B fazes 7 séries de ombro lateral por semana, 10 se fizeres o C.</p>
   </section>`;
 }
@@ -143,7 +143,7 @@ export function renderProgress(root) {
     </section>
     <div class="two-col">
       <section class="panel">
-        <h2 class="panel-title">1RM estimado no supino</h2>
+        <h2 class="panel-title">1RM estimado no bench press</h2>
         <p class="muted small">Melhor série de cada treino. Atual: <b class="num">${fmt1(cur)} kg</b>; máximo: <b class="num">${fmt1(best)} kg</b>.</p>
         <div class="chart-box" data-chart="bench"></div>
       </section>
@@ -154,7 +154,7 @@ export function renderProgress(root) {
     </div>
     <div class="two-col">
       <section class="panel">
-        <h2 class="panel-title">Recordes no supino</h2>
+        <h2 class="panel-title">Recordes no bench press</h2>
         ${benchRecords()}
       </section>
       <section class="panel">
@@ -163,7 +163,7 @@ export function renderProgress(root) {
       </section>
     </div>
     ${shouldersPanel()}
-    ${wp.length ? `<section class="panel"><h2 class="panel-title">Elevações com peso</h2><p class="muted small">Peso extra máximo estimado para 1 rep.</p><div class="chart-box" data-chart="wp"></div></section>` : ''}
+    ${wp.length ? `<section class="panel"><h2 class="panel-title">Weighted pull-ups</h2><p class="muted small">Peso extra máximo estimado para 1 rep.</p><div class="chart-box" data-chart="wp"></div></section>` : ''}
     <section class="panel">
       <h2 class="panel-title">Exercícios</h2>
       ${trained.length
@@ -173,7 +173,7 @@ export function renderProgress(root) {
 
   const hist = E.benchHistory();
   lineChart(root.querySelector('[data-chart="bench"]'), {
-    label: '1RM estimado no supino ao longo do tempo',
+    label: '1RM estimado no bench press ao longo do tempo',
     series: [{
       name: '1RM estimado', color: 'var(--blue)',
       points: hist.map((p) => ({ x: isoToMs(p.date), y: p.e1rm, tip: `${fmt1(p.e1rm)} kg (${fmtNum(p.bestSet.w)} × ${p.bestSet.reps}${p.bestSet.rpe ? ' @' + fmtNum(p.bestSet.rpe) : ''})` })),
@@ -186,7 +186,7 @@ export function renderProgress(root) {
   });
   if (wp.length) {
     lineChart(root.querySelector('[data-chart="wp"]'), {
-      label: 'Elevações com peso: peso extra estimado para 1 rep',
+      label: 'Weighted pull-ups: peso extra estimado para 1 rep',
       series: [{ name: 'Peso extra (1RM)', color: 'var(--green)', points: wp.map((h) => ({ x: isoToMs(h.date), y: h.e1rm - E.bodyweightAt(h.date), tip: `+${fmt1(h.e1rm - E.bodyweightAt(h.date))} kg` })), dots: true }],
       yFmt: (v) => `+${fmtNum(v)}`,
     });
