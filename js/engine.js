@@ -366,6 +366,7 @@ export function sessionContext({ day, place, suggestedDay, suggestedPlace } = {}
     extra: plan === 'descanso' || plan === 'corrida' || (plan === 'livre' && w.done >= w.target),
     daysSinceLast: daysSinceLastSession(iso),
     sleepOk: sleepOk(get('habits', iso)),
+    sleepBand: sleepBand(get('habits', iso)),
     sleepHours: (get('habits', iso) || {}).sleep ?? null,
     bodyweight: bws.length ? bws[bws.length - 1].kg : null,
     benchE1rm: Math.round(currentBenchE1RM() * 10) / 10,
@@ -1047,23 +1048,41 @@ export function habitsFor(iso) {
   return get('habits', iso) || { date: iso, protein: 0, creatine: false, sleep: null, shake: false };
 }
 
-// Sono: "bom" = 7 h ou mais. Vem do botão simples (sleepOk) ou das horas, se as registaste.
-export function sleepOk(h) {
+// Sono em 3 níveis: menos de 7 h, entre 7 e 8 h, 8 h ou mais. Vem do botão do Hoje (sleepBand)
+// ou das horas registadas em Corpo.
+export const SLEEP_BANDS = [
+  { value: 'lt7', label: 'Menos de 7 h', short: '−7h' },
+  { value: '7to8', label: 'Entre 7 e 8 h', short: '7–8h' },
+  { value: 'ge8', label: '8 h ou mais', short: '8h+' },
+];
+
+export function bandForHours(x) {
+  return x < 7 ? 'lt7' : x < 8 ? '7to8' : 'ge8';
+}
+
+export function sleepBand(h) {
   if (!h) return null;
-  if (h.sleepOk === true || h.sleepOk === false) return h.sleepOk;
-  return h.sleep !== null && h.sleep !== undefined ? h.sleep >= 7 : null;
+  if (h.sleepBand) return h.sleepBand;
+  if (h.sleep !== null && h.sleep !== undefined) return bandForHours(h.sleep);
+  if (h.sleepOk === false) return 'lt7';
+  if (h.sleepOk === true) return '7to8';
+  return null;
+}
+
+// "Bom" = 7 h ou mais
+export function sleepOk(h) {
+  const b = sleepBand(h);
+  return b === null ? null : b !== 'lt7';
 }
 
 export function sleepWeek(iso = todayISO()) {
   const ws = weekStart(iso);
-  let good = 0;
-  let bad = 0;
+  const out = { lt7: 0, '7to8': 0, ge8: 0, logged: 0 };
   for (let d = ws; d <= iso; d = addDays(d, 1)) {
-    const v = sleepOk(get('habits', d));
-    if (v === true) good++;
-    else if (v === false) bad++;
+    const v = sleepBand(get('habits', d));
+    if (v) { out[v]++; out.logged++; }
   }
-  return { good, bad, logged: good + bad };
+  return out;
 }
 
 export function creatineStreak() {

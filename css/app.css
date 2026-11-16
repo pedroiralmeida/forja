@@ -806,7 +806,8 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
   .update-bar { bottom: 80px; }
 }
 
-/* Sono: menos de 7 h (mau) ou 7 h ou mais (bom) */
-.sleep-pick .toggle.sleep-good.on { background: var(--green); border-color: var(--green); color: #fff; }
-.sleep-pick .toggle.sleep-bad.on { background: var(--red, #D64545); border-color: var(--red, #D64545); color: #fff; }
+/* Sono: menos de 7 h, entre 7 e 8 h, 8 h ou mais */
+.sleep-pick .toggle.sleep-ge8.on { background: var(--green); border-color: var(--green); color: #fff; }
+.sleep-pick .toggle.sleep-7to8.on { background: var(--yellow); border-color: var(--yellow); color: var(--on-yellow); }
+.sleep-pick .toggle.sleep-lt7.on { background: var(--red); border-color: var(--red); color: #fff; }
 .hw-sleep.bad { color: var(--red, #D64545); }

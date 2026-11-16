@@ -111,12 +111,11 @@ function habitsCard(today, trainingDay) {
         </div>
       </div>
       ${(() => {
-        const ok = E.sleepOk(h);
+        const band = E.sleepBand(h);
         return `<div class="daily-row">
         <div class="daily-label">Sono <span class="muted">esta noite</span></div>
         <div class="daily-value sleep-pick">
-          <button class="toggle sleep-bad ${ok === false ? 'on' : ''}" data-act="sleep-ok" data-v="0" aria-pressed="${ok === false}">Menos de 7 h</button>
-          <button class="toggle sleep-good ${ok === true ? 'on' : ''}" data-act="sleep-ok" data-v="1" aria-pressed="${ok === true}">7 h ou mais</button>
+          ${E.SLEEP_BANDS.map((x) => `<button class="toggle sleep-${x.value} ${band === x.value ? 'on' : ''}" data-act="sleep-band" data-v="${x.value}" aria-pressed="${band === x.value}">${x.label}</button>`).join('')}
           ${h.sleep ? `<span class="muted small">${fmtNum(h.sleep)} h registadas em Corpo</span>` : ''}
         </div>
       </div>`;
@@ -369,7 +368,9 @@ export function renderToday(root) {
     ${goalMeters(E.goals(), true)}
     ${(() => {
       const sw = E.sleepWeek(today);
-      return sw.logged ? `<p class="muted small">Sono: ${sw.good} de ${sw.logged} ${sw.logged === 1 ? 'noite' : 'noites'} com 7 h ou mais esta semana.</p>` : '';
+      if (!sw.logged) return '';
+      const parts = [[sw.ge8, '8 h ou mais'], [sw['7to8'], 'entre 7 e 8 h'], [sw.lt7, 'menos de 7 h']].filter(([n]) => n).map(([n, l]) => `${n} ${n === 1 ? 'noite' : 'noites'} com ${l}`);
+      return `<p class="muted small">Sono esta semana: ${parts.join(', ')}.</p>`;
     })()}
     <a class="link" href="#/progresso">Ver progresso</a>
   </section>`;
@@ -434,12 +435,12 @@ export function renderToday(root) {
       const d = act.dataset.date;
       put('days', d, { date: d, plan: E.planFor(d), reason: 'sem-motivo', note: '', missed: true, skip: false, decidedAt: now() });
       rerender();
-    } else if (a === 'sleep-ok') {
+    } else if (a === 'sleep-band') {
       const h = E.habitsFor(today);
-      const v = act.dataset.v === '1';
-      const cur = E.sleepOk(h);
-      const patch = cur === v ? { sleepOk: null, sleep: null } : { sleepOk: v, sleep: h.sleep !== null && h.sleep !== undefined && (h.sleep >= 7) !== v ? null : h.sleep ?? null };
-      put('habits', today, { ...h, ...patch, sleepAt: patch.sleepOk === null ? null : now() });
+      const v = act.dataset.v;
+      const off = E.sleepBand(h) === v;
+      const keepHours = !off && h.sleep !== null && h.sleep !== undefined && E.bandForHours(h.sleep) === v;
+      put('habits', today, { ...h, sleepBand: off ? null : v, sleepOk: off ? null : v !== 'lt7', sleep: keepHours ? h.sleep : null, sleepAt: off ? null : now() });
       rerender();
     } else if (a === 'creatine') {
       const h = E.habitsFor(today);
