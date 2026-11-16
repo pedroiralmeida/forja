@@ -257,7 +257,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.9.0';
+export const APP_VERSION = '1.9.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -384,6 +384,7 @@ export const GUIDE = [
 <p><strong>Supera A, pesado.</strong> Uma série principal de bench press de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
 <p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>
 <p><strong>Supera C, força e técnica (extra).</strong> Paused bench press: 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
+<p><strong>Progressão (progressive overload).</strong> Sim, em todos os exercícios. No bench press os pesos vêm da série principal e do RPE (o esforço que marcas). Nos outros exercícios com peso a app usa a progressão dupla: cada exercício tem uma gama de reps, por exemplo 4 séries de 6 a 10. Na primeira vez escolhes um peso com que faças entre 6 e 10 e ainda te sobrem 2. Nos treinos seguintes, com o mesmo peso, tentas mais 1 rep por série (a app já preenche o alvo). Quando fizeres 10 em todas as séries, a app sobe o peso e recomeças perto das 6. Nos exercícios sem peso (Estádio) progrides em reps e, depois, em variantes mais difíceis.</p>
 <p>Todos os treinos acabam com 1 minuto de dead hang (pendurado na barra), para alongar e melhorar a pegada.</p>
 <p><strong>Estádio 1 e 2.</strong> Só com o peso do corpo: como vais a pé, não levas pesos. A força vem de reps mais difíceis (slow eccentric pull-ups, depois archer pull-ups) e não de peso extra. Começam sempre pelo muscle-up, enquanto estás fresco. Os exercícios mudam sozinhos à medida que cumpres os marcos. Se correres no mesmo dia, corre depois, nunca antes.</p>`,
   },

@@ -591,9 +591,10 @@ function buildDouble(slot, exId, deload) {
       const any = lastForExercise(exId);
       if (any) w = modeWeight(workSets(any.entry));
     }
+    if (w === null) reps = Array(slot.sets).fill(null);
     note = w === null
-      ? `Primeira vez: escolhe um peso com que faças ${slot.min} a ${slot.max} reps deixando 2 na reserva.`
-      : `Primeira vez: ${slot.min} a ${slot.max} reps por série, deixando 2 reps na reserva.`;
+      ? `Primeira vez: escolhe um peso com que consigas entre ${slot.min} e ${slot.max} reps e ainda te sobrem 2. Escreve o peso e as reps que fizeste. Nos próximos treinos a app pede +1 rep de cada vez; quando fizeres ${slot.max} em todas as séries, sobe o peso.`
+      : `Primeira vez: ${slot.min} a ${slot.max} reps por série, deixando 2 na reserva. Quando fizeres ${slot.max} em todas as séries, a app sobe o peso.`;
   } else {
     const ws = workSets(hist[0].entry);
     const lw = modeWeight(ws);
@@ -606,14 +607,14 @@ function buildDouble(slot, exId, deload) {
     }
     if (allMax) {
       w = roundW(exId, lw + inc);
-      note = `Chegaste a ${slot.max} reps em todas as séries: sobe ${fmtNum(w - lw)} kg.`;
+      note = `Da última vez fizeste ${slot.max} reps em todas as séries com ${fmtNum(lw)} kg: hoje sobe para ${fmtNum(w)} kg e recomeça perto das ${slot.min} reps.${info.kind === 'machine' ? ' Se a máquina não tiver este peso, usa o mais próximo acima.' : ''}`;
     } else if (fail && prevFail) {
       w = roundW(exId, lw * 0.9);
       note = `Ficaste abaixo de ${slot.min} reps duas vezes seguidas: baixa o peso cerca de 10% e volta a subir.`;
     } else {
       w = lw;
       reps = Array.from({ length: slot.sets }, (_, i) => clamp((ws[i] ? ws[i].reps : slot.min) + 1, slot.min, slot.max));
-      note = 'Mesmo peso: tenta mais uma rep por série.';
+      note = `Da última vez: ${fmtNum(lw)} kg × ${ws.map((x) => x.reps).join(', ')}. Hoje: mesmo peso e tenta +1 rep por série (já está preenchido). Quando fizeres ${slot.max} em todas as séries, a app sobe o peso.`;
     }
   }
   let n = slot.sets;
@@ -623,7 +624,7 @@ function buildDouble(slot, exId, deload) {
     reps = Array(n).fill(slot.min);
     note = 'Semana de deload: menos séries e menos peso.';
   }
-  const sets = Array.from({ length: n }, (_, i) => setObj('work', w, reps[i] ?? slot.min, { tReps: range }));
+  const sets = Array.from({ length: n }, (_, i) => setObj('work', w, reps[i] === undefined ? slot.min : reps[i], { tReps: range }));
   const warm = info.kind === 'barbell' && info.tier === 'main' ? warmups(exId, w, false) : [];
   return { sets: [...warm, ...sets], note, target: `${n}×${range}` };
 }
