@@ -152,10 +152,120 @@ function beep() {
   });
 }
 
-function alarm() {
+function alarm(label = '') {
   const s = settings();
-  if (s.sound) beep();
+  // Se o áudio do descanso estiver a tocar, o apito já vem nele (e toca mesmo com o ecrã bloqueado)
+  if (s.sound && !(restAudio && !restAudio.paused)) beep();
   if (s.vibrate && navigator.vibrate) navigator.vibrate([250, 120, 250, 120, 400]);
+  notifyRestEnd(label);
+}
+
+// ---------- Descanso com o ecrã bloqueado ----------
+// Toca um áudio inaudível com a duração exata do descanso e com o apito no fim.
+// Com isto: o descanso aparece nos controlos de multimédia do ecrã bloqueado (com a barra
+// de tempo), a contagem continua com o telemóvel bloqueado e o apito toca à hora certa.
+let restAudio = null;
+let restAudioUrl = null;
+const REST_TAIL = 2.4; // segundos de apito depois do fim
+
+function restWav(seconds) {
+  const rate = 6000;
+  const n = Math.round((seconds + REST_TAIL) * rate);
+  const buf = new ArrayBuffer(44 + n * 2);
+  const v = new DataView(buf);
+  const str = (o, x) => { for (let i = 0; i < x.length; i++) v.setUint8(o + i, x.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, n * 2, true);
+  const start = Math.round(seconds * rate);
+  const tones = [[0, 880], [0.22, 880], [0.44, 1175], [1.1, 880], [1.32, 880], [1.54, 1175]];
+  for (let i = 0; i < n; i++) {
+    let x = i & 1 ? 1 : -1; // sinal mínimo, inaudível, para o telemóvel tratar isto como áudio a tocar
+    if (i >= start) {
+      const t = (i - start) / rate;
+      for (const [d, f] of tones) {
+        if (t >= d && t < d + 0.18) {
+          const env = Math.min(1, (t - d) / 0.01, (d + 0.18 - t) / 0.02);
+          x = Math.round(Math.sin(2 * Math.PI * f * (t - d)) * 15000 * env);
+        }
+      }
+    }
+    v.setInt16(44 + i * 2, x, true);
+  }
+  return new Blob([buf], { type: 'audio/wav' });
+}
+
+function stopRestAudio() {
+  if (restAudio) { try { restAudio.pause(); } catch (e) { /* nada */ } }
+  restAudio = null;
+  if (restAudioUrl) URL.revokeObjectURL(restAudioUrl);
+  restAudioUrl = null;
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.metadata = null;
+      navigator.mediaSession.playbackState = 'none';
+      for (const a of ['play', 'pause', 'stop', 'nexttrack', 'seekforward', 'seekbackward']) navigator.mediaSession.setActionHandler(a, null);
+    } catch (e) { /* nada */ }
+  }
+}
+
+function playRestAudio(t) {
+  if (settings().lockScreenRest === false) return;
+  try {
+    stopRestAudio();
+    const elapsed = Math.max(0, t.total - (t.endAt - Date.now()) / 1000);
+    restAudioUrl = URL.createObjectURL(restWav(t.total));
+    const a = new Audio(restAudioUrl);
+    restAudio = a;
+    a.addEventListener('loadedmetadata', () => {
+      if (elapsed > 0.5) a.currentTime = elapsed;
+      try { navigator.mediaSession.setPositionState({ duration: a.duration, playbackRate: 1, position: Math.min(elapsed, a.duration) }); } catch (e) { /* nada */ }
+    }, { once: true });
+    a.addEventListener('ended', () => { if (restAudio === a) stopRestAudio(); });
+    a.play().catch(() => { if (restAudio === a) stopRestAudio(); });
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: t.label ? `Descanso: ${t.label}` : 'Descanso',
+        artist: 'Forja',
+        album: 'Treino',
+        artwork: [
+          { src: './icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: './icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+        ],
+      });
+      navigator.mediaSession.playbackState = 'playing';
+      const h = (act, fn) => { try { navigator.mediaSession.setActionHandler(act, fn); } catch (e) { /* não suportado */ } };
+      h('pause', () => stopRest());
+      h('stop', () => stopRest());
+      h('nexttrack', () => stopRest());
+      h('play', () => { if (restAudio) restAudio.play().catch(() => {}); });
+      h('seekforward', () => adjustRest(15));
+      h('seekbackward', () => adjustRest(-15));
+    }
+  } catch (e) {
+    console.error(e);
+    stopRestAudio();
+  }
+}
+
+// Notificação no fim do descanso (aparece no ecrã bloqueado), se tiveres dado permissão
+function notifyRestEnd(label) {
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted' || !document.hidden) return;
+    navigator.serviceWorker?.getRegistration().then((reg) => {
+      if (!reg) return;
+      reg.showNotification('Descanso terminado', {
+        body: label ? `Próxima série: ${label}` : 'Próxima série',
+        tag: 'forja-rest', renotify: true, icon: './icons/icon-192.png', vibrate: [250, 120, 250, 120, 400],
+      });
+    });
+  } catch (e) { /* sem notificações */ }
+}
+
+export async function enableRestNotifications() {
+  if (!('Notification' in window)) return 'unsupported';
+  try { return await Notification.requestPermission(); } catch (e) { return 'denied'; }
 }
 
 // ---------- Temporizador de descanso ----------
@@ -165,11 +275,13 @@ export function startRest(sec, label = '') {
   local.timer = { endAt: Date.now() + sec * 1000, total: sec, label, fired: false };
   persistLocal();
   buildRest();
+  playRestAudio(local.timer);
 }
 
 export function stopRest() {
   local.timer = null;
   persistLocal();
+  stopRestAudio();
   buildRest();
 }
 
@@ -181,6 +293,7 @@ function adjustRest(d) {
   if (t.endAt > Date.now()) t.fired = false;
   persistLocal();
   updateRest();
+  if (t.endAt > Date.now()) playRestAudio(t);
 }
 
 export function buildRest() {
@@ -192,6 +305,7 @@ export function buildRest() {
     document.body.classList.remove('has-rest');
     clearInterval(restTick);
     restTick = null;
+    stopRestAudio();
     return;
   }
   // Descanso que já acabou há muito tempo (app fechada): limpa sem tocar
@@ -211,11 +325,14 @@ export function buildRest() {
         <button class="btn ghost small" data-d="15" aria-label="Mais 15 segundos">+15</button>
         <button class="btn secondary small" data-stop>Saltar</button>
       </div>
-    </div>`;
+    </div>
+    ${'Notification' in window && Notification.permission === 'default' ? '<button class="rest-notify" data-notify>Avisar também com notificação no ecrã bloqueado</button>' : ''}`;
   el.onclick = (e) => {
     const d = e.target.closest('[data-d]');
     if (d) adjustRest(Number(d.dataset.d));
     if (e.target.closest('[data-stop]')) stopRest();
+    const nb = e.target.closest('[data-notify]');
+    if (nb) enableRestNotifications().then((r) => { nb.remove(); toast(r === 'granted' ? 'Vais receber um aviso quando o descanso acabar.' : 'Sem notificações: fica o apito e o descanso nos controlos de multimédia.'); });
   };
   clearInterval(restTick);
   restTick = setInterval(updateRest, 250);
@@ -235,7 +352,7 @@ function updateRest() {
     if (!t.fired) {
       t.fired = true;
       persistLocal();
-      alarm();
+      alarm(t.label);
       setTimeout(() => {
         if (local.timer && local.timer.fired && local.timer.endAt === t.endAt) stopRest();
       }, 6000);

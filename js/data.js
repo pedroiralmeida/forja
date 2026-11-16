@@ -268,7 +268,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.9.5';
+export const APP_VERSION = '1.10.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -367,6 +367,7 @@ export const DEFAULT_SETTINGS = {
   rest: { main: 180, secondary: 150, accessory: 90, skill: 120 },
   sound: true,
   vibrate: true,
+  lockScreenRest: true,
   wakeLock: true,
   theme: 'auto',
   baseline: { date: null, bench: { w: 80, reps: 2, rpe: 10 }, pullups: 10, bw: 64 },

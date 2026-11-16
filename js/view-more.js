@@ -187,6 +187,7 @@ export function renderSettings(root) {
         <label class="check line"><input type="checkbox" name="sound" ${S.sound ? 'checked' : ''}><span>Som no fim do descanso</span></label>
         <label class="check line"><input type="checkbox" name="vibrate" ${S.vibrate ? 'checked' : ''}><span>Vibrar no fim do descanso (Android)</span></label>
         <label class="check line"><input type="checkbox" name="wakeLock" ${S.wakeLock ? 'checked' : ''}><span>Manter o ecrã ligado durante o treino</span></label>
+        <label class="check line"><input type="checkbox" name="lockScreenRest" ${S.lockScreenRest !== false ? 'checked' : ''}><span>Descanso no ecrã bloqueado (aparece nos controlos de multimédia; a contagem e o apito continuam com o telemóvel bloqueado)</span></label>
       </section>
       <section class="panel">
         <h2 class="panel-title">Alimentação</h2>
@@ -224,6 +225,7 @@ export function renderSettings(root) {
       sound: f.sound.checked,
       vibrate: f.vibrate.checked,
       wakeLock: f.wakeLock.checked,
+      lockScreenRest: f.lockScreenRest.checked,
       bwGoal: f.bwGoal.value,
       proteinPerKg: Number(f.proteinPerKg.value),
       wheyProtein: Math.min(60, Math.max(5, parseNum(f.wheyProtein.value) || 21)),

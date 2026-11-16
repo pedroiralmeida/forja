@@ -1,6 +1,6 @@
 // Service worker da Forja: guarda a app em cache para funcionar sem internet.
 // Quando mudares algum ficheiro, sobe a VERSION para os dispositivos receberem a versão nova.
-const VERSION = 'forja-v1.9.5';
+const VERSION = 'forja-v1.10.0';
 const ASSETS = [
   "./",
   "./index.html",
@@ -71,5 +71,16 @@ self.addEventListener('fetch', (event) => {
       }
       return res;
     }))
+  );
+});
+
+// Tocar na notificação do fim do descanso volta à app
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) if ('focus' in c) return c.focus();
+      return self.clients.openWindow('./');
+    })
   );
 });
