@@ -41,7 +41,7 @@ export function renderMore(root) {
         <li><a href="#/mais/sync"><span>Sincronização</span><span class="muted">${esc(syncText)}</span>${icons.chevron}</a></li>
         <li><a href="#/mais/dados"><span>Backup e dados</span><span class="muted">exportar, importar</span>${icons.chevron}</a></li>
       </ul>
-      <p class="muted small">Forja ${APP_VERSION}. Os dados ficam neste dispositivo${s.token ? ' e no teu gist privado do GitHub' : ''}. <button class="link-btn" data-act="force-update">Forçar atualização</button></p>
+      <p class="muted small">Forja ${APP_VERSION}. Os dados ficam neste dispositivo${s.token ? (s.provider === 'repo' ? ' e no teu repositório privado do GitHub' : ' e no teu gist do GitHub') : ''}. <button class="link-btn" data-act="force-update">Forçar atualização</button></p>
     </section>`;
   // Apaga os ficheiros da app guardados em cache (os teus dados não são tocados) e recarrega
   root.querySelector('[data-act="force-update"]').addEventListener('click', async () => {
@@ -251,11 +251,13 @@ export function renderSettings(root) {
 export function renderSync(root) {
   const s = local.sync;
   const last = s.lastSync ? new Intl.DateTimeFormat('pt-PT', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(s.lastSync)) : null;
+  const owner = (location.hostname.match(/^([^.]+)\.github\.io$/) || [])[1] || 'o-teu-utilizador';
+  const defRepo = `${owner}/forja-dados`;
   root.innerHTML = `
     ${header('Sincronização', { back: '#/mais' })}
     <section class="panel prose">
-      <p>Para teres os mesmos dados no PC e no telemóvel, a app guarda uma cópia num <strong>gist privado</strong> do teu GitHub (um ficheiro de texto alojado na tua conta). Cada dispositivo junta as alterações dos outros automaticamente.</p>
-      <p>Um gist "secreto" não aparece no teu perfil nem em pesquisas, mas quem tiver o link exato consegue abri-lo. Para dados de treino isso costuma chegar.</p>
+      <p>Para teres os mesmos dados no PC e no telemóvel, e uma cópia na nuvem, a app guarda os dados no teu GitHub. Cada dispositivo junta as alterações dos outros automaticamente.</p>
+      <p><strong>Recomendado: um repositório privado</strong> só teu. Ninguém o vê, cada sincronização fica guardada no histórico (dá para recuar a qualquer dia) e o Claude consegue lê-lo para te acompanhar. A alternativa antiga é um gist secreto.</p>
     </section>
     ${s.token ? `
       <section class="panel">
@@ -269,29 +271,48 @@ export function renderSync(root) {
           <button class="btn primary" data-act="sync">${icons.sync} Sincronizar agora</button>
           <button class="btn ghost danger-text" data-act="disconnect">Desligar neste dispositivo</button>
         </div>
-        ${s.gistId ? `<p class="muted small">Gist: <a href="https://gist.github.com/${esc(s.gistId)}" target="_blank" rel="noopener">${esc(s.gistId.slice(0, 8))}…</a></p>` : ''}
+        ${s.provider === 'repo' && s.repo ? `<p class="muted small">Repositório privado: <a href="https://github.com/${esc(s.repo)}" target="_blank" rel="noopener">${esc(s.repo)}</a> (ficheiro ${esc(s.path || 'forja-dados.json')}). <a href="https://github.com/${esc(s.repo)}/commits" target="_blank" rel="noopener">Histórico</a></p>` : ''}
+        ${s.provider !== 'repo' && s.gistId ? `<p class="muted small">Gist: <a href="https://gist.github.com/${esc(s.gistId)}" target="_blank" rel="noopener">${esc(s.gistId.slice(0, 8))}…</a>. Podes mudar para um repositório privado: desliga e volta a ligar.</p>` : ''}
       </section>` : `
       <section class="panel">
-        <h2 class="panel-title">Ligar</h2>
+        <h2 class="panel-title">Ligar a um repositório privado (recomendado)</h2>
+        <ol class="steps">
+          <li>Cria um repositório <strong>privado</strong> chamado <code>forja-dados</code>, vazio: <a href="https://github.com/new?name=forja-dados&visibility=private&description=Dados%20da%20app%20Forja" target="_blank" rel="noopener">abrir no GitHub</a>.</li>
+          <li>Cria um token só para esse repositório: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">novo token "fine-grained"</a>. Em "Repository access" escolhe "Only select repositories" e <code>forja-dados</code>. Em "Permissions → Repository permissions", põe <strong>Contents</strong> em "Read and write". Em "Expiration" escolhe a data mais longa possível.</li>
+          <li>Copia o token (começa por <code>github_pat_</code>), cola-o aqui e confirma o nome do repositório. No outro dispositivo, faz o mesmo com o mesmo token.</li>
+        </ol>
+        <form class="sync-form" data-form="repo">
+          <label class="field"><span>Repositório</span><input name="repo" class="input" value="${esc(defRepo)}" autocomplete="off" aria-label="Repositório (dono/nome)"></label>
+          <label class="field"><span>Token</span><input name="token" type="password" autocomplete="off" class="input" placeholder="github_pat_…" aria-label="Token do GitHub"></label>
+          <button class="btn primary">Ligar</button>
+        </form>
+        <p class="muted small">O token fica guardado só neste dispositivo e só dá acesso a este repositório. Quando expirar, a app avisa aqui e basta gerar outro.</p>
+      </section>
+      <details class="panel alt-sync">
+        <summary>Alternativa: gist secreto</summary>
         <ol class="steps">
           <li>Abre <a href="https://github.com/settings/tokens/new?scopes=gist&description=Forja%20app" target="_blank" rel="noopener">esta página do GitHub</a> (já vem com a permissão certa marcada: só <em>gist</em>).</li>
           <li>Em "Expiration" escolhe "No expiration" ou uma data longa, e carrega em "Generate token".</li>
-          <li>Copia o token (começa por <code>ghp_</code>) e cola-o aqui. Faz o mesmo no outro dispositivo, com o mesmo token.</li>
+          <li>Copia o token (começa por <code>ghp_</code>) e cola-o aqui.</li>
         </ol>
-        <form class="inline-form" data-form="token">
+        <form class="inline-form" data-form="gist">
           <input name="token" type="password" autocomplete="off" class="input" placeholder="ghp_…" aria-label="Token do GitHub">
-          <button class="btn primary small">Ligar</button>
+          <button class="btn secondary small">Ligar</button>
         </form>
-        <p class="muted small">O token fica guardado só neste dispositivo e só dá acesso aos teus gists.</p>
-      </section>`}`;
+        <p class="muted small">Um gist secreto não aparece no teu perfil, mas quem tiver o link consegue abri-lo.</p>
+      </details>`}`;
 
   root.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const t = e.target.token.value.trim();
+    const f = e.target;
+    const t = f.token.value.trim();
     if (t.length < 20) return toast('Esse token parece incompleto.');
+    const isRepo = f.dataset.form === 'repo';
+    const repo = isRepo ? f.repo.value.trim() : '';
+    if (isRepo && !/^[\w.-]+\/[\w.-]+$/.test(repo.replace(/^https?:\/\/github\.com\//, '').replace(/\.git$|\/$/g, ''))) return toast('Escreve o repositório como dono/nome, por exemplo pedroiralmeida/forja-dados.');
     toast('A ligar ao GitHub…');
     const wasOnboarded = E.S().onboarded;
-    const r = await connectSync(t);
+    const r = await connectSync(t, { provider: isRepo ? 'repo' : 'gist', repo });
     if (r.ok) {
       toast('Sincronização ligada');
       if (!wasOnboarded && E.S().onboarded) return navigate('#/hoje');
@@ -306,7 +327,7 @@ export function renderSync(root) {
       toast(r.ok ? 'Sincronizado' : r.reason || 'Falhou');
       rerender();
     } else if (a.dataset.act === 'disconnect') {
-      if (await confirmDialog('Desligar a sincronização neste dispositivo? Os dados locais ficam; o gist não é apagado.', { ok: 'Desligar' })) {
+      if (await confirmDialog('Desligar a sincronização neste dispositivo? Os dados locais ficam; nada é apagado no GitHub.', { ok: 'Desligar' })) {
         disconnectSync();
         rerender();
       }

@@ -1,4 +1,5 @@
-// Estado da app: guardado no dispositivo e, opcionalmente, sincronizado num gist privado do GitHub.
+// Estado da app: guardado no dispositivo e, opcionalmente, sincronizado na nuvem: num repositório privado
+// do GitHub (recomendado; cada sincronização fica no histórico do git) ou num gist.
 import { DEFAULT_SETTINGS } from './data.js';
 import { now, uid, debounce, todayISO } from './util.js';
 
@@ -48,7 +49,7 @@ export let state = emptyState();
 export let local = {
   deviceId: uid(),
   active: null,
-  sync: { token: '', gistId: '', lastSync: 0, lastError: '', status: 'off' },
+  sync: { provider: 'gist', token: '', gistId: '', repo: '', path: 'forja-dados.json', lastSync: 0, lastError: '', status: 'off' },
 };
 
 const listeners = new Set();
@@ -270,9 +271,9 @@ function setStatus(status) {
   emit('sync-status');
 }
 
-async function gh(path, { method = 'GET', body } = {}) {
+async function gh(path, { method = 'GET', body, allow404 = false, raw = false } = {}) {
   const headers = {
-    Accept: 'application/vnd.github+json',
+    Accept: raw ? 'application/vnd.github.raw' : 'application/vnd.github+json',
     Authorization: 'Bearer ' + local.sync.token.trim(),
     'X-GitHub-Api-Version': '2022-11-28',
   };
@@ -284,12 +285,59 @@ async function gh(path, { method = 'GET', body } = {}) {
     throw new Error('Sem ligação ao GitHub.');
   }
   if (!res.ok) {
+    if (res.status === 404 && allow404) return null;
     if (res.status === 401) throw new Error('O token é inválido ou expirou.');
-    if (res.status === 404) throw new Error('Gist não encontrado, ou o token não tem permissão para gists.');
+    if (res.status === 404) {
+      throw new Error(local.sync.provider === 'repo'
+        ? 'Repositório não encontrado, ou o token não tem acesso a ele (confirma o nome e as permissões do token).'
+        : 'Gist não encontrado, ou o token não tem permissão para gists.');
+    }
+    if (res.status === 409 || res.status === 422) { const e = new Error('Conflito: outro dispositivo gravou ao mesmo tempo.'); e.code = 'conflict'; throw e; }
     if (res.status === 403) throw new Error('O GitHub recusou o pedido (permissões do token ou limite de pedidos).');
     throw new Error('Erro do GitHub: ' + res.status);
   }
-  return res.status === 204 ? null : res.json();
+  if (res.status === 204) return null;
+  return raw ? res.text() : res.json();
+}
+
+// ---------- Repositório privado: o ficheiro forja-dados.json, com histórico no git ----------
+function b64encode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+function b64decode(b64) {
+  const bin = atob(String(b64).replace(/\s/g, ''));
+  return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+}
+// JSON com chaves ordenadas e uma linha por campo: o histórico do git mostra só o que mudou
+function sortKeys(v) {
+  if (Array.isArray(v)) return v.map(sortKeys);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortKeys(v[k])]));
+  return v;
+}
+function repoPath() {
+  const { repo, path } = local.sync;
+  return `/repos/${repo}/contents/${(path || FILE).split('/').map(encodeURIComponent).join('/')}`;
+}
+async function readRepoFile() {
+  const meta = await gh(repoPath(), { allow404: true });
+  if (!meta) return { data: null, sha: null };
+  let text = meta.content && meta.encoding === 'base64' ? b64decode(meta.content) : null;
+  if (text === null || text === '') text = await gh(repoPath(), { raw: true });
+  return { data: text ? JSON.parse(text) : null, sha: meta.sha };
+}
+async function writeRepoFile(data, sha) {
+  const when = new Intl.DateTimeFormat('pt-PT', { dateStyle: 'short', timeStyle: 'short' }).format(new Date());
+  return gh(repoPath(), {
+    method: 'PUT',
+    body: {
+      message: `Forja: dados (${when}, dispositivo ${local.deviceId.slice(0, 6)})`,
+      content: b64encode(JSON.stringify(sortKeys(data), null, 1) + '\n'),
+      ...(sha ? { sha } : {}),
+    },
+  });
 }
 
 async function findGist() {
@@ -346,23 +394,39 @@ export async function syncNow() {
   syncing = (async () => {
     setStatus('syncing');
     try {
-      let id = local.sync.gistId || (await findGist());
-      if (!id) {
-        id = await createGist(state);
-        local.sync.gistId = id;
-      } else {
-        local.sync.gistId = id;
-        const remote = await readGist(id);
+      const mergeIn = (remote) => {
         const merged = remote ? merge(state, remote) : state;
-        const mergedStr = stable(merged);
-        if (mergedStr !== stable(state)) {
+        if (stable(merged) !== stable(state)) {
           state = merged;
           saveRaw();
           emit('remote');
         }
         snapshotSettings();
-        const toWrite = state;
-        if (!remote || stable(toWrite) !== stable(normalize(remote))) await writeGist(id, toWrite);
+        return state;
+      };
+      if (local.sync.provider === 'repo') {
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const { data: remote, sha } = await readRepoFile();
+          const toWrite = mergeIn(remote);
+          if (remote && stable(toWrite) === stable(normalize(remote))) break;
+          try {
+            await writeRepoFile(toWrite, sha);
+            break;
+          } catch (e) {
+            if (e.code !== 'conflict' || attempt === 2) throw e;
+          }
+        }
+      } else {
+        let id = local.sync.gistId || (await findGist());
+        if (!id) {
+          id = await createGist(state);
+          local.sync.gistId = id;
+        } else {
+          local.sync.gistId = id;
+          const remote = await readGist(id);
+          const toWrite = mergeIn(remote);
+          if (!remote || stable(toWrite) !== stable(normalize(remote))) await writeGist(id, toWrite);
+        }
       }
       local.sync.lastSync = now();
       local.sync.lastError = '';
@@ -382,14 +446,18 @@ export async function syncNow() {
 
 const debouncedSync = debounce(() => {
   if (local.sync.token) syncNow();
-}, 6000);
+}, 15000);
 
 export function scheduleSync() {
   if (local.sync.token) debouncedSync();
 }
 
-export function connectSync(token) {
+// provider 'repo': repositório privado (repo = 'dono/nome'); 'gist': gist secreto
+export function connectSync(token, { provider = 'gist', repo = '' } = {}) {
   local.sync.token = token.trim();
+  local.sync.provider = provider;
+  local.sync.repo = repo.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+  local.sync.path = local.sync.path || FILE;
   local.sync.gistId = '';
   local.sync.lastError = '';
   persistLocal();
@@ -397,7 +465,7 @@ export function connectSync(token) {
 }
 
 export function disconnectSync() {
-  local.sync = { token: '', gistId: '', lastSync: 0, lastError: '', status: 'off' };
+  local.sync = { provider: 'gist', token: '', gistId: '', repo: '', path: FILE, lastSync: 0, lastError: '', status: 'off' };
   persistLocal();
   emit('sync-status');
 }
