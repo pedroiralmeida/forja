@@ -223,6 +223,14 @@
    "machine": "Life Fitness (Remada): máquina de remada sentada com apoio no peito e braços independentes",
    "note": "Remada do treino A de 16/11 feita nesta máquina, um braço de cada vez (mesmo que na app esteja como Seated cable row).",
    "updatedAt": 1794860937725
+  },
+  "pulldown": {
+   "id": "pulldown",
+   "ex": "pulldown",
+   "from": "2026-11-16",
+   "machine": "Life Fitness (Puxada para baixo): máquina de puxada com braços e pegas fixas e apoio para as coxas, em vez da polia com barra",
+   "note": "Pilha de 7,5 em 7,5 kg; o seletor laranja no topo da pilha junta 2,5 ou 5 kg. O peso registado é o total (pilha + seletor).",
+   "updatedAt": 1794861868152
   }
  }
 }
