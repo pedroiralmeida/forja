@@ -32,6 +32,7 @@ function setLabels(entry) {
 
 function weightCell(kind, s) {
   if (kind === 'bodyweight') return '<span class="cell-static">corpo</span>';
+  if (kind === 'hold') return '<span class="cell-static">barra</span>';
   if (kind === 'band') {
     return `<select data-f="band" class="cell-input" aria-label="Banda">${BAND_LEVELS.map((b) => `<option ${s.band === b ? 'selected' : ''}>${b}</option>`).join('')}</select>`;
   }
@@ -44,9 +45,9 @@ function setRow(entry, s, si, ei, label, kind) {
   return `<div class="set ${s.done ? 'done' : ''} k-${s.kind}" data-e="${ei}" data-s="${si}">
     <span class="set-label ${s.kind === 'top' ? 'top' : ''}" title="${warm ? 'Aquecimento' : s.kind === 'top' ? 'Série principal' : ''}">${label}</span>
     ${weightCell(kind, s)}
-    <label class="cell"><input data-f="reps" inputmode="numeric" autocomplete="off" class="cell-input num" value="${fmtIn(s.reps)}" placeholder="${esc(s.tReps || '')}" aria-label="Reps"><span class="unit">reps</span></label>
-    ${warm
-      ? '<span class="cell-static muted">aquec.</span>'
+    <label class="cell"><input data-f="reps" inputmode="numeric" autocomplete="off" class="cell-input num" value="${fmtIn(s.reps)}" placeholder="${esc(s.tReps || '')}" aria-label="${kind === 'hold' ? 'Segundos' : 'Reps'}"><span class="unit">${kind === 'hold' ? 's' : 'reps'}</span></label>
+    ${warm || kind === 'hold'
+      ? `<span class="cell-static muted">${warm ? 'aquec.' : ''}</span>`
       : `<select data-f="rpe" class="cell-input rpe ${s.rpe === null || s.rpe === undefined ? 'is-empty' : ''}" aria-label="RPE"><option value="">RPE</option>${RPES.map((r) => `<option value="${r}" ${s.rpe === r ? 'selected' : ''}>${fmtNum(r)}</option>`).join('')}</select>`}
     <button class="done-btn" data-act="done" aria-label="Série feita" aria-pressed="${!!s.done}">${icons.check}</button>
   </div>`;
@@ -81,7 +82,7 @@ function entryCard(entry, ei, session, mode) {
     ${entry.note ? `<p class="ex-note">${esc(entry.note)}</p>` : ''}
     ${showBar ? `<div class="ex-bar">${barbellSVG(plates)}<span class="plate-text">${esc(plateText(plates))}</span></div>` : ''}
     <div class="sets">
-      <div class="set set-head" aria-hidden="true"><span>Série</span><span>${kind === 'band' ? 'Banda' : kind === 'bodyweight' ? '' : 'Peso'}</span><span>Reps</span><span>RPE</span><span></span></div>
+      <div class="set set-head" aria-hidden="true"><span>Série</span><span>${kind === 'band' ? 'Banda' : kind === 'bodyweight' || kind === 'hold' ? '' : 'Peso'}</span><span>${kind === 'hold' ? 'Segundos' : 'Reps'}</span><span>${kind === 'hold' ? '' : 'RPE'}</span><span></span></div>
       ${entry.sets.map((s, si) => setRow(entry, s, si, ei, labels[si], kind)).join('')}
     </div>
     <div class="ex-foot">
@@ -374,7 +375,8 @@ function setLine(exId, s, entry) {
   let w = '';
   if (info.kind === 'weighted_bw') w = s.w ? `+${fmtNum(s.w)} kg × ` : '';
   else if (info.kind === 'band') w = `banda ${s.band || ''} × `;
-  else if (info.kind !== 'bodyweight' && s.w !== null && s.w !== undefined) w = `${fmtNum(s.w)} × `;
+  else if (info.kind !== 'bodyweight' && info.kind !== 'hold' && s.w !== null && s.w !== undefined) w = `${fmtNum(s.w)} × `;
+  if (info.kind === 'hold') return `${s.reps} s`;
   return `${w}${s.reps}${s.rpe ? ` @${fmtNum(s.rpe)}` : ''}`;
 }
 

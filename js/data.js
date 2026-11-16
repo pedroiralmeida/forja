@@ -86,6 +86,11 @@ export const EX = {
     note: 'barra à altura do peito, pés no chão',
     cues: ['Usa as pernas para ajudar e foca-te só na rotação dos pulsos e cotovelos por cima da barra.'],
   },
+  dead_hang: {
+    name: 'Dead hang', kind: 'hold', tier: 'accessory', group: 'pegada',
+    note: 'pendurado na barra, braços estendidos',
+    cues: ['Pendura-te com os braços totalmente estendidos e os ombros relaxados.', 'Respira devagar e deixa as costas e os ombros alongar.', 'Serve para alongar no fim do treino e para a pegada aguentar mais tempo na barra.'],
+  },
   muscle_up: {
     name: 'Muscle-up', kind: 'bodyweight', tier: 'skill', group: 'skill',
     cues: [
@@ -126,6 +131,7 @@ export const DAYS = {
       { id: 'A_row', ex: 'row', mode: 'double', sets: 4, min: 6, max: 10 },
       { id: 'A_pulldown', ex: 'pulldown', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'A_face', ex: 'face_pull', mode: 'double', sets: 3, min: 12, max: 20 },
+      { id: 'A_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
   B: {
@@ -137,6 +143,7 @@ export const DAYS = {
       { id: 'B_rowdb', ex: 'row_db', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'B_lat', ex: 'lateral_raise', mode: 'double', sets: 3, min: 12, max: 20 },
       { id: 'B_tri', ex: 'triceps_pushdown', mode: 'double', sets: 3, min: 10, max: 15 },
+      { id: 'B_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
   C: {
@@ -148,6 +155,7 @@ export const DAYS = {
       { id: 'C_pulldown', ex: 'pulldown', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'C_curl', ex: 'curl', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'C_rear', ex: 'rear_delt', mode: 'double', sets: 2, min: 12, max: 20 },
+      { id: 'C_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
   E1: {
@@ -157,6 +165,7 @@ export const DAYS = {
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
       { id: 'E1_wpull', ex: 'weighted_pullup', mode: 'double', sets: 4, min: 5, max: 8, startAdded: 0 },
       { id: 'E1_sbd', ex: 'sbd', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
+      { id: 'E1_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
   E2: {
@@ -166,6 +175,7 @@ export const DAYS = {
       { id: 'E2_skill', mode: 'skill', focus: 'main' },
       { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
       { id: 'E2_sbd', ex: 'sbd', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
+      { id: 'E2_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
 };
@@ -313,6 +323,7 @@ export const GUIDE = [
 <p><strong>Supera A, pesado.</strong> Uma série principal de supino de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
 <p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>
 <p><strong>Supera C, força e técnica.</strong> Supino com 2 segundos de pausa no peito, para ganhar força a sair do peito.</p>
+<p>Todos os treinos acabam com 1 minuto de dead hang (pendurado na barra), para alongar e melhorar a pegada.</p>
 <p><strong>Estádio 1 e 2.</strong> Começam sempre pelo muscle-up, enquanto estás fresco. Os exercícios mudam sozinhos à medida que cumpres os marcos. Se correres no mesmo dia, corre depois, nunca antes.</p>`,
   },
   {

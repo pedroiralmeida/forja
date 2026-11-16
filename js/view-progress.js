@@ -165,7 +165,7 @@ export function renderExercise(root, { id }) {
   const info = EX[id];
   if (!info) return navigate('#/progresso');
   const hist = E.exerciseHistory(id);
-  const loadBased = info.kind !== 'bodyweight' && info.kind !== 'band';
+  const loadBased = info.kind !== 'bodyweight' && info.kind !== 'band' && info.kind !== 'hold';
   const pts = hist.filter((h) => (loadBased ? h.e1rm : h.maxReps));
   const yOf = (h) => (loadBased ? (info.kind === 'weighted_bw' ? h.e1rm - E.bodyweightAt(h.date) : h.e1rm) : h.maxReps);
   const fmtSet = (s) => {
@@ -173,12 +173,13 @@ export function renderExercise(root, { id }) {
     if (info.kind === 'weighted_bw') return `${s.w ? '+' + fmtNum(s.w) + ' kg × ' : ''}${s.reps}`;
     if (info.kind === 'band') return `banda ${s.band || ''} × ${s.reps}`;
     if (info.kind === 'bodyweight') return `${s.reps} reps`;
+    if (info.kind === 'hold') return `${s.reps} s`;
     return `${fmtNum(s.w)} × ${s.reps}${s.rpe ? ' @' + fmtNum(s.rpe) : ''}`;
   };
   root.innerHTML = `
     ${header(info.name, { back: '#/progresso', sub: info.note || '' })}
     <section class="panel">
-      <h2 class="panel-title">${loadBased ? (info.kind === 'weighted_bw' ? 'Peso extra estimado para 1 rep' : '1RM estimado') : 'Máximo de reps numa série'}</h2>
+      <h2 class="panel-title">${loadBased ? (info.kind === 'weighted_bw' ? 'Peso extra estimado para 1 rep' : '1RM estimado') : info.kind === 'hold' ? 'Máximo de segundos' : 'Máximo de reps numa série'}</h2>
       <div class="chart-box" data-chart="ex"></div>
     </section>
     <section class="panel">

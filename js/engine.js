@@ -102,7 +102,7 @@ export function workSets(entry) {
 export function loadOf(exId, set, iso) {
   const k = exInfo(exId).kind;
   if (k === 'weighted_bw') return bodyweightAt(iso) + (set.w || 0);
-  if (k === 'bodyweight' || k === 'band') return null;
+  if (k === 'bodyweight' || k === 'band' || k === 'hold') return null;
   return set.w || null;
 }
 
@@ -504,12 +504,22 @@ function buildSkill(slot, deload) {
   });
 }
 
+function buildHold(slot) {
+  const sec = slot.seconds || 60;
+  return {
+    sets: Array.from({ length: slot.sets || 1 }, () => setObj('work', null, sec, { tReps: `${sec}` })),
+    note: 'Para alongar e melhorar a pegada. Regista os segundos que aguentaste.',
+    target: `${slot.sets || 1}×${sec} s`,
+  };
+}
+
 export function buildEntry(slot, deload) {
   if (slot.mode === 'skill') return buildSkill(slot, deload);
   const exId = slotEx(slot);
   let r;
   if (slot.mode === 'top_backoff') r = buildTopBackoff(slot, exId, deload);
   else if (slot.mode === 'reps') r = buildReps(slot, exId, deload);
+  else if (slot.mode === 'hold') r = buildHold(slot);
   else r = buildDouble(slot, exId, deload);
   return [{ key: slot.id, slotId: slot.id, ex: exId, mode: slot.mode, target: r.target, note: r.note, sets: r.sets }];
 }
@@ -555,10 +565,10 @@ export function sessionPRs(session) {
       const b = S().baseline.bench;
       priorSets.push({ w: b.w, reps: b.reps, rpe: b.rpe, date: S().baseline.date || session.date });
     }
-    if (info.kind === 'bodyweight' || info.kind === 'band') {
+    if (info.kind === 'bodyweight' || info.kind === 'band' || info.kind === 'hold') {
       const best = Math.max(...sets.map((s) => s.reps));
       const pb = priorSets.length ? Math.max(...priorSets.map((s) => s.reps)) : 0;
-      if (priorSets.length && best > pb) prs.push(`${info.name}: ${best} reps seguidas, o teu recorde`);
+      if (priorSets.length && best > pb) prs.push(info.kind === 'hold' ? `${info.name}: ${best} s, o teu recorde` : `${info.name}: ${best} reps seguidas, o teu recorde`);
       continue;
     }
     if (info.tier === 'accessory') {

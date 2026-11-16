@@ -8,7 +8,7 @@ import { icons, navigate, rerender, toast, header, segmented, confirmDialog, dow
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { esc, fmtNum, fmt1, todayISO, parseNum } from './util.js';
 
-export const APP_VERSION = '1.4.1';
+export const APP_VERSION = '1.5.0';
 
 export function renderMore(root) {
   const s = local.sync;

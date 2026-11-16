@@ -20,6 +20,7 @@ export function weightSummary(entry) {
   const info = E.exInfo(entry.ex, entry);
   const work = entry.sets.filter((s) => s.kind !== 'warm');
   if (info.kind === 'bodyweight') return 'peso corporal';
+  if (info.kind === 'hold') return 'pendurado na barra';
   if (info.kind === 'band') return `banda ${(work[0] && work[0].band) || 'média'}`;
   const ws = [...new Set(work.map((s) => s.w))];
   if (!ws.length || ws.every((w) => w === null || w === undefined)) return 'escolhe o peso';
