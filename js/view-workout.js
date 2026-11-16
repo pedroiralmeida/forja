@@ -95,6 +95,12 @@ function entryCard(entry, ei, session, mode) {
         ${!anyDone ? `<button class="icon-btn" data-act="remove-ex" aria-label="Remover exercício">${icons.trash}</button>` : ''}
       </div>
     </header>
+    ${mode === 'active' ? E.remindersFor(entry.ex, session.date).map((r) => `
+      <div class="reminder" role="note">
+        <strong>Lembrete${r.title ? `: ${esc(r.title)}` : ''}</strong>
+        <ul>${(r.items || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+        <button class="link" data-act="reminder-done" data-id="${esc(r.id)}">Já não preciso deste lembrete</button>
+      </div>`).join('') : ''}
     ${openCues.has(entry.key) ? `<ul class="cues">${info.cues.map((c) => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
     ${entry.note ? `<p class="ex-note">${esc(entry.note)}</p>` : ''}
     ${showBar ? `<div class="ex-bar">${barbellSVG(plates)}<span class="plate-text">${esc(plateText(plates))}</span></div>` : ''}
@@ -254,6 +260,11 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
       entry.sets.splice(idx, 1);
       save(mode);
       redrawCard(ei);
+    } else if (act === 'reminder-done') {
+      const r = get('reminders', btn.dataset.id);
+      if (r) put('reminders', r.id, { ...r, dismissedAt: now() });
+      session.exercises.forEach((x, i) => { if (x.ex === entry.ex || (r && (r.ex || []).includes(x.ex))) redrawCard(i); });
+      toast('Lembrete escondido. Continua no histórico.');
     } else if (act === 'cues') {
       if (openCues.has(entry.key)) openCues.delete(entry.key); else openCues.add(entry.key);
       redrawCard(ei);

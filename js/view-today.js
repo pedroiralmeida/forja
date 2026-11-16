@@ -316,6 +316,7 @@ export function renderToday(root) {
           <span class="hero-target">${esc(main.target)}</span>
         </div>
         <div class="hero-bar">${barbellSVG(plates)}<p class="plate-text">${esc(plateText(plates))}</p></div>
+        ${E.remindersFor(main.ex, hoursIso).map((r) => `<p class="hero-reminder"><strong>Lembrete:</strong> ${esc(r.short || r.title || '')} <span class="muted">Tens as dicas todas no treino.</span></p>`).join('')}
       </div>` : place === 'estadio' ? `
       <div class="hero-lift">
         <div class="hero-lift-text">

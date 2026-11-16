@@ -187,6 +187,30 @@
    "updatedAt": 1794786864473
   }
  },
+ "reminders": {
+  "bench-video-2026-11-16": {
+   "createdAt": 1794870956530,
+   "ex": [
+    "bench",
+    "bench_paused",
+    "bench_close"
+   ],
+   "from": "2026-11-16",
+   "id": "bench-video-2026-11-16",
+   "items": [
+    "Pulso: barra na base da palma, alinhada com o antebraço, e pulso quase direito. Aperta a barra com força. Acerta isto já nos aquecimentos.",
+    "Antes de tirar a barra: omoplatas juntas e para baixo, peito para cima (um pequeno arco nas costas).",
+    "Pés mais para trás, debaixo dos joelhos, e empurra o chão com as pernas.",
+    "A barra toca na parte de baixo do peito (linha dos mamilos), com os cotovelos um pouco mais junto ao corpo.",
+    "Sem barras de segurança: para sempre com 1 a 2 reps de reserva.",
+    "Se puderes, filma de lado com o telemóvel parado, à altura do banco."
+   ],
+   "short": "Pulso direito, omoplatas atrás, pés mais atrás e a barra a tocar mais abaixo no peito.",
+   "source": "Análise do Claude ao vídeo da série de topo de 16/11 (72,5 kg × 3)",
+   "title": "do vídeo de 16/11",
+   "updatedAt": 1794870956530
+  }
+ },
  "settingsPatch": {
   "budgetMonthly": 0,
   "updatedAt": 1794843667617,

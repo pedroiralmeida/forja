@@ -936,9 +936,18 @@ export function executionFor(entry, date) {
   return { ...rest, noteId: id };
 }
 
+// Lembretes ativos para um exercício (por exemplo, dicas tiradas de um vídeo)
+export function remindersFor(exId, iso = todayISO()) {
+  return list('reminders')
+    .filter((r) => !r.dismissedAt && (r.ex || []).includes(exId) && (!r.from || iso >= r.from) && (!r.until || iso <= r.until))
+    .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+}
+
 export function annotateSession(session) {
   let changed = false;
   for (const e of session.exercises || []) {
+    const rs = remindersFor(e.ex, session.date).map((r) => r.id);
+    if (rs.length && !e.reminders) { e.reminders = rs; changed = true; }
     if (e.execution) continue;
     const x = executionFor(e, session.date);
     if (x) { e.execution = x; changed = true; }
