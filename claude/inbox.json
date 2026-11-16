@@ -119,5 +119,26 @@
    "note": "No shaker com leite ou água, sem liquidificadora",
    "updatedAt": 1794786864473
   }
+ },
+ "bodyweight": {
+  "2026-11-16": {
+   "date": "2026-11-16",
+   "kg": 62.5,
+   "updatedAt": 1794827086960
+  },
+  "2026-11-15": {
+   "deleted": true,
+   "updatedAt": 1794827086960
+  }
+ },
+ "habits": {
+  "2026-11-16": {
+   "date": "2026-11-16",
+   "protein": 45,
+   "creatine": true,
+   "sleep": null,
+   "shake": false,
+   "updatedAt": 1794827086960
+  }
  }
 }
