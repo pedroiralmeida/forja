@@ -884,6 +884,50 @@ export function bwStats() {
   return { last, avgNow, weekly, status, count: e.length };
 }
 
+// ---------- Ombros ----------
+export const SIDE_DELT_EX = ['lateral_raise', 'lateral_cable', 'lateral_machine'];
+
+export function shoulderEntries() {
+  return list('shoulders').sort((a, b) => a.date.localeCompare(b.date));
+}
+
+// Perímetro dos ombros, variação e relação ombros/cintura (com a medição de cintura mais próxima, até 10 dias)
+export function shoulderStats() {
+  const sh = shoulderEntries();
+  if (!sh.length) return null;
+  const last = sh[sh.length - 1];
+  const first = sh[0];
+  const daysSince = daysBetween(last.date, todayISO());
+  const ws = list('waist');
+  const nearWaist = (iso) => {
+    const c = ws.filter((w) => Math.abs(daysBetween(w.date, iso)) <= 10).sort((a, b) => Math.abs(daysBetween(a.date, iso)) - Math.abs(daysBetween(b.date, iso)));
+    return c.length ? c[0].cm : null;
+  };
+  const ratio = (e) => { const w = nearWaist(e.date); return w ? e.cm / w : null; };
+  return {
+    last, first, daysSince, entries: sh,
+    change: sh.length > 1 ? last.cm - first.cm : null,
+    ratio: ratio(last), ratioFirst: sh.length > 1 ? ratio(first) : null,
+    ratios: sh.map((e) => ({ date: e.date, r: ratio(e) })).filter((x) => x.r),
+  };
+}
+
+// Séries de ombro lateral por semana (média das últimas 4 semanas com treino)
+export function sideDeltSets(weeks = 4, iso = todayISO()) {
+  const out = [];
+  for (let i = 0; i < weeks; i++) {
+    const ws = addDays(weekStart(iso), -7 * i);
+    const we = addDays(ws, 6);
+    let n = 0;
+    for (const s of sessions()) {
+      if (s.date < ws || s.date > we) continue;
+      for (const e of s.exercises) if (SIDE_DELT_EX.includes(e.ex)) n += workSets(e).length;
+    }
+    out.push({ week: ws, sets: n });
+  }
+  return out;
+}
+
 // ---------- Cintura ----------
 export function waistEntries() {
   return list('waist').sort((a, b) => a.date.localeCompare(b.date));

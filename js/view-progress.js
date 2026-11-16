@@ -98,6 +98,28 @@ function benchRecords() {
     <p class="muted small">"Possível hoje" é o peso que, pelo teu 1RM estimado, conseguirias fazer nessas reps a esforço máximo.</p>`;
 }
 
+// Objetivo: ombros largos (perímetro, relação com a cintura e trabalho de ombro lateral)
+function shouldersPanel() {
+  const ss = E.shoulderStats();
+  const weeks = E.sideDeltSets(4);
+  const done = weeks.filter((w) => w.sets > 0);
+  const avg = done.length ? done.reduce((a, w) => a + w.sets, 0) / done.length : 0;
+  const lat = E.exerciseHistory('lateral_raise');
+  const lastLat = lat.length ? lat[lat.length - 1] : null;
+  const bits = [];
+  if (ss) {
+    bits.push(`<div class="stat"><span class="num big2">${fmt1(ss.last.cm)} cm</span><span class="muted">perímetro${ss.change !== null ? `, ${ss.change >= 0 ? '+' : ''}${fmt1(ss.change)} cm desde ${esc(fmtDate(ss.first.date))}` : ''}</span></div>`);
+    if (ss.ratio) bits.push(`<div class="stat"><span class="num big2">${fmtNum(Math.round(ss.ratio * 100) / 100)}</span><span class="muted">ombros ÷ cintura${ss.ratioFirst ? ` (era ${fmtNum(Math.round(ss.ratioFirst * 100) / 100)})` : ''}</span></div>`);
+  }
+  bits.push(`<div class="stat"><span class="num big2">${fmtNum(Math.round(avg * 10) / 10)}</span><span class="muted">séries de ombro lateral por semana</span></div>`);
+  return `<section class="panel">
+    <h2 class="panel-title">Ombros largos</h2>
+    <div class="stats-row">${bits.join('')}</div>
+    ${lastLat && lastLat.maxW ? `<p class="muted small">Elevações laterais: ${fmtNum(lastLat.maxW)} kg por halter no último treino (${esc(fmtDate(lastLat.date))}).</p>` : ''}
+    <p class="muted small">${ss ? 'Mede os ombros uma vez por mês, em Corpo.' : 'Mede o perímetro dos ombros em Corpo quando tiveres a fita: é o ponto de partida.'} Com o A e o B fazes 7 séries de ombro lateral por semana, 10 se fizeres o C.</p>
+  </section>`;
+}
+
 export function renderProgress(root) {
   const goals = E.goals();
   const cur = E.currentBenchE1RM();
@@ -139,6 +161,7 @@ export function renderProgress(root) {
         ${calendar()}
       </section>
     </div>
+    ${shouldersPanel()}
     ${wp.length ? `<section class="panel"><h2 class="panel-title">Elevações com peso</h2><p class="muted small">Peso extra máximo estimado para 1 rep.</p><div class="chart-box" data-chart="wp"></div></section>` : ''}
     <section class="panel">
       <h2 class="panel-title">Exercícios</h2>

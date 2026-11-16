@@ -35,6 +35,8 @@ export function renderBody(root) {
   const runs = E.runs();
   const waist = E.waistEntries();
   const ws = E.waistStats();
+  const ss = E.shoulderStats();
+  const shoulders = E.shoulderEntries();
   const week = E.weekSummary();
   const bw = E.latestBodyweight();
   const weekKcal = Math.round(week.km * bw / 50) * 50;
@@ -94,7 +96,8 @@ export function renderBody(root) {
     </div>
     <div class="two-col">
       <section class="panel">
-        <h2 class="panel-title">Cintura</h2>
+        <h2 class="panel-title">Cintura e ombros</h2>
+        <h3 class="sub-title">Cintura</h3>
         <form class="bw-form" data-form="waist">
           <span class="with-unit"><input name="cm" inputmode="decimal" class="input num" placeholder="${ws ? fmt1(ws.last.cm) : '75'}" aria-label="Cintura em cm"><i>cm</i></span>
           <input name="date" type="date" class="input" value="${today}" max="${today}" aria-label="Data">
@@ -108,6 +111,21 @@ export function renderBody(root) {
           <p class="status status-${ws.status.level}">${esc(ws.status.text)}</p>` : ''}
         <div class="chart-box" data-chart="waist"></div>
         <p class="muted small">Uma vez por semana, de manhã, à altura do umbigo. Fita justa mas sem apertar, e sem encolher a barriga. Regra prática: até cerca de 1 cm de cintura por cada kg que ganhas é sobretudo músculo.</p>
+        <h3 class="sub-title">Ombros</h3>
+        <form class="bw-form" data-form="shoulders">
+          <span class="with-unit"><input name="cm" inputmode="decimal" class="input num" placeholder="${ss ? fmt1(ss.last.cm) : '110'}" aria-label="Perímetro dos ombros em cm"><i>cm</i></span>
+          <input name="date" type="date" class="input" value="${today}" max="${today}" aria-label="Data">
+          <button class="btn primary">Guardar</button>
+        </form>
+        ${ss ? `
+          <div class="stats-row">
+            <div class="stat"><span class="num big2">${fmt1(ss.last.cm)} cm</span><span class="muted">último, ${esc(fmtDate(ss.last.date))}</span></div>
+            ${ss.change !== null ? `<div class="stat"><span class="num big2">${fmtSigned(ss.change, 1)} cm</span><span class="muted">desde ${esc(fmtDate(ss.first.date))}</span></div>` : ''}
+            ${ss.ratio ? `<div class="stat"><span class="num big2">${fmtNum(Math.round(ss.ratio * 100) / 100)}</span><span class="muted">ombros ÷ cintura</span></div>` : ''}
+          </div>` : ''}
+        <div class="chart-box" data-chart="shoulders"></div>
+        ${shoulders.length ? `<ul class="rec-list">${shoulders.slice(-6).reverse().map((w) => `<li><span>${esc(fmtDate(w.date))}</span><span class="num">${fmt1(w.cm)} cm</span><button class="icon-btn small" data-del-shoulders="${w.date}" aria-label="Apagar medição">${icons.trash}</button></li>`).join('')}</ul>` : ''}
+        <p class="muted small">Uma vez por mês. De pé, braços relaxados ao lado do corpo, fita à volta da parte mais larga dos ombros, sem encher o peito. A relação ombros ÷ cintura sobe quando os ombros crescem e a cintura não: é a forma em V.</p>
       </section>
       <section class="panel">
         <h2 class="panel-title">Corrida</h2>
@@ -160,6 +178,15 @@ export function renderBody(root) {
     height: 160,
     empty: 'Regista a primeira medição para ver a evolução.',
   });
+  if (shoulders.length) {
+    lineChart(root.querySelector('[data-chart="shoulders"]'), {
+      label: 'Perímetro dos ombros',
+      series: [{ name: 'Ombros', color: 'var(--blue)', points: shoulders.map((w) => ({ x: isoToMs(w.date), y: w.cm, tip: `${fmt1(w.cm)} cm` })), dots: true }],
+      yFmt: (v) => fmtNum(v),
+      minSpan: 2,
+      height: 160,
+    });
+  }
   barChart(root.querySelector('[data-chart="km"]'), {
     label: 'Quilómetros por semana', bars, color: 'var(--green)', yFmt: (v) => fmtNum(v), empty: 'Os km por semana aparecem aqui.',
   });
@@ -181,6 +208,13 @@ export function renderBody(root) {
       if (!cm || cm < 40 || cm > 160) return toast('Escreve a cintura em cm, por exemplo 76,5');
       put('waist', date, { date, cm, at: now() });
       toast('Cintura guardada');
+      rerender();
+    } else if (f.dataset.form === 'shoulders') {
+      const cm = parseNum(f.cm.value);
+      const date = f.date.value || today;
+      if (!cm || cm < 70 || cm > 180) return toast('Escreve o perímetro dos ombros em cm, por exemplo 112');
+      put('shoulders', date, { date, cm, at: now() });
+      toast('Ombros guardados');
       rerender();
     } else if (f.dataset.form === 'run') {
       const km = parseNum(f.km.value);
@@ -207,6 +241,12 @@ export function renderBody(root) {
     if (dr && (await confirmDialog('Apagar esta corrida?', { ok: 'Apagar', danger: true }))) {
       remove('runs', dr.dataset.delRun);
       rerender();
+    }
+    const dsh = e.target.closest('[data-del-shoulders]');
+    if (dsh) {
+      remove('shoulders', dsh.dataset.delShoulders);
+      rerender();
+      return;
     }
     const dw = e.target.closest('[data-del-waist]');
     if (dw && (await confirmDialog('Apagar esta medição da cintura?', { ok: 'Apagar', danger: true }))) {

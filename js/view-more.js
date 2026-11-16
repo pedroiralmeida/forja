@@ -307,7 +307,7 @@ export function renderSync(root) {
 // O que está guardado, coleção a coleção (incluindo o que foi apagado e se mantém no histórico)
 function historyTable() {
   const names = {
-    sessions: 'Treinos', bodyweight: 'Pesagens', waist: 'Cintura', habits: 'Hábitos por dia', runs: 'Corridas', milestones: 'Marcos',
+    sessions: 'Treinos', bodyweight: 'Pesagens', waist: 'Cintura', shoulders: 'Ombros (perímetro)', habits: 'Hábitos por dia', runs: 'Corridas', milestones: 'Marcos',
     deloadWeeks: 'Semanas de deload', overrides: 'Exercícios trocados', purchases: 'Compras', stock: 'Stock', days: 'Notas de dias (faltas)',
     settingsHistory: 'Versões do plano e definições', revisions: 'Versões antigas de treinos', meta: 'Versões da app e dispositivos',
   };

@@ -120,7 +120,18 @@ export const EX = {
   row_chest: { name: 'Remada com apoio no peito', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['row', 'row_db'], cues: ['Peito encostado ao apoio; não balances.'] },
   pulldown: { name: 'Puxada na polia', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['pullup', 'row'], cues: ['Puxa a barra até ao peito, cotovelos para baixo.', 'Controla a subida.'] },
   face_pull: { name: 'Face pulls', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'corda na polia alta, puxar para a cara', alts: ['rear_delt'], cues: ['Corda à altura da cara; puxa separando as mãos.', 'Protege os ombros de tanto empurrar.'] },
-  lateral_raise: { name: 'Elevações laterais', kind: 'dumbbell', tier: 'accessory', group: 'ombros', note: 'peso de cada halter', cues: ['Sobe até à altura dos ombros, sem balançar.'] },
+  lateral_raise: {
+    name: 'Elevações laterais', kind: 'dumbbell', tier: 'accessory', group: 'ombros', note: 'peso de cada halter', alts: ['lateral_cable', 'lateral_machine'],
+    cues: ['É o exercício que mais alarga os ombros (trabalha a parte lateral do deltoide).', 'Peso leve, sem balançar: sobe até à altura dos ombros, cotovelos ligeiramente fletidos, e desce devagar.', 'Leva as séries quase até à falha (1 a 2 reps de reserva).'],
+  },
+  lateral_cable: {
+    name: 'Elevações laterais na polia', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'polia baixa, um braço de cada vez', alts: ['lateral_raise', 'lateral_machine'],
+    cues: ['Polia em baixo, cabo a passar à frente do corpo.', 'A polia mantém o músculo em tensão em todo o movimento.', 'Faz as séries de um braço e depois do outro.'],
+  },
+  lateral_machine: {
+    name: 'Máquina de elevações laterais', kind: 'machine', tier: 'accessory', group: 'ombros', alts: ['lateral_raise', 'lateral_cable'],
+    cues: ['Ajusta o banco para os ombros ficarem alinhados com o eixo da máquina.', 'Sobe até à altura dos ombros, sem encolher.'],
+  },
   rear_delt: { name: 'Aberturas inversas', kind: 'machine', tier: 'accessory', group: 'ombros', alts: ['face_pull'], cues: ['Máquina ou halteres; braços quase estendidos, abre para trás.'] },
   triceps_pushdown: { name: 'Extensão de tríceps na polia', kind: 'machine', tier: 'accessory', group: 'tríceps', alts: ['triceps_overhead'], cues: ['Cotovelos colados ao corpo; estende até ao fim.'] },
   triceps_overhead: { name: 'Extensão de tríceps acima da cabeça', kind: 'machine', tier: 'accessory', group: 'tríceps', alts: ['triceps_pushdown'], cues: ['Cabo ou halter; alongamento total atrás da cabeça.'] },
@@ -135,11 +146,12 @@ export const BAND_LEVELS = ['forte', 'média', 'leve'];
 export const DAYS = {
   A: {
     label: 'Supera A', title: 'Pesado', place: 'supera',
-    blurb: 'Série pesada de supino e costas nas máquinas.',
+    blurb: 'Série pesada de supino, costas nas máquinas e ombros.',
     slots: [
       { id: 'A_bench', ex: 'bench', mode: 'top_backoff', topReps: 3, topRPE: 8, backSets: 3, backReps: 5, backRPE: 7 },
       { id: 'A_row', ex: 'row', mode: 'double', sets: 4, min: 6, max: 10 },
       { id: 'A_pulldown', ex: 'pulldown', mode: 'double', sets: 3, min: 8, max: 12 },
+      { id: 'A_lat', ex: 'lateral_raise', mode: 'double', sets: 3, min: 12, max: 20 },
       { id: 'A_face', ex: 'face_pull', mode: 'double', sets: 3, min: 12, max: 20 },
       { id: 'A_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
@@ -151,7 +163,7 @@ export const DAYS = {
       { id: 'B_bench', ex: 'bench', mode: 'double', sets: 4, min: 6, max: 8, startPct: 0.76 },
       { id: 'B_dips', ex: 'dips', mode: 'double', sets: 3, min: 6, max: 12, startAdded: 0 },
       { id: 'B_rowdb', ex: 'row_db', mode: 'double', sets: 3, min: 8, max: 12 },
-      { id: 'B_lat', ex: 'lateral_raise', mode: 'double', sets: 3, min: 12, max: 20 },
+      { id: 'B_lat', ex: 'lateral_raise', mode: 'double', sets: 4, min: 12, max: 20 },
       { id: 'B_tri', ex: 'triceps_pushdown', mode: 'double', sets: 3, min: 10, max: 15 },
       { id: 'B_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
@@ -163,8 +175,9 @@ export const DAYS = {
       { id: 'C_pause', ex: 'bench_paused', mode: 'double', sets: 4, min: 3, max: 5, startPct: 0.73 },
       { id: 'C_incl', ex: 'incline_db', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'C_pulldown', ex: 'pulldown', mode: 'double', sets: 3, min: 8, max: 12 },
+      { id: 'C_lat', ex: 'lateral_raise', mode: 'double', sets: 3, min: 12, max: 20 },
+      { id: 'C_rear', ex: 'rear_delt', mode: 'double', sets: 3, min: 12, max: 20 },
       { id: 'C_curl', ex: 'curl', mode: 'double', sets: 3, min: 8, max: 12 },
-      { id: 'C_rear', ex: 'rear_delt', mode: 'double', sets: 2, min: 12, max: 20 },
       { id: 'C_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
@@ -244,7 +257,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.7.0';
+export const APP_VERSION = '1.8.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -382,6 +395,16 @@ export const GUIDE = [
 <p>A pegada deve deixar os antebraços na vertical quando a barra está no peito. A barra desce em direção à parte de baixo do peito e sobe ligeiramente para trás, até ficar por cima dos ombros.</p>
 <p>O <strong>leg drive</strong> é empurrar o chão com os pés durante a subida, sem levantar o rabo. Transmite força das pernas para o tronco.</p>
 <p>Filma-te de lado de vez em quando. E monta sempre as barras de segurança ou pede a alguém que te ajude nas séries pesadas.</p>`,
+  },
+  {
+    id: 'ombros',
+    title: 'Ombros largos',
+    body: `
+<p>O que faz os ombros parecerem largos é sobretudo a parte <strong>lateral do deltoide</strong> (o músculo redondo do ombro), mais as costas largas e uma cintura que não cresce. A parte da frente do ombro já trabalha muito com o supino e os dips, por isso não precisas de mais press de ombros.</p>
+<p><strong>No plano:</strong> elevações laterais no Supera A (3 séries) e no B (4 séries), e mais 3 no C quando o fizeres. Os face pulls (A) e as aberturas inversas (C) trabalham a parte de trás do ombro. As elevações e a puxada no Estádio e no Supera alargam as costas.</p>
+<p><strong>Como fazer as laterais:</strong> peso leve, 12 a 20 reps, sem balançar, e quase até à falha. Sobe o peso só quando fizeres 20 reps em todas as séries. Podes trocar por polia ou máquina para variar.</p>
+<p><strong>Medir:</strong> uma vez por mês, mede o perímetro dos ombros com a fita: de pé, braços relaxados ao lado do corpo, a fita à volta da parte mais larga dos ombros, sem encher o peito. A app mostra a evolução e a relação entre ombros e cintura (quanto maior, mais em V).</p>
+<p><strong>Expectativas:</strong> a largura dos ossos (clavículas) não muda. O músculo cresce devagar: meio centímetro a um centímetro de perímetro por mês já é bom progresso.</p>`,
   },
   {
     id: 'muscleup',

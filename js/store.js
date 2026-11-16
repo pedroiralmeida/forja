@@ -11,7 +11,7 @@ const API = 'https://api.github.com';
 // days: notas por dia (treino falhado e motivo, "hoje não dá");
 // settingsHistory: cópia das definições em cada dia em que mudaram (o plano semanal incluído);
 // revisions: versões anteriores de treinos editados; meta: versões da app e dispositivos usados.
-export const COLLS = ['sessions', 'bodyweight', 'waist', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock',
+export const COLLS = ['sessions', 'bodyweight', 'waist', 'shoulders', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock',
   'days', 'settingsHistory', 'revisions', 'meta'];
 
 function emptyState() {

@@ -83,7 +83,14 @@ function habitsCard(today, trainingDay) {
     <h2 class="panel-title">O teu dia</h2>
     <div class="daily">
       ${trainingDay ? `<div class="daily-row"><div class="daily-label">Antes do treino</div><div class="daily-value"><span>Lanche por volta das 17h, antes de saíres do trabalho: sandes e iogurte, ou banana e skyr.</span></div></div>` : ''}
-      ${(() => { const ws = E.waistStats(); return ws && ws.daysSince >= 7 ? `<div class="daily-row"><div class="daily-label">Cintura</div><div class="daily-value"><span>Última medição há ${ws.daysSince} dias.</span> <a class="link" href="#/corpo">Medir</a></div></div>` : ''; })()}
+      ${(() => {
+        const ws = E.waistStats();
+        const ss = E.shoulderStats();
+        const bits = [];
+        if (ws && ws.daysSince >= 7) bits.push(`cintura há ${ws.daysSince} dias`);
+        if (ws && (!ss || ss.daysSince >= 28)) bits.push(ss ? `ombros há ${ss.daysSince} dias` : 'ombros ainda por medir');
+        return bits.length ? `<div class="daily-row"><div class="daily-label">Medidas</div><div class="daily-value"><span>Última medição: ${bits.join(', ')}.</span> <a class="link" href="#/corpo">Medir</a></div></div>` : '';
+      })()}
       <div class="daily-row">
         <div class="daily-label">Peso de hoje</div>
         ${bwToday
