@@ -204,5 +204,25 @@
   },
   "updatedAt": 1794843667617,
   "budgetMonthly": 0
+ },
+ "exerciseNotes": {
+  "row_chest": {
+   "id": "row_chest",
+   "ex": "row_chest",
+   "unilateral": true,
+   "from": "2026-11-16",
+   "machine": "Life Fitness (Remada): máquina de remada sentada com apoio no peito e braços independentes",
+   "note": "Um braço de cada vez. Peso = peso da pilha da máquina; reps contadas por braço.",
+   "updatedAt": 1794860937725
+  },
+  "A_row@2026-11-16": {
+   "id": "A_row@2026-11-16",
+   "slotId": "A_row",
+   "date": "2026-11-16",
+   "unilateral": true,
+   "machine": "Life Fitness (Remada): máquina de remada sentada com apoio no peito e braços independentes",
+   "note": "Remada do treino A de 16/11 feita nesta máquina, um braço de cada vez (mesmo que na app esteja como Seated cable row).",
+   "updatedAt": 1794860937725
+  }
  }
 }

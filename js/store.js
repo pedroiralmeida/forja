@@ -10,9 +10,10 @@ const API = 'https://api.github.com';
 // Coleções guardadas. As últimas servem sobretudo o histórico:
 // days: notas por dia (treino falhado e motivo, "hoje não dá");
 // settingsHistory: cópia das definições em cada dia em que mudaram (o plano semanal incluído);
-// revisions: versões anteriores de treinos editados; meta: versões da app e dispositivos usados.
+// revisions: versões anteriores de treinos editados; meta: versões da app e dispositivos usados;
+// exerciseNotes: notas sobre como um exercício é feito (ex.: um braço de cada vez, que máquina), copiadas para os treinos.
 export const COLLS = ['sessions', 'bodyweight', 'waist', 'shoulders', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock',
-  'days', 'settingsHistory', 'revisions', 'meta'];
+  'days', 'settingsHistory', 'revisions', 'meta', 'exerciseNotes'];
 
 function emptyState() {
   return {

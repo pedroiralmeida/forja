@@ -1,5 +1,6 @@
 // Arranque: navegação, tema, service worker e sincronização
-import { load, local, settings, onChange, syncNow, syncConfigured, loadInbox, snapshotSettings, noteVersion } from './store.js';
+import { load, local, settings, onChange, syncNow, syncConfigured, loadInbox, snapshotSettings, noteVersion, put } from './store.js';
+import * as E from './engine.js';
 import { APP_VERSION } from './data.js';
 import { setRouter, icons, toast, buildRest, requestWakeLock, unlockAudio, header } from './ui.js';
 import { renderToday, renderOnboarding } from './view-today.js';
@@ -176,4 +177,13 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
 render();
 buildRest();
-loadInbox({ force: true }).finally(() => { if (syncConfigured()) syncNow(); });
+// Copia para os treinos já guardados as notas de execução que ainda não tinham (ex.: um braço de cada vez)
+function annotateSaved() {
+  try {
+    for (const sess of E.sessions()) {
+      const c = structuredClone(sess);
+      if (E.annotateSession(c)) put('sessions', c.id, c);
+    }
+  } catch (e) { console.error(e); }
+}
+loadInbox({ force: true }).finally(() => { annotateSaved(); if (syncConfigured()) syncNow(); });

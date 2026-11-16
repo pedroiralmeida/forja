@@ -355,6 +355,7 @@ function cleanSession(session) {
       return false;
     });
   if (skippedEx.length) c.skippedExercises = [...(c.skippedExercises || []), ...skippedEx];
+  E.annotateSession(c);
   return c;
 }
 

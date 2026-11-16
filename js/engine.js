@@ -885,6 +885,28 @@ export function bwStats() {
   return { last, avgNow, weekly, status, count: e.length };
 }
 
+// ---------- Notas de execução dos exercícios ----------
+// Uma nota aplica-se a um exercício a partir de uma data (ex, from, until) ou a um treino concreto (slotId, date).
+// Guardam-se no próprio treino (entry.execution) para o histórico saber como foi feito.
+export function executionFor(entry, date) {
+  const notes = list('exerciseNotes');
+  const hit = notes.find((n) => n.slotId && n.date === date && n.slotId === entry.slotId)
+    || notes.find((n) => n.ex && n.ex === entry.ex && (!n.from || date >= n.from) && (!n.until || date <= n.until));
+  if (!hit) return null;
+  const { id, updatedAt, createdAt, ...rest } = hit;
+  return { ...rest, noteId: id };
+}
+
+export function annotateSession(session) {
+  let changed = false;
+  for (const e of session.exercises || []) {
+    if (e.execution) continue;
+    const x = executionFor(e, session.date);
+    if (x) { e.execution = x; changed = true; }
+  }
+  return changed;
+}
+
 // ---------- Ombros ----------
 export const SIDE_DELT_EX = ['lateral_raise', 'lateral_cable', 'lateral_machine'];
 
