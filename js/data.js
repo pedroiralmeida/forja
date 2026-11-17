@@ -45,7 +45,7 @@ export const EX = {
   pullup_slow: {
     name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Sobe normal, queixo acima da barra.', 'Desce em 3 segundos, contados, até aos braços estendidos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).'],
+    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce em 3 segundos, contados, até aos braços estendidos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).'],
   },
   archer_pull: {
     name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
@@ -54,7 +54,13 @@ export const EX = {
   },
   pullup: {
     name: 'Pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas',
-    cues: ['Braços totalmente estendidos em baixo.', 'Queixo acima da barra.'],
+    cues: [
+      'Pegada por cima (palmas para a frente), um pouco mais aberta que os ombros, polegar à volta da barra.',
+      'Começa pendurado com os braços totalmente esticados. Antes de puxar, puxa os ombros para baixo e para trás, sem dobrar os braços.',
+      'Puxa os cotovelos para baixo, em direção às costelas, até o queixo passar a barra. Peito para a frente, olhar para a barra.',
+      'Pernas juntas e corpo firme, ligeiramente "côncavo" (abdominais apertados): nada de pontapés nem balanço.',
+      'Desce controlado até aos braços totalmente esticados. Só conta a rep se o queixo passar a barra e voltares a esticar os braços.',
+    ],
   },
   c2b: {
     name: 'Chest-to-bar pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
@@ -64,7 +70,14 @@ export const EX = {
   explosive_pull: {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o mais alto possível, peito à barra',
-    cues: ['Rep explosiva desde baixo: tenta que a barra chegue ao peito ou mais abaixo.', 'Poucas reps, todas rápidas. Descansa bem entre séries.'],
+    cues: [
+      'Começa parado, pendurado com os braços esticados e os ombros já puxados para baixo. Sem balanço para "ganhar embalo".',
+      'Puxa o mais depressa e com o máximo de força que conseguires, desde baixo: a ideia é a barra chegar ao peito ou mais abaixo.',
+      'Puxa os cotovelos para baixo e para trás e leva o peito à barra, inclinando ligeiramente o tronco para trás no topo.',
+      'Corpo firme e pernas juntas e à frente (ligeiramente "côncavo"), para a força não se perder no balanço.',
+      'Desce controlado até aos braços esticados, para um segundo e faz a rep seguinte do zero.',
+      'Poucas reps e todas rápidas: se uma rep sair lenta ou mais baixa, a série acabou. Descansa 2 a 3 minutos entre séries.',
+    ],
   },
   waist_pull: {
     name: 'High pull-ups (bar to waist)', kind: 'bodyweight', tier: 'skill', group: 'costas',
@@ -305,7 +318,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.20.0';
+export const APP_VERSION = '1.20.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
