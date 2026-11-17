@@ -2,8 +2,8 @@
 // acerto do total (somar, tirar, definir) e desfazer.
 // Cada alimento fica guardado em habits[dia].foods com a refeição (meal), para o histórico ficar completo.
 import * as E from './engine.js';
-import { put, list } from './store.js';
-import { toast, rerender } from './ui.js';
+import { put, list, setSettings } from './store.js';
+import { toast, rerender, modal } from './ui.js';
 import { esc, fmtNum, parseNum, uid, todayISO, addDays } from './util.js';
 import { MEAL_SLOTS } from './data.js';
 
@@ -72,7 +72,7 @@ export function foodG(f) {
 
 // Catálogo + alimentos escritos à mão (com nome) já usados. Numa refeição, primeiro o que já comeste
 // nessa refeição, depois o que costuma entrar nela; a seguir, o mais usado nos últimos 60 dias.
-function catalog(meal = null) {
+function catalog(meal = null, includeHidden = false) {
   const from = addDays(todayISO(), -60);
   const count = new Map();
   const inMeal = new Map();
@@ -90,7 +90,9 @@ function catalog(meal = null) {
     }
   }
   const all = [...FOODS, ...[...custom.values()].sort((a, b) => a.name.localeCompare(b.name, 'pt'))];
+  const hidden = new Set(E.S().hiddenFoods || []);
   return all
+    .filter((f) => includeHidden || !hidden.has(f.id))
     .map((f, i) => ({ ...f, uses: count.get(f.id) || 0, mealUses: inMeal.get(f.id) || 0, hint: meal && (f.meals || []).includes(meal) ? 1 : 0, i }))
     .sort((a, b) => b.mealUses - a.mealUses || b.hint - a.hint || b.uses - a.uses || a.i - b.i);
 }
@@ -129,6 +131,7 @@ export function foodPicker(meal = null) {
     </div>
     <div class="chips">${top.map(foodChip).join('')}</div>
     ${rest.length ? `<details class="prot-ref"><summary>Mais alimentos</summary><div class="chips">${rest.map(foodChip).join('')}</div></details>` : ''}
+    <button type="button" class="link small food-manage" data-food-manage>Esconder ou mostrar alimentos${(E.S().hiddenFoods || []).length ? ` (${(E.S().hiddenFoods || []).length} ${(E.S().hiddenFoods || []).length === 1 ? 'escondido' : 'escondidos'})` : ''}</button>
     <form class="prot-form" data-form="food-add">
       <input name="what" autocomplete="off" class="input prot-what" placeholder="Outro alimento" aria-label="Nome do alimento">
       <span class="with-unit"><input name="g" inputmode="decimal" autocomplete="off" class="input num" placeholder="10" aria-label="Gramas de proteína"><i>g</i></span>
@@ -224,6 +227,28 @@ export function addFoods(iso, items, meta = {}, label = 'Refeição') {
     (cur) => ({ protein: r1(Math.max(0, (cur.protein || 0) - add)), foods: (cur.foods || []).filter((x) => !ids.has(x.id)) }));
 }
 
+// Escolher que alimentos aparecem nos botões. Os escondidos continuam nas sugestões e no histórico.
+async function manageFoods() {
+  const hidden = new Set(E.S().hiddenFoods || []);
+  const foods = catalog(null, true).sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+  const ok = await modal({
+    title: 'Alimentos nos botões',
+    body: `<p class="muted small">Tira o visto aos que não queres ver. Ficam escondidos em todos os dispositivos; o que já registaste não muda.</p>
+      <div class="food-manage-list">${foods.map((f) => `<label class="field-check"><input type="checkbox" data-fid="${esc(f.id)}" ${hidden.has(f.id) ? '' : 'checked'}> ${esc(f.name)} <span class="muted small">${fmtNum(foodG(f))} g</span></label>`).join('')}</div>`,
+    actions: [
+      { label: 'Cancelar', value: false, kind: 'ghost' },
+      { label: 'Guardar', value: true, kind: 'primary', fn: (wrap) => {
+        hidden.clear();
+        wrap.querySelectorAll('[data-fid]').forEach((c) => { if (!c.checked) hidden.add(c.dataset.fid); });
+      } },
+    ],
+  });
+  if (!ok) return;
+  setSettings({ hiddenFoods: [...hidden] });
+  rerender();
+  toast(hidden.size ? `${hidden.size} ${hidden.size === 1 ? 'alimento escondido' : 'alimentos escondidos'}` : 'Todos os alimentos visíveis');
+}
+
 function setRow(root, attr, value) {
   root.querySelectorAll(`[${attr}]`).forEach((b) => {
     const on = b.getAttribute(attr) === String(value);
@@ -241,6 +266,7 @@ export function bindProtein(root, iso) {
       setRow(root, 'data-mult', m.dataset.mult);
       return;
     }
+    if (e.target.closest('[data-food-manage]')) { e.preventDefault(); manageFoods(); return; }
     const pm = e.target.closest('[data-pick-meal]');
     if (pm) {
       e.preventDefault();

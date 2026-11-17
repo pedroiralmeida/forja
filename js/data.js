@@ -268,7 +268,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.17.2';
+export const APP_VERSION = '1.17.3';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -376,6 +376,7 @@ export const DEFAULT_SETTINGS = {
   sound: true,
   vibrate: true,
   lockScreenRest: true,
+  hiddenFoods: [], // alimentos escondidos dos botões de registo (continuam nas sugestões e no histórico)
   wakeLock: true,
   theme: 'auto',
   baseline: { date: null, bench: { w: 80, reps: 2, rpe: 10 }, pullups: 10, bw: 64 },

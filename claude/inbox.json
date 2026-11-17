@@ -444,7 +444,10 @@
  },
  "settingsPatch": {
   "budgetMonthly": 0,
-  "updatedAt": 1794843667617,
+  "hiddenFoods": [
+   "fiambre_peru"
+  ],
+  "updatedAt": 1794915530702,
   "weekPlan": {
    "0": "descanso",
    "1": "supera",

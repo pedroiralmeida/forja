@@ -811,3 +811,5 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .sleep-pick .toggle.sleep-7to8.on { background: var(--yellow); border-color: var(--yellow); color: var(--on-yellow); }
 .sleep-pick .toggle.sleep-lt7.on { background: var(--red); border-color: var(--red); color: #fff; }
 .hw-sleep.bad { color: var(--red, #D64545); }
+.food-manage { justify-self: start; font-size: 14px; }
+.food-manage-list { display: grid; gap: 6px; max-height: 55vh; overflow: auto; margin-top: 8px; }
