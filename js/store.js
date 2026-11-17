@@ -15,8 +15,10 @@ const API = 'https://api.github.com';
 // exerciseNotes: notas sobre como um exercício é feito (ex.: um braço de cada vez, que máquina), copiadas para os treinos.
 // reminders: lembretes de técnica para mostrar nos próximos treinos de um exercício, até os esconderes.
 // mealPlans: opção escolhida em cada refeição do guia de refeições, por dia.
+// media: vídeos dos treinos. O ficheiro fica no repositório privado dos dados (pasta videos/);
+// aqui fica só a ficha (data, treino, exercício, série, descrição, análise e caminho do ficheiro).
 export const COLLS = ['sessions', 'bodyweight', 'waist', 'shoulders', 'habits', 'runs', 'milestones', 'deloadWeeks', 'overrides', 'purchases', 'stock',
-  'days', 'settingsHistory', 'revisions', 'meta', 'exerciseNotes', 'reminders', 'mealPlans'];
+  'days', 'settingsHistory', 'revisions', 'meta', 'exerciseNotes', 'reminders', 'mealPlans', 'media'];
 
 function emptyState() {
   return {
@@ -319,6 +321,25 @@ function sortKeys(v) {
   if (v && typeof v === 'object') return Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortKeys(v[k])]));
   return v;
 }
+// Vai buscar um ficheiro do repositório privado dos dados (por exemplo um vídeo) e devolve um Blob
+export async function fetchRepoBlob(path) {
+  if (local.sync.provider !== 'repo' || !local.sync.repo || !local.sync.token) {
+    throw new Error('Liga a sincronização com o repositório (Mais → Sincronizar) para veres os vídeos.');
+  }
+  const enc = path.split('/').map(encodeURIComponent).join('/');
+  let res;
+  try {
+    res = await fetch(`${API}/repos/${local.sync.repo}/contents/${enc}`, {
+      headers: { Accept: 'application/vnd.github.raw', Authorization: 'Bearer ' + local.sync.token.trim(), 'X-GitHub-Api-Version': '2022-11-28' },
+    });
+  } catch (e) {
+    throw new Error('Sem ligação ao GitHub.');
+  }
+  if (res.status === 404) throw new Error('O vídeo não foi encontrado no repositório.');
+  if (!res.ok) throw new Error('Erro do GitHub ao abrir o vídeo: ' + res.status);
+  return res.blob();
+}
+
 function repoPath() {
   const { repo, path } = local.sync;
   return `/repos/${repo}/contents/${(path || FILE).split('/').map(encodeURIComponent).join('/')}`;

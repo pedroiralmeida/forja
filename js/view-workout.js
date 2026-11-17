@@ -1,7 +1,7 @@
 // Treino em curso, edição de sessões passadas e detalhe de uma sessão
 import { EX, DAYS, BAND_LEVELS, PAIN_SPOTS, CONDITIONS } from './data.js';
 import * as E from './engine.js';
-import { local, persistLocal, put, get, remove, syncNow } from './store.js';
+import { local, persistLocal, put, get, remove, syncNow, list, fetchRepoBlob } from './store.js';
 import {
   icons, navigate, rerender, toast, modal, confirmDialog, header, startRest, stopRest, unlockAudio, releaseWakeLock, requestWakeLock, applyPendingUpdate,
 } from './ui.js';
@@ -546,6 +546,25 @@ export function sessionMeta(s) {
   return bits.length ? `<p class="sess-meta muted">${bits.map(esc).join('. ')}.</p>` : '';
 }
 
+// Vídeos ligados a este treino (ficheiros no repositório privado dos dados)
+function videosPanel(s) {
+  const vids = list('media').filter((m) => m.kind === 'video' && (m.sessionId === s.id || (!m.sessionId && m.date === s.date)))
+    .sort((a, b) => (a.order ?? a.createdAt ?? 0) - (b.order ?? b.createdAt ?? 0));
+  if (!vids.length) return '';
+  return `<section class="panel videos">
+    <h2 class="panel-title">Vídeos</h2>
+    ${vids.map((m) => `<div class="video-item">
+      <h3>${esc(m.title || (m.ex ? E.exInfo(m.ex).name : 'Vídeo'))}</h3>
+      ${m.set ? `<p class="muted small">${esc(m.set)}</p>` : ''}
+      ${m.summary ? `<p>${esc(m.summary)}</p>` : ''}
+      ${m.findings && m.findings.length ? `<details><summary>Análise</summary><ul>${m.findings.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></details>` : ''}
+      <div class="video-box"></div>
+      <button class="btn secondary small" data-act="play-video" data-id="${esc(m.id)}">Ver vídeo</button>
+      ${m.sizeKB ? `<span class="muted small"> ${fmtNum(Math.round(m.sizeKB / 100) / 10)} MB</span>` : ''}
+    </div>`).join('')}
+  </section>`;
+}
+
 export function renderSession(root, { id, fresh }) {
   const s = get('sessions', id);
   if (!s) {
@@ -574,6 +593,7 @@ export function renderSession(root, { id, fresh }) {
         </div>`).join('')}
       ${s.notes ? `<p class="sess-notes">${esc(s.notes)}</p>` : ''}
     </section>
+    ${videosPanel(s)}
     <div class="row-actions">
       ${fresh ? '<a class="btn primary" href="#/hoje">Feito</a>' : ''}
       <button class="btn secondary" data-act="edit">${icons.edit} Editar</button>
@@ -583,6 +603,23 @@ export function renderSession(root, { id, fresh }) {
   root.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
+    if (b.dataset.act === 'play-video') {
+      const m = get('media', b.dataset.id);
+      const box = b.closest('.video-item').querySelector('.video-box');
+      b.disabled = true;
+      b.textContent = 'A carregar…';
+      try {
+        const blob = await fetchRepoBlob(m.file);
+        const url = URL.createObjectURL(blob.type ? blob : new Blob([blob], { type: 'video/mp4' }));
+        box.innerHTML = `<video controls playsinline preload="metadata" src="${url}"></video>`;
+        b.remove();
+      } catch (err) {
+        b.disabled = false;
+        b.textContent = 'Ver vídeo';
+        toast(err.message);
+      }
+      return;
+    }
     if (b.dataset.act === 'edit') {
       startEdit(s.id);
       navigate(`#/sessao/${s.id}/editar`);

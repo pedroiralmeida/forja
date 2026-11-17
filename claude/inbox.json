@@ -308,6 +308,36 @@
    "updatedAt": 1794910839526
   }
  },
+ "media": {
+  "video-2026-11-16-bench-top": {
+   "createdAt": 1794953012055,
+   "date": "2026-11-16",
+   "day": "A",
+   "durationS": 11,
+   "ex": "bench",
+   "file": "videos/2026-11-16/bench-top-set-72.5x3.mp4",
+   "findings": [
+    "Amplitude completa: a barra toca no peito em todas as reps, sem ressalto.",
+    "Rabo sempre no banco, cabeça apoiada.",
+    "Toque alto no peito (perto das clavículas), em vez da parte de baixo do peito.",
+    "Costas quase planas: pouco arco e pouca retração das omoplatas.",
+    "Pés à frente dos joelhos, pouca força das pernas (leg drive).",
+    "Pulso dobrado para trás, sobretudo na mão do lado da câmara (barra alta na mão): coincide com a dor no pulso.",
+    "A 3.ª rep subiu à velocidade da 2.ª (~1 s): RPE real provavelmente 8 a 8,5."
+   ],
+   "id": "video-2026-11-16-bench-top",
+   "kind": "video",
+   "recordedBy": "filmado por outra pessoa, de lado a partir dos pés",
+   "sessionId": "mwjo8l38o5sg8s",
+   "set": "72,5 kg × 3, RPE 9 registada",
+   "sizeKB": 1413,
+   "slotId": "A_bench",
+   "source": "Análise do Claude",
+   "summary": "Amplitude completa e sem ressalto; a corrigir: pulso dobrado para trás, toque alto no peito, costas planas e pés à frente.",
+   "title": "Bench press, série de topo",
+   "updatedAt": 1794953012055
+  }
+ },
  "purchases": {
   "compra-amazon-2026-11-15": {
    "category": "material",
