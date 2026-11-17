@@ -96,6 +96,27 @@ export const EX = {
     note: 'barra à altura do peito, pés no chão',
     cues: ['Usa as pernas para ajudar e foca-te só na rotação dos pulsos e cotovelos por cima da barra.'],
   },
+  hanging_leg_raise: {
+    name: 'Hanging leg raises', kind: 'bodyweight', tier: 'accessory', group: 'abdominais', alts: ['toes_to_bar'],
+    note: 'pendurado, pernas esticadas até 90°, a formar um L',
+    cues: [
+      'Pendura-te com os braços esticados e os ombros "ligados": puxa-os um pouco para baixo, sem dobrar os braços.',
+      'Sobe as pernas juntas e esticadas até à altura da anca (90°), pausa 1 s e desce em 2 s.',
+      'Sem balançar: se o corpo começar a balançar, para um segundo entre reps.',
+      'Deita o ar fora ao subir. Se ainda não chegas aos 90° com as pernas esticadas, dobra os joelhos.',
+    ],
+  },
+  toes_to_bar: {
+    name: 'Toes-to-bar', kind: 'bodyweight', tier: 'accessory', group: 'abdominais', alts: ['hanging_leg_raise'],
+    note: 'pendurado, levar os pés até à barra',
+    cues: [
+      'Começa pendurado com os ombros "ligados" e o corpo parado.',
+      'Ao subir as pernas, empurra a barra para baixo com os braços esticados: ajuda a chegar lá acima.',
+      'Toca na barra com os pés, com as pernas o mais esticadas possível, e desce controlado.',
+      'Se ainda não chegas, faz knees-to-elbows (joelhos aos cotovelos) e vai esticando as pernas.',
+      'É o mesmo controlo do corpo que segura o balanço do muscle-up.',
+    ],
+  },
   dead_hang: {
     name: 'Dead hang', kind: 'hold', tier: 'accessory', group: 'pegada',
     note: 'pendurado na barra, braços estendidos',
@@ -194,21 +215,23 @@ export const DAYS = {
   },
   E1: {
     label: 'Estádio 1', title: 'Muscle-up e força', place: 'estadio',
-    blurb: 'Muscle-up primeiro, depois slow eccentric pull-ups e straight bar dips. Sem pesos: vais a pé.',
+    blurb: 'Muscle-up primeiro, depois slow eccentric pull-ups, straight bar dips e hanging leg raises. Sem pesos: vais a pé.',
     slots: [
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
       { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 4, min: 5, max: 8 },
       { id: 'E1_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
+      { id: 'E1_legs', ex: 'hanging_leg_raise', mode: 'reps', sets: 3, min: 8, max: 12 },
       { id: 'E1_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
   E2: {
     label: 'Estádio 2', title: 'Muscle-up e volume', place: 'estadio',
-    blurb: 'Muscle-up primeiro, depois chest-to-bar pull-ups e straight bar dips.',
+    blurb: 'Muscle-up primeiro, depois chest-to-bar pull-ups, straight bar dips e toes-to-bar.',
     slots: [
       { id: 'E2_skill', mode: 'skill', focus: 'main' },
       { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
       { id: 'E2_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
+      { id: 'E2_t2b', ex: 'toes_to_bar', mode: 'reps', sets: 3, min: 5, max: 10 },
       { id: 'E2_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
@@ -270,7 +293,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.18.0';
+export const APP_VERSION = '1.19.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
