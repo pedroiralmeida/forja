@@ -203,6 +203,9 @@ export function nextDay(place = 'supera', iso = todayISO()) {
 
 // Próximos dias com treino (a partir de amanhã): para cada dia do Supera ou do Estádio no plano,
 // o treino que calha seguindo a rotação; o sábado de reposição aparece com o estado da semana.
+// Dias de reposição: 'livre' (obrigatório se faltou algum treino) e 'repor' (opcional, só se faltou)
+export const isFlex = (plan) => plan === 'livre' || plan === 'repor';
+
 export function upcomingPlan(iso = todayISO(), n = 7) {
   const ptr = {};
   for (const place of Object.keys(CORE_DAYS)) {
@@ -218,7 +221,7 @@ export function upcomingPlan(iso = todayISO(), n = 7) {
       const core = CORE_DAYS[plan];
       out.push({ date: d, plan, place: plan, day: core[ptr[plan] % core.length] });
       ptr[plan] = (ptr[plan] + 1) % core.length;
-    } else if (plan === 'livre') {
+    } else if (isFlex(plan)) {
       out.push({ date: d, plan, place: null, day: null });
     }
   }
@@ -362,8 +365,8 @@ export function sessionContext({ day, place, suggestedDay, suggestedPlace } = {}
     chosenByHand: day !== suggestedDay || place !== suggestedPlace,
     weekDoneBefore: w.done,
     weekTarget: w.target,
-    makeup: plan === 'livre' ? w.done < w.target : plan !== place && w.deficit[place] > 0 && (plan === 'supera' || plan === 'estadio'),
-    extra: plan === 'descanso' || plan === 'corrida' || (plan === 'livre' && w.done >= w.target),
+    makeup: isFlex(plan) ? w.done < w.target : plan !== place && w.deficit[place] > 0 && (plan === 'supera' || plan === 'estadio'),
+    extra: plan === 'descanso' || plan === 'corrida' || (isFlex(plan) && w.done >= w.target),
     daysSinceLast: daysSinceLastSession(iso),
     sleepOk: sleepOk(get('habits', iso)),
     sleepBand: sleepBand(get('habits', iso)),
@@ -398,13 +401,38 @@ export function adherence(weeks = 8, iso = todayISO()) {
 }
 
 // Horário de um sítio num dia: { open: bool, from, to }
+// Feriados nacionais em Portugal (fixos e móveis, a partir da Páscoa)
+function easter(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+  return `${y}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+export function holidayName(iso) {
+  const y = Number(iso.slice(0, 4));
+  const fixed = {
+    '01-01': 'Ano Novo', '04-25': 'Dia da Liberdade', '05-01': 'Dia do Trabalhador', '06-10': 'Dia de Portugal',
+    '08-15': 'Assunção de Nossa Senhora', '10-05': 'Implantação da República', '11-01': 'Dia de Todos os Santos',
+    '12-01': 'Restauração da Independência', '12-08': 'Imaculada Conceição', '12-25': 'Natal',
+  };
+  if (fixed[iso.slice(5)]) return fixed[iso.slice(5)];
+  const e = easter(y);
+  if (iso === addDays(e, -2)) return 'Sexta-feira Santa';
+  if (iso === e) return 'Páscoa';
+  if (iso === addDays(e, 60)) return 'Corpo de Deus';
+  return null;
+}
+
 export function placeHours(place, iso = todayISO()) {
   const p = PLACES[place];
   if (!p) return null;
   if (p.always) return { open: true, always: true };
-  const dow = new Date(isoToMs(iso)).getDay();
+  const holiday = holidayName(iso);
+  const dow = holiday && p.holidaysAsSunday ? 0 : new Date(isoToMs(iso)).getDay();
   const h = p.hours[dow];
-  return h ? { open: true, from: h[0], to: h[1] } : { open: false };
+  return h ? { open: true, from: h[0], to: h[1], holiday } : { open: false, holiday };
 }
 
 export function dayTitle(day) {

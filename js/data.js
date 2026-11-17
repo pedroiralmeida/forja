@@ -249,11 +249,12 @@ export const CONDITIONS = [
   { value: 'cheio', label: 'Cheio de gente' },
 ];
 
-// Horários segundo o Google (nov. 2026). Índice = dia da semana JS (0 = domingo).
+// Horários do Supera segundo o site (centrosupera.pt, nov. 2026). Índice = dia da semana JS (0 = domingo).
 export const PLACES = {
   supera: {
     name: 'Supera Telheiras', short: 'Supera',
     hours: { 0: ['9:00', '14:00'], 1: ['6:30', '22:00'], 2: ['6:30', '22:00'], 3: ['6:30', '22:00'], 4: ['6:30', '22:00'], 5: ['6:30', '22:00'], 6: ['9:00', '20:30'] },
+    holidaysAsSunday: true, // feriados: horário de domingo (site do Supera)
   },
   estadio: {
     name: 'Estádio Universitário', short: 'Estádio', always: true,
@@ -264,11 +265,12 @@ export const PLAN_TYPES = [
   { value: 'supera', label: 'Supera' },
   { value: 'estadio', label: 'Estádio' },
   { value: 'livre', label: 'Reposição (obrigatório só se faltaste)' },
+  { value: 'repor', label: 'Reposição opcional (só se faltaste; senão descanso)' },
   { value: 'corrida', label: 'Corrida' },
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.17.5';
+export const APP_VERSION = '1.18.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -367,7 +369,7 @@ export const ALL_PLATES = [25, 20, 15, 10, 5, 2.5, 2, 1.25, 1, 0.5];
 export const DEFAULT_SETTINGS = {
   onboarded: false,
   daysPerWeek: 3,
-  weekPlan: { 0: 'descanso', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'descanso', 6: 'livre' },
+  weekPlan: { 0: 'repor', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'descanso', 6: 'livre' },
   bar: 20,
   plates: [25, 20, 15, 10, 5, 2.5, 1.25],
   dbStep: 2,
