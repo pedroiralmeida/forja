@@ -410,12 +410,13 @@
     }
    ],
    "note": "Cupão de 23,37 € usado, portes grátis",
+   "receivedOn": "2026-11-17",
    "shipping": 0,
-   "status": "a caminho",
+   "status": "recebida",
    "store": "Zumub",
    "subtotal": 62.87,
    "total": 39.5,
-   "updatedAt": 1794786864473
+   "updatedAt": 1794921447201
   }
  },
  "reminders": {
@@ -430,16 +431,43 @@
    "id": "bench-video-2026-11-16",
    "items": [
     "Pulso: barra na base da palma, alinhada com o antebraço, e pulso quase direito. Aperta a barra com força. Acerta isto já nos aquecimentos.",
+    "Fitas de pulso (chegaram a 17/11): usa-as no top set e nas back-offs, bem apertadas à volta do pulso. Nos aquecimentos não são precisas.",
     "Antes de tirar a barra: omoplatas juntas e para baixo, peito para cima (um pequeno arco nas costas).",
     "Pés mais para trás, debaixo dos joelhos, e empurra o chão com as pernas.",
     "A barra toca na parte de baixo do peito (linha dos mamilos), com os cotovelos um pouco mais junto ao corpo.",
     "Sem barras de segurança: para sempre com 1 a 2 reps de reserva.",
     "Se puderes, filma de lado com o telemóvel parado, à altura do banco."
    ],
-   "short": "Pulso direito, omoplatas atrás, pés mais atrás e a barra a tocar mais abaixo no peito.",
+   "short": "Pulso direito, omoplatas atrás, pés mais atrás e a barra a tocar mais abaixo no peito, e fitas de pulso nas séries pesadas.",
    "source": "Análise do Claude ao vídeo da série de topo de 16/11 (72,5 kg × 3)",
    "title": "do vídeo de 16/11",
-   "updatedAt": 1794870956530
+   "updatedAt": 1794921447201
+  },
+  "magnesio-barra-2026-11-17": {
+   "createdAt": 1794921447201,
+   "ex": [
+    "muscle_up",
+    "mu_negative",
+    "mu_band",
+    "mu_low_bar",
+    "pullup",
+    "pullup_slow",
+    "archer_pull",
+    "c2b",
+    "explosive_pull",
+    "dead_hang",
+    "sbd"
+   ],
+   "from": "2026-11-17",
+   "id": "magnesio-barra-2026-11-17",
+   "items": [
+    "Antes da primeira série na barra, espalha um pouco de magnésio líquido nas palmas e nos dedos e deixa secar uns 30 segundos.",
+    "Se as mãos voltarem a escorregar, põe outra camada fina entre séries."
+   ],
+   "short": "Magnésio líquido nas mãos antes da barra.",
+   "source": "Chegou na encomenda da Amazon a 17/11",
+   "title": "magnésio líquido",
+   "updatedAt": 1794921447201
   }
  },
  "settingsPatch": {
@@ -466,10 +494,11 @@
    "note": "No shaker com leite ou água, sem liquidificadora",
    "perDay": 1,
    "purchaseId": "compra-zumub-2026-11-15",
+   "receivedOn": "2026-11-17",
    "servingG": 45,
    "sizeG": 3000,
-   "status": "encomendado",
-   "updatedAt": 1794786864473
+   "status": "fechado",
+   "updatedAt": 1794921447201
   },
   "creatina-zumub": {
    "id": "creatina-zumub",
@@ -490,10 +519,11 @@
    "note": "Guarda fora do frigorífico, longe do calor; mexe o óleo antes de usar",
    "perDay": 1,
    "purchaseId": "compra-zumub-2026-11-15",
+   "receivedOn": "2026-11-17",
    "servingG": 15,
    "sizeG": 1000,
-   "status": "encomendado",
-   "updatedAt": 1794786864473
+   "status": "fechado",
+   "updatedAt": 1794921447201
   },
   "whey-zumub-atual": {
    "id": "whey-zumub-atual",
@@ -513,10 +543,11 @@
    "name": "100% Whey Concentrate Cookies & Cream",
    "perDay": 1,
    "purchaseId": "compra-zumub-2026-11-15",
+   "receivedOn": "2026-11-17",
    "servingG": 30,
    "sizeG": 1000,
-   "status": "encomendado",
-   "updatedAt": 1794786864473
+   "status": "fechado",
+   "updatedAt": 1794921447201
   }
  }
 }

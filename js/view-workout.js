@@ -95,7 +95,10 @@ function entryCard(entry, ei, session, mode) {
         ${!anyDone ? `<button class="icon-btn" data-act="remove-ex" aria-label="Remover exercício">${icons.trash}</button>` : ''}
       </div>
     </header>
-    ${mode === 'active' ? E.remindersFor(entry.ex, session.date).map((r) => `
+    ${mode === 'active' ? E.remindersFor(entry.ex, session.date)
+    // Cada lembrete só aparece no primeiro exercício do treino a que se aplica
+    .filter((r) => !session.exercises.slice(0, ei).some((x) => (r.ex || []).includes(x.ex)))
+    .map((r) => `
       <div class="reminder" role="note">
         <strong>Lembrete${r.title ? `: ${esc(r.title)}` : ''}</strong>
         <ul>${(r.items || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
