@@ -752,11 +752,30 @@ function prescribedOf(sets) {
   });
 }
 
+// Isometrias: tempo fixo, ou com progressão (slot.progress = { max, step }): se da última vez
+// aguentaste o tempo pedido em todas as séries, sobe step segundos, até max.
 function buildHold(slot) {
-  const sec = slot.seconds || 60;
+  let sec = slot.seconds || 60;
+  let note = slot.note || 'Para alongar e melhorar a pegada. Regista os segundos que aguentaste.';
+  if (slot.progress) {
+    // Última vez que fizeste este exercício, em qualquer treino (o E1 e o E2 partilham a progressão)
+    const exId = slotEx(slot);
+    let last = null;
+    for (const ss of sessions()) {
+      const e = ss.exercises.find((x) => x.ex === exId && workSets(x).length);
+      if (e) { last = { session: ss, entry: e }; break; }
+    }
+    if (last) {
+      const ws = workSets(last.entry);
+      const prevT = Number((ws[0] || {}).tReps) || sec;
+      const allOk = ws.length >= (slot.sets || 1) && ws.every((x) => (x.reps || 0) >= prevT);
+      sec = allOk ? Math.min(slot.progress.max, prevT + slot.progress.step) : prevT;
+      if (allOk && sec > prevT) note = `Da última vez aguentaste os ${prevT} s em todas as séries: hoje ${sec} s. ${note}`;
+    }
+  }
   return {
     sets: Array.from({ length: slot.sets || 1 }, () => setObj('work', null, sec, { tReps: `${sec}` })),
-    note: 'Para alongar e melhorar a pegada. Regista os segundos que aguentaste.',
+    note,
     target: `${slot.sets || 1}×${sec} s`,
   };
 }

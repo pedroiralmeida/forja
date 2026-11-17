@@ -446,6 +446,7 @@
   "magnesio-barra-2026-11-17": {
    "createdAt": 1794921447201,
    "ex": [
+    "false_grip_hang",
     "muscle_up",
     "mu_negative",
     "mu_band",
@@ -467,7 +468,7 @@
    "short": "Magnésio líquido nas mãos antes da barra.",
    "source": "Chegou na encomenda da Amazon a 17/11",
    "title": "magnésio líquido",
-   "updatedAt": 1794921447201
+   "updatedAt": 1794937747150
   }
  },
  "settingsPatch": {

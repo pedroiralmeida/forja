@@ -84,17 +84,27 @@ export const EX = {
   mu_negative: {
     name: 'Muscle-up negatives', kind: 'bodyweight', tier: 'skill', group: 'skill',
     note: 'começa por cima da barra e desce em 3–5 s',
-    cues: ['Sobe para cima da barra (salto ou caixa).', 'Desce devagar, passando pela transição até aos braços estendidos.', 'Sente onde os pulsos rodam por cima da barra.'],
+    cues: ['Agarra em pegada falsa (pulso por cima da barra) antes de começares.', 'Sobe para cima da barra (salto ou caixa).', 'Desce devagar, passando pela transição até aos braços estendidos.', 'Sente onde os pulsos rodam por cima da barra.'],
   },
   mu_band: {
     name: 'Band-assisted muscle-ups', kind: 'band', tier: 'skill', group: 'skill',
     note: 'banda presa na barra, sob os joelhos ou pés',
-    cues: ['Usa a banda mais leve que te deixe fazer reps limpas.', 'Puxa para trás e à volta da barra, não na vertical.', 'Passa os cotovelos por cima depressa.'],
+    cues: ['Pegada falsa: pulso por cima da barra desde o início.', 'Usa a banda mais leve que te deixe fazer reps limpas.', 'Puxa para trás e à volta da barra, não na vertical.', 'Passa os cotovelos por cima depressa.'],
   },
   mu_low_bar: {
     name: 'Low bar transitions', kind: 'bodyweight', tier: 'skill', group: 'skill',
     note: 'barra à altura do peito, pés no chão',
-    cues: ['Usa as pernas para ajudar e foca-te só na rotação dos pulsos e cotovelos por cima da barra.'],
+    cues: ['Pegada falsa: pulso por cima da barra.', 'Usa as pernas para ajudar e foca-te só na rotação dos pulsos e cotovelos por cima da barra.'],
+  },
+  false_grip_hang: {
+    name: 'False grip hang', kind: 'hold', tier: 'skill', group: 'pegada',
+    note: 'pendurado em pegada falsa: pulso por cima da barra',
+    cues: [
+      'Põe a base da palma (a parte junto ao pulso) em cima da barra, com o pulso dobrado e os nós dos dedos virados para a frente.',
+      'Agarra com força e pendura-te com os braços esticados e os ombros puxados um pouco para baixo.',
+      'Se a pegada escorregar para os dedos, não é pegada falsa: para e volta a agarrar.',
+      'Começa com séries curtas. Se o pulso doer (ou a dor do bench press voltar), para por hoje.',
+    ],
   },
   hanging_leg_raise: {
     name: 'Hanging leg raises', kind: 'bodyweight', tier: 'accessory', group: 'abdominais', alts: ['toes_to_bar'],
@@ -125,7 +135,7 @@ export const EX = {
   muscle_up: {
     name: 'Muscle-up', kind: 'bodyweight', tier: 'skill', group: 'skill',
     cues: [
-      'Pegada um pouco mais fechada que nos pull-ups, pulso por cima da barra.',
+      'Pegada falsa ou meia pegada falsa: um pouco mais fechada que nos pull-ups, pulso por cima da barra.',
       'Balanço curto e controlado: corpo arqueado atrás, corpo "côncavo" à frente.',
       'Puxa a barra para as ancas e passa os cotovelos por cima depressa.',
       'Evita passar um braço de cada vez (chicken wing).',
@@ -217,6 +227,7 @@ export const DAYS = {
     label: 'Estádio 1', title: 'Muscle-up e força', place: 'estadio',
     blurb: 'Muscle-up primeiro, depois slow eccentric pull-ups, straight bar dips e hanging leg raises. Sem pesos: vais a pé.',
     slots: [
+      { id: 'E1_fg', ex: 'false_grip_hang', mode: 'hold', sets: 2, seconds: 10, progress: { max: 30, step: 5 }, note: 'Faz isto depois de aquecer, antes do muscle-up. Usa a mesma pegada no resto do bloco de muscle-up.' },
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
       { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 4, min: 5, max: 8 },
       { id: 'E1_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
@@ -228,6 +239,7 @@ export const DAYS = {
     label: 'Estádio 2', title: 'Muscle-up e volume', place: 'estadio',
     blurb: 'Muscle-up primeiro, depois chest-to-bar pull-ups, straight bar dips e toes-to-bar.',
     slots: [
+      { id: 'E2_fg', ex: 'false_grip_hang', mode: 'hold', sets: 2, seconds: 10, progress: { max: 30, step: 5 }, note: 'Faz isto depois de aquecer, antes do muscle-up. Usa a mesma pegada no resto do bloco de muscle-up.' },
       { id: 'E2_skill', mode: 'skill', focus: 'main' },
       { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
       { id: 'E2_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
@@ -293,7 +305,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.19.0';
+export const APP_VERSION = '1.20.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -422,9 +434,9 @@ export const GUIDE = [
     title: 'Como funciona o plano',
     body: `
 <p>Há dois sítios. No <strong>Supera</strong> fazes o bench press e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, pull-ups e straight bar dips reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
-<p><strong>A semana tem 4 treinos obrigatórios:</strong> Supera à segunda e à quarta, Estádio à terça e à quinta. Sexta e domingo são de descanso (à sexta há o grupo de jovens).</p>
+<p><strong>A semana tem 4 treinos obrigatórios:</strong> Supera à segunda e à quarta, Estádio à terça e à quinta. A sexta é de descanso (há o grupo de jovens). O domingo serve para repor um treino em falta, se ainda faltar algum; senão é descanso. Ao domingo e nos feriados o Supera só abre das 9h às 14h.</p>
 <p><strong>O sábado depende da semana.</strong> Se fizeste os 4 treinos, é opcional: treinas se te apetecer, ou descansas. Se faltaste a algum, é obrigatório e a app diz-te onde ir (o sítio que ficou a faltar). Ao sábado o Supera abre das 9h às 20h30.</p>
-<p><strong>Se faltares a um treino</strong>, não o perdes: a app segue sempre a ordem e retoma onde ficaste. Regista o motivo quando a app perguntar; fica no histórico. Se faltares a dois na mesma semana, o sábado repõe só um: nunca faças dois treinos no mesmo dia para compensar. Depois de uma pausa longa, a app baixa um pouco os pesos do supino.</p>
+<p><strong>Se faltares a um treino</strong>, não o perdes: a app segue sempre a ordem e retoma onde ficaste. Regista o motivo quando a app perguntar; fica no histórico. Se faltares a dois na mesma semana, repões um no sábado e outro no domingo: nunca faças dois treinos no mesmo dia para compensar. Depois de uma pausa longa, a app baixa um pouco os pesos do supino.</p>
 <p><strong>Ordem dos treinos.</strong> No Supera alternas o A (pesado) e o B (volume). O C (paused bench press) é o treino extra: aparece quando já fizeste o A e o B nessa semana, por exemplo num sábado opcional. No Estádio alternas o 1 e o 2.</p>
 <p><strong>Sábado opcional: onde?</strong> Enquanto não tiveres o primeiro muscle-up, a app sugere o Estádio (aprender uma técnica pede repetição frequente). Depois, sugere o Supera.</p>
 <p><strong>Dias com pouco tempo:</strong> se só tiveres 20 minutos, vai ao Estádio fazer apenas o bloco de muscle-up. É melhor do que saltar o treino.</p>
@@ -442,7 +454,7 @@ export const GUIDE = [
 <p>A técnica dá quilos sem precisares de ganhar força. Antes de tirar a barra: omoplatas juntas e puxadas para baixo, arco moderado na zona das costas (o rabo fica no banco) e pés bem firmes.</p>
 <p>A pegada deve deixar os antebraços na vertical quando a barra está no peito. A barra desce em direção à parte de baixo do peito e sobe ligeiramente para trás, até ficar por cima dos ombros.</p>
 <p>O <strong>leg drive</strong> é empurrar o chão com os pés durante a subida, sem levantar o rabo. Transmite força das pernas para o tronco.</p>
-<p>Filma-te de lado de vez em quando. E monta sempre as barras de segurança ou pede a alguém que te ajude nas séries pesadas.</p>`,
+<p>Filma-te de lado de vez em quando. O banco do Supera não tem barras de segurança: nunca vás até à falha e deixa sempre 1 a 2 reps de reserva, ou pede a alguém que te ajude nas séries pesadas.</p>`,
   },
   {
     id: 'ombros',
@@ -458,8 +470,11 @@ export const GUIDE = [
     id: 'muscleup',
     title: 'Muscle-up na barra',
     body: `
-<p>Com 10 pull-ups já tens força suficiente. O que falta é altura (puxar a barra até à barriga) e a transição (rodar os pulsos e passar os cotovelos por cima da barra).</p>
-<p><strong>Pegada:</strong> um pouco mais fechada que nos pull-ups, com o pulso por cima da barra. Tirar o polegar de volta da barra ajuda alguns.</p>
+<p>Com cerca de 10 pull-ups seguidos já tens a força de base. O que falta é altura (puxar a barra até à barriga) e a transição (rodar os pulsos e passar os cotovelos por cima da barra).</p>
+<p><strong>Pegada falsa (false grip):</strong> em vez de agarrares a barra com os dedos, pões a base da palma (a parte junto ao pulso) em cima da barra, com o pulso dobrado. Assim o pulso já começa por cima da barra e a transição fica muito mais curta: não precisas de rodar a mão a meio do movimento. Custa um pouco de força a puxar (fazes menos pull-ups assim) e cansa os antebraços e os pulsos, por isso treina-se aos poucos.</p>
+<p><strong>Como treinar:</strong> no início de cada treino no Estádio, depois de aquecer, 2 séries de false grip hang (começas com 10 s e a app sobe 5 s quando aguentares tudo, até 30 s). Depois usa a mesma pegada nas negatives, nas transições na barra baixa e nos band-assisted muscle-ups. Nas explosive pull-ups podes usar a pegada normal, para puxares mais alto. Na barra, muita gente usa uma meia pegada falsa (a mão rodada por cima da barra, sem o pulso todo dobrado): experimenta as duas.</p>
+<p><strong>Pulsos:</strong> aquece-os antes (rodar os pulsos e apoiar o peso nas palmas, no chão). Se doer, faz séries mais curtas ou para por hoje. Magnésio líquido ajuda a pegada a não escorregar.</p>
+<p><strong>A pegada falsa ajuda, mas não chega sozinha.</strong> O que mais decide o muscle-up na barra é a altura do puxão (a barra tem de chegar ao peito ou à barriga). Por isso as explosive pull-ups continuam a ser o centro do plano.</p>
 <p><strong>Balanço:</strong> um balanço curto e controlado (kip) é legítimo para aprender. Corpo arqueado atrás, corpo "côncavo" à frente e puxa nesse momento.</p>
 <p><strong>Direção:</strong> puxa a barra para as ancas, para trás e à volta, não em linha reta para cima. Quando a barra passar o peito, inclina o tronco à frente e passa os cotovelos por cima depressa.</p>
 <p>Evita passar um braço de cada vez (chicken wing): carrega o ombro e o cotovelo de forma desigual. Se o cotovelo ou o ombro doerem, para e reduz o volume.</p>`,
