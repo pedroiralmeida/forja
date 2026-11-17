@@ -298,6 +298,16 @@
    "updatedAt": 1794872438278
   }
  },
+ "mealPlans": {
+  "2026-11-17": {
+   "choices": {
+    "pa": "pa-paes"
+   },
+   "createdAt": 1794910839526,
+   "date": "2026-11-17",
+   "updatedAt": 1794910839526
+  }
+ },
  "purchases": {
   "compra-amazon-2026-11-15": {
    "category": "material",
