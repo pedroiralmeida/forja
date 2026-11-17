@@ -45,12 +45,12 @@ export const EX = {
   pullup_slow: {
     name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).'],
+    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.'],
   },
   archer_pull: {
     name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
     note: 'reps por cada lado',
-    cues: ['Pega larga. Puxa para um lado, com o outro braço quase esticado a ajudar.', 'Alterna os lados; regista as reps de cada lado.', 'Dá força de um braço sem precisares de pesos.'],
+    cues: ['Pega larga. Puxa para um lado, com o outro braço quase esticado a ajudar.', 'Alterna os lados; regista as reps de cada lado.', 'Dá força de um braço sem precisares de pesos.', 'Pernas sempre juntas.'],
   },
   pullup: {
     name: 'Pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas',
@@ -65,7 +65,7 @@ export const EX = {
   c2b: {
     name: 'Chest-to-bar pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o peito toca na barra',
-    cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.'],
+    cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Pernas sempre juntas.'],
   },
   explosive_pull: {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
@@ -82,17 +82,25 @@ export const EX = {
   waist_pull: {
     name: 'High pull-ups (bar to waist)', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'a barra chega à zona do umbigo',
-    cues: ['Pequeno balanço controlado (kip) é permitido.', 'Puxa a barra em direção às ancas, inclinando o tronco para trás.', 'É esta altura que cria espaço para passares por cima da barra.'],
+    cues: ['Pequeno balanço controlado (kip) é permitido.', 'Puxa a barra em direção às ancas, inclinando o tronco para trás.', 'É esta altura que cria espaço para passares por cima da barra.', 'Pernas sempre juntas.'],
   },
   sbd: {
     name: 'Straight bar dips', kind: 'bodyweight', tier: 'secondary', group: 'tríceps',
     note: 'fundos em cima da barra reta, só com o peso do corpo',
-    cues: ['Em cima da barra, desce até ela tocar perto do umbigo/peito.', 'Inclina o tronco à frente e empurra até aos braços estendidos.', 'É a parte de cima do muscle-up.'],
+    cues: [
+      'Pegada um pouco mais aberta que a largura dos ombros, com as mãos por cima da barra.',
+      'Ombros para baixo e rodados para fora: afasta-os das orelhas e aponta a dobra dos cotovelos para a frente. Mantém-nos assim a série toda, porque é isto que protege o ombro.',
+      'Antebraços sempre na vertical (perpendiculares ao chão): ao descer, os cotovelos vão para trás, não para os lados.',
+      'Inclina o tronco ligeiramente à frente e desce até o peito tocar na barra.',
+      'Sobe até os braços ficarem totalmente esticados, com os cotovelos trancados em cima.',
+      'Pernas sempre juntas e corpo firme, sem balançar.',
+      'É a parte de cima do muscle-up.',
+    ],
   },
   dips: {
     name: 'Parallel bar dips', kind: 'weighted_bw', tier: 'secondary', group: 'tríceps',
     note: 'peso extra se houver',
-    cues: ['Desce até os ombros ficarem ao nível dos cotovelos.', 'Sem dor no ombro: se doer, encurta a amplitude.'],
+    cues: ['Desce até os ombros ficarem ao nível dos cotovelos.', 'Sem dor no ombro: se doer, encurta a amplitude.', 'Pernas sempre juntas.'],
   },
   mu_negative: {
     name: 'Muscle-up negatives', kind: 'bodyweight', tier: 'skill', group: 'skill',
@@ -318,7 +326,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.20.2';
+export const APP_VERSION = '1.20.3';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
