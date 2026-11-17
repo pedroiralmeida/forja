@@ -45,7 +45,7 @@ export const EX = {
   pullup_slow: {
     name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.'],
+    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Esforço: RPE 8, ou seja, para com 1 a 2 reps de reserva. Se assim só saírem 3 ou 4 reps, está certo: nunca até à falha, porque a descida lenta carrega muito os cotovelos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.'],
   },
   archer_pull: {
     name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
@@ -105,7 +105,7 @@ export const EX = {
   mu_negative: {
     name: 'Muscle-up negatives', kind: 'bodyweight', tier: 'skill', group: 'skill',
     note: 'começa por cima da barra e desce em 3–5 s',
-    cues: ['Agarra em pegada falsa (pulso por cima da barra) antes de começares.', 'Sobe para cima da barra (salto ou caixa).', 'Desce devagar, passando pela transição até aos braços estendidos.', 'Sente onde os pulsos rodam por cima da barra.'],
+    cues: ['Agarra em pegada falsa (pulso por cima da barra) antes de começares; se o pulso doer, usa a pegada normal ou a meia pegada falsa.', 'Sobe para cima da barra (salto ou caixa).', 'Desce devagar, em 3 a 5 segundos, passando pela transição até aos braços estendidos.', 'Sente onde os pulsos rodam por cima da barra.', 'Nunca até à falha: quando a descida deixar de durar 3 a 5 segundos controlados, a série acabou. Descer devagar carrega muito os cotovelos.'],
   },
   mu_band: {
     name: 'Band-assisted muscle-ups', kind: 'band', tier: 'skill', group: 'skill',
@@ -251,7 +251,7 @@ export const DAYS = {
     slots: [
       { id: 'E1_fg', ex: 'false_grip_hang', mode: 'hold', sets: 2, seconds: 10, progress: { max: 30, step: 5 }, note: 'Faz isto depois de aquecer, antes do muscle-up. Usa a mesma pegada no resto do bloco de muscle-up.' },
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
-      { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 4, min: 5, max: 8 },
+      { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 3, min: 5, max: 8 },
       { id: 'E1_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
       { id: 'E1_legs', ex: 'hanging_leg_raise', mode: 'reps', sets: 3, min: 8, max: 12 },
       { id: 'E1_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
@@ -327,7 +327,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.22.0';
+export const APP_VERSION = '1.23.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

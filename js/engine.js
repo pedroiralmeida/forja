@@ -707,8 +707,15 @@ function buildReps(slot, exId, deload) {
   if (hist.length) {
     const ws = workSets(hist[0].entry);
     const allMax = ws.length >= slot.sets && ws.every((s) => s.reps >= slot.max);
-    reps = Array.from({ length: slot.sets }, (_, i) => clamp((ws[i] ? ws[i].reps : slot.min) + 1, slot.min, slot.max));
-    note = allMax ? 'Já fazes o topo da gama: mantém e foca-te em reps mais explosivas.' : 'Tenta mais uma rep por série.';
+    const failed = ws.some((s) => (s.rpe || 0) >= 9.5);
+    if (failed) {
+      // Da última vez foi à falha: não pede mais reps; pede as mesmas (mesmo abaixo da gama) com reserva
+      reps = Array.from({ length: slot.sets }, (_, i) => Math.max(1, Math.min(slot.max, ws[i] ? ws[i].reps : (ws[ws.length - 1] || {}).reps || slot.min)));
+      note = 'Da última vez foste à falha (RPE 10). Hoje para com 1 a 2 reps de reserva (RPE 8), mesmo que faças menos reps do que a gama pede.';
+    } else {
+      reps = Array.from({ length: slot.sets }, (_, i) => clamp((ws[i] ? ws[i].reps : slot.min) + 1, slot.min, slot.max));
+      note = allMax ? 'Já fazes o topo da gama: mantém e foca-te em reps mais explosivas.' : 'Tenta mais uma rep por série.';
+    }
   }
   let n = slot.sets;
   if (deload) { n = deloadSets(slot.sets); reps = Array(n).fill(slot.min); note = 'Semana de deload: menos séries.'; }

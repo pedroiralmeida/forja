@@ -96,6 +96,9 @@ function howToSets(session) {
     <ul>
       <li><strong>Bloco de muscle-up primeiro, ainda fresco:</strong> aqui conta a qualidade, não o número. Cada rep limpa e rápida; quando uma rep sair mais lenta ou pior, a série acabou. Nunca até à falha. Descansa 2 a 3 minutos entre séries.</li>
       <li><strong>Pull-ups, dips e leg raises:</strong> cada série vai até RPE 8 a 9, ou seja, paras quando ainda conseguias mais 1 ou 2 reps. As reps vão ficar iguais ou descer um pouco de série para série (por exemplo 8, 7, 7, 6). É normal: é o cansaço a acumular.</li>
+      <li><strong>Negatives e slow eccentric pull-ups: nunca até à falha.</strong> Descer devagar é o que mais carrega os cotovelos. Nas negatives, a série acaba quando a descida deixar de durar 3 a 5 segundos; nas slow eccentric, para a RPE 8, mesmo que só saiam 3 ou 4 reps.</li>
+      <li><strong>Duração:</strong> o treino deve ficar perto dos 60 minutos. Se passar muito disso, é sinal de que estás a ir à falha ou a descansar demais.</li>
+      <li><strong>Teste de máximo de pull-ups:</strong> só de 4 em 4 semanas, mais ou menos (a app avisa). Não faças séries até à falha fora disso.</li>
       <li><strong>A progressão é entre treinos:</strong> é tudo com o peso do corpo, por isso o que sobe são as reps. Tenta +1 rep na mesma série da vez anterior. Quando chegares ao topo da gama em todas as séries, a app sugere uma variante mais difícil (por exemplo, archer pull-ups).</li>
       <li><strong>Isometrias</strong> (false grip hang, dead hang): regista os segundos que aguentaste.</li>
       <li><strong>Técnica:</strong> pernas sempre juntas e corpo firme, sem balanço. O botão (i) de cada exercício tem as dicas.</li>
