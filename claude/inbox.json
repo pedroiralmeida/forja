@@ -336,6 +336,36 @@
    "summary": "Amplitude completa e sem ressalto; a corrigir: pulso dobrado para trás, toque alto no peito, costas planas e pés à frente.",
    "title": "Bench press, série de topo",
    "updatedAt": 1794953012055
+  },
+  "video-2026-11-17-pullups-teste": {
+   "createdAt": 1794958958940,
+   "date": "2026-11-17",
+   "day": "E1",
+   "durationS": 47,
+   "ex": "pullup",
+   "file": "videos/2026-11-17/pullups-teste-maximo-9.mp4",
+   "findings": [
+    "Amplitude em baixo: braços totalmente esticados em todas as reps, com uma pequena pausa pendurado. Bem.",
+    "Corpo: pernas juntas e esticadas, sem balanço nem pontapés. Nas últimas reps os joelhos dobram um pouco.",
+    "Pegada: um pouco mais aberta que os ombros, adequada.",
+    "Em cima: o queixo chega à barra, mas a partir da 4.ª rep sobretudo inclinando a cabeça para trás (esticar o pescoço para \"chegar\" com o queixo). O ideal é olhar em frente e levar o peito em direção à barra.",
+    "Ombros: em baixo ficam soltos (encostados às orelhas). Começar cada rep a puxar os ombros para baixo ajuda a ganhar altura.",
+    "Ritmo: reps 1 a 7 com cerca de 2,5 s cada; a 8.ª já mais lenta e a 9.ª com cerca de 4 s a subir e o queixo no limite: foi mesmo o máximo.",
+    "Para o muscle-up: hoje a barra chega ao queixo; tem de chegar ao peito ou à barriga. É o que as explosive pull-ups treinam.",
+    "Próximo teste (15/12): filmar de lado, à altura da barra, para ver melhor a altura do queixo e o percurso do corpo."
+   ],
+   "id": "video-2026-11-17-pullups-teste",
+   "kind": "video",
+   "order": 1,
+   "original": "VID_20261117_210925.mp4 (1080p, 60 fps, 94,6 MB): comprimido para 720p e 30 fps (4,8 MB); o original ficou no telemóvel",
+   "recordedBy": "telemóvel parado, de frente, um pouco abaixo da barra",
+   "sessionId": "mwl674x9m90e80",
+   "set": "9 reps até à falha, no início do treino, depois do aquecimento",
+   "sizeKB": 4835,
+   "source": "Análise do Claude",
+   "summary": "9 pull-ups estritas: braços esticados em baixo em todas as reps, pernas juntas, sem balanço. Do 8.º rep em diante o queixo só chega à barra inclinando a cabeça para trás; a 9.ª demorou cerca de 4 s a subir.",
+   "title": "Teste de máximo de pull-ups",
+   "updatedAt": 1794958958940
   }
  },
  "purchases": {
