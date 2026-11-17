@@ -472,11 +472,26 @@
   }
  },
  "settingsPatch": {
+  "baseline": {
+   "bench": {
+    "reps": 2,
+    "rpe": 10,
+    "w": 80
+   },
+   "bw": 62.5,
+   "date": "2026-11-16",
+   "pullups": 9,
+   "pullupsTest": {
+    "date": "2026-11-17",
+    "note": "Teste de máximo no início do Estádio 1, depois do aquecimento, pull-ups estritas",
+    "reps": 9
+   }
+  },
   "budgetMonthly": 0,
   "hiddenFoods": [
    "fiambre_peru"
   ],
-  "updatedAt": 1794929454772,
+  "updatedAt": 1794951047052,
   "weekPlan": {
    "0": "repor",
    "1": "supera",
