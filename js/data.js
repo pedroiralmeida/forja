@@ -124,6 +124,7 @@ export const EX = {
       'Põe a base da palma (a parte junto ao pulso) em cima da barra, com o pulso dobrado e os nós dos dedos virados para a frente.',
       'Agarra com força e pendura-te com os braços esticados e os ombros puxados um pouco para baixo.',
       'Se a pegada escorregar para os dedos, não é pegada falsa: para e volta a agarrar.',
+      'Se ainda não consegues manter a pegada pendurado, começa numa barra baixa com os pés no chão (só parte do peso) ou usa a meia pegada falsa: mão rodada por cima da barra, sem dobrar o pulso todo.',
       'Começa com séries curtas. Se o pulso doer (ou a dor do bench press voltar), para por hoje.',
     ],
   },
@@ -326,7 +327,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.21.0';
+export const APP_VERSION = '1.21.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
