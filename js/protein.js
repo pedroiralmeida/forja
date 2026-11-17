@@ -91,8 +91,9 @@ function catalog(meal = null, includeHidden = false) {
   }
   const all = [...FOODS, ...[...custom.values()].sort((a, b) => a.name.localeCompare(b.name, 'pt'))];
   const hidden = new Set(E.S().hiddenFoods || []);
+  const deleted = new Set(E.S().deletedFoods || []);
   return all
-    .filter((f) => includeHidden || !hidden.has(f.id))
+    .filter((f) => !deleted.has(f.id) && (includeHidden || !hidden.has(f.id)))
     .map((f, i) => ({ ...f, uses: count.get(f.id) || 0, mealUses: inMeal.get(f.id) || 0, hint: meal && (f.meals || []).includes(meal) ? 1 : 0, i }))
     .sort((a, b) => b.mealUses - a.mealUses || b.hint - a.hint || b.uses - a.uses || a.i - b.i);
 }
@@ -131,7 +132,7 @@ export function foodPicker(meal = null) {
     </div>
     <div class="chips">${top.map(foodChip).join('')}</div>
     ${rest.length ? `<details class="prot-ref"><summary>Mais alimentos</summary><div class="chips">${rest.map(foodChip).join('')}</div></details>` : ''}
-    <button type="button" class="link small food-manage" data-food-manage>Esconder ou mostrar alimentos${(E.S().hiddenFoods || []).length ? ` (${(E.S().hiddenFoods || []).length} ${(E.S().hiddenFoods || []).length === 1 ? 'escondido' : 'escondidos'})` : ''}</button>
+    <button type="button" class="link small food-manage" data-food-manage>Gerir alimentos${(E.S().hiddenFoods || []).length ? ` (${(E.S().hiddenFoods || []).length} ${(E.S().hiddenFoods || []).length === 1 ? 'escondido' : 'escondidos'})` : ''}</button>
     <form class="prot-form" data-form="food-add">
       <input name="what" autocomplete="off" class="input prot-what" placeholder="Outro alimento" aria-label="Nome do alimento">
       <span class="with-unit"><input name="g" inputmode="decimal" autocomplete="off" class="input num" placeholder="10" aria-label="Gramas de proteína"><i>g</i></span>
@@ -227,26 +228,50 @@ export function addFoods(iso, items, meta = {}, label = 'Refeição') {
     (cur) => ({ protein: r1(Math.max(0, (cur.protein || 0) - add)), foods: (cur.foods || []).filter((x) => !ids.has(x.id)) }));
 }
 
-// Escolher que alimentos aparecem nos botões. Os escondidos continuam nas sugestões e no histórico.
+// Escolher que alimentos aparecem nos botões. Os da app escondem-se; os criados à mão podem ser apagados.
+// Em ambos os casos, o que já registaste não muda (tira um registo errado com o × na refeição).
 async function manageFoods() {
   const hidden = new Set(E.S().hiddenFoods || []);
+  const deleted = new Set(E.S().deletedFoods || []);
   const foods = catalog(null, true).sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+  const row = (f) => `<div class="food-manage-row" data-row="${esc(f.id)}">
+      <label class="field-check"><input type="checkbox" data-fid="${esc(f.id)}" ${hidden.has(f.id) ? '' : 'checked'}> ${esc(f.name)} <span class="muted small">${fmtNum(foodG(f))} g</span></label>
+      ${f.id.startsWith('c:') ? `<button type="button" class="link small danger" data-del-food="${esc(f.id)}">Apagar</button>` : ''}
+    </div>`;
   const ok = await modal({
     title: 'Alimentos nos botões',
-    body: `<p class="muted small">Tira o visto aos que não queres ver. Ficam escondidos em todos os dispositivos; o que já registaste não muda.</p>
-      <div class="food-manage-list">${foods.map((f) => `<label class="field-check"><input type="checkbox" data-fid="${esc(f.id)}" ${hidden.has(f.id) ? '' : 'checked'}> ${esc(f.name)} <span class="muted small">${fmtNum(foodG(f))} g</span></label>`).join('')}</div>`,
+    body: `<p class="muted small">Tira o visto para esconder. Os alimentos que criaste em "Outro alimento" também podem ser apagados. Vale para todos os dispositivos e o que já registaste não muda.</p>
+      <div class="food-manage-list">${foods.map(row).join('')}</div>`,
     actions: [
       { label: 'Cancelar', value: false, kind: 'ghost' },
       { label: 'Guardar', value: true, kind: 'primary', fn: (wrap) => {
         hidden.clear();
-        wrap.querySelectorAll('[data-fid]').forEach((c) => { if (!c.checked) hidden.add(c.dataset.fid); });
+        wrap.querySelectorAll('[data-fid]').forEach((c) => { if (!c.checked && !deleted.has(c.dataset.fid)) hidden.add(c.dataset.fid); });
       } },
     ],
+    onMount: (wrap) => {
+      wrap.addEventListener('click', (e) => {
+        const d = e.target.closest('[data-del-food]');
+        if (!d) return;
+        const id = d.dataset.delFood;
+        const r = wrap.querySelector(`[data-row="${CSS.escape(id)}"]`);
+        if (deleted.has(id)) {
+          deleted.delete(id);
+          r.classList.remove('is-deleted');
+          d.textContent = 'Apagar';
+        } else {
+          deleted.add(id);
+          r.classList.add('is-deleted');
+          d.textContent = 'Anular';
+        }
+      });
+    },
   });
   if (!ok) return;
-  setSettings({ hiddenFoods: [...hidden] });
+  setSettings({ hiddenFoods: [...hidden], deletedFoods: [...deleted] });
   rerender();
-  toast(hidden.size ? `${hidden.size} ${hidden.size === 1 ? 'alimento escondido' : 'alimentos escondidos'}` : 'Todos os alimentos visíveis');
+  const nd = foods.filter((f) => deleted.has(f.id)).length;
+  toast(nd ? `${nd} ${nd === 1 ? 'alimento apagado' : 'alimentos apagados'} das opções` : hidden.size ? `${hidden.size} ${hidden.size === 1 ? 'alimento escondido' : 'alimentos escondidos'}` : 'Todos os alimentos visíveis');
 }
 
 function setRow(root, attr, value) {
@@ -314,6 +339,11 @@ export function bindProtein(root, iso) {
       if (g === null || g < 0 || g > 300) { toast('Escreve os gramas de proteína (0 se não tiver), por exemplo 10.'); fa.g.focus(); return; }
       const scope = fa.closest('[data-meal-scope]');
       const food = { id: `c:${name.toLowerCase().replace(/\s+/g, ' ')}`, name, portion: null };
+      // Voltar a criar um alimento apagado ou escondido torna-o a mostrar
+      const S = E.S();
+      if ((S.deletedFoods || []).includes(food.id) || (S.hiddenFoods || []).includes(food.id)) {
+        setSettings({ deletedFoods: (S.deletedFoods || []).filter((x) => x !== food.id), hiddenFoods: (S.hiddenFoods || []).filter((x) => x !== food.id) });
+      }
       addFood(iso, food, 1, g, scope ? scope.dataset.mealScope : pickMeal || mealAt());
       return;
     }

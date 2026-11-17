@@ -813,3 +813,6 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .hw-sleep.bad { color: var(--red, #D64545); }
 .food-manage { justify-self: start; font-size: 14px; }
 .food-manage-list { display: grid; gap: 6px; max-height: 55vh; overflow: auto; margin-top: 8px; }
+.food-manage-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.food-manage-row.is-deleted label { text-decoration: line-through; opacity: .5; }
+.link.danger { color: var(--red); }
