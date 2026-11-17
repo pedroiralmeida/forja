@@ -55,8 +55,54 @@ function setRow(entry, s, si, ei, label, kind) {
 
 // Nota no início do treino: como fazer as séries e como funciona a progressão.
 // Aberta nos primeiros treinos; depois fica fechada (toca para abrir).
-function howToSets() {
+// Aquecimento de cada sítio: lista para ir marcando (fica guardada no treino)
+const WARMUPS = {
+  estadio: [
+    { id: 'pulsos', text: 'Pulsos: roda-os 10 vezes para cada lado. Depois apoia as mãos no chão (dedos para a frente e depois para trás) e balança devagar 10 vezes.' },
+    { id: 'ombros', text: 'Ombros: 2 × 15 band pull-aparts (banda à frente do peito, braços esticados, abre para os lados) e 10 rotações de braços.' },
+    { id: 'hang', text: 'Dead hang de 20 a 30 s.' },
+    { id: 'scap', text: '5 scapular pulls: pendurado, puxa os ombros para baixo sem dobrar os braços.' },
+    { id: 'pullups', text: '3 a 4 pull-ups fáceis, longe do limite.' },
+    { id: 'magnesio', text: 'Magnésio nas mãos e 2 a 3 minutos de descanso antes da primeira série.' },
+  ],
+  supera: [
+    { id: 'geral', text: '3 a 5 minutos para aquecer o corpo: bicicleta, remo ou passadeira.' },
+    { id: 'pulsos', text: 'Pulsos: roda-os 10 vezes para cada lado.' },
+    { id: 'ombros', text: 'Ombros: 2 × 15 band pull-aparts ou face pulls leves, e 10 rotações de braços.' },
+    { id: 'series', text: 'No bench press, faz as séries de aquecimento que a app mostra antes das séries a sério.' },
+  ],
+};
+
+function placeOf(session) {
+  return (DAYS[session.day] && DAYS[session.day].place) || 'supera';
+}
+
+function warmupCard(session) {
+  const items = WARMUPS[placeOf(session)] || [];
+  if (!items.length) return '';
+  const done = new Set((session.warmup && session.warmup.done) || []);
+  const all = items.every((x) => done.has(x.id));
+  return `<details class="howto warmup" ${all ? '' : 'open'}>
+    <summary>${all ? 'Aquecimento feito' : `Aquecimento, 5 a 8 min (${done.size} de ${items.length})`}</summary>
+    <ul class="warmup-list">${items.map((x) => `<li><label class="field-check"><input type="checkbox" data-act="warmup" data-id="${x.id}" ${done.has(x.id) ? 'checked' : ''}> <span>${esc(x.text)}</span></label></li>`).join('')}</ul>
+  </details>`;
+}
+
+function howToSets(session) {
   const open = E.sessions().length < 4;
+  if (placeOf(session) === 'estadio') {
+    return `<details class="howto" ${open ? 'open' : ''}>
+    <summary>Como fazer as séries</summary>
+    <ul>
+      <li><strong>Bloco de muscle-up primeiro, ainda fresco:</strong> aqui conta a qualidade, não o número. Cada rep limpa e rápida; quando uma rep sair mais lenta ou pior, a série acabou. Nunca até à falha. Descansa 2 a 3 minutos entre séries.</li>
+      <li><strong>Pull-ups, dips e leg raises:</strong> cada série vai até RPE 8 a 9, ou seja, paras quando ainda conseguias mais 1 ou 2 reps. As reps vão ficar iguais ou descer um pouco de série para série (por exemplo 8, 7, 7, 6). É normal: é o cansaço a acumular.</li>
+      <li><strong>A progressão é entre treinos:</strong> é tudo com o peso do corpo, por isso o que sobe são as reps. Tenta +1 rep na mesma série da vez anterior. Quando chegares ao topo da gama em todas as séries, a app sugere uma variante mais difícil (por exemplo, archer pull-ups).</li>
+      <li><strong>Isometrias</strong> (false grip hang, dead hang): regista os segundos que aguentaste.</li>
+      <li><strong>Técnica:</strong> pernas sempre juntas e corpo firme, sem balanço. O botão (i) de cada exercício tem as dicas.</li>
+      <li><strong>Regista o que fizeste de facto:</strong> reps e RPE. Se um exercício não correr bem ou doer, escreve na nota.</li>
+    </ul>
+  </details>`;
+  }
   return `<details class="howto" ${open ? 'open' : ''}>
     <summary>Como fazer as séries</summary>
     <ul>
@@ -153,7 +199,7 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
         </div>
         ${mode === 'active' ? `<button class="btn ghost small" data-act="discard">Descartar</button>` : ''}
       </header>
-      ${mode === 'active' ? howToSets() : ''}
+      ${mode === 'active' ? warmupCard(session) + howToSets(session) : ''}
       <div class="ex-list">
         ${session.exercises.map((e, i) => entryCard(e, i, session, mode)).join('')}
       </div>
@@ -209,6 +255,18 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
     const ei = card ? Number(card.dataset.card) : null;
     const entry = ei !== null ? session.exercises[ei] : null;
 
+    if (act === 'warmup') {
+      const done = new Set((session.warmup && session.warmup.done) || []);
+      if (btn.checked) done.add(btn.dataset.id); else done.delete(btn.dataset.id);
+      session.warmup = { done: [...done], at: session.warmup?.at || Date.now() };
+      persistLocal();
+      const items = WARMUPS[placeOf(session)] || [];
+      const det = btn.closest('details');
+      const all = items.every((x) => done.has(x.id));
+      if (det) det.querySelector('summary').textContent = all ? 'Aquecimento feito' : `Aquecimento, 5 a 8 min (${done.size} de ${items.length})`;
+      if (all && det) det.open = false;
+      return;
+    }
     if (act === 'done') {
       const row = btn.closest('.set');
       const s = entry.sets[Number(row.dataset.s)];

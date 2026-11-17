@@ -816,3 +816,9 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .food-manage-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .food-manage-row.is-deleted label { text-decoration: line-through; opacity: .5; }
 .link.danger { color: var(--red); }
+
+/* Aquecimento no início do treino */
+.warmup-list { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 8px; }
+.warmup-list .field-check { align-items: flex-start; gap: 10px; }
+.warmup-list input { margin-top: 3px; flex: none; width: 20px; height: 20px; }
+.howto.warmup { margin-bottom: 10px; }
