@@ -45,7 +45,7 @@ export const EX = {
   pullup_slow: {
     name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Esforço: RPE 8, ou seja, para com 1 a 2 reps de reserva. Se assim só saírem 3 ou 4 reps, está certo: nunca até à falha, porque a descida lenta carrega muito os cotovelos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.'],
+    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Esforço: RPE 8, contado pela subida. A descida lenta é fácil, por isso não te guies por ela: para quando a subida já estiver lenta e só conseguirias mais 1 ou 2 pull-ups. Se assim só saírem 3 ou 4 reps, está certo.', 'Nunca subas até já não conseguires mais nenhuma: cansa demasiado para o resto do treino e carrega os cotovelos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.'],
   },
   archer_pull: {
     name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
@@ -105,7 +105,7 @@ export const EX = {
   mu_negative: {
     name: 'Muscle-up negatives', kind: 'bodyweight', tier: 'skill', group: 'skill',
     note: 'começa por cima da barra e desce em 3–5 s',
-    cues: ['Agarra em pegada falsa (pulso por cima da barra) antes de começares; se o pulso doer, usa a pegada normal ou a meia pegada falsa.', 'Sobe para cima da barra (salto ou caixa).', 'Desce devagar, em 3 a 5 segundos, passando pela transição até aos braços estendidos.', 'Sente onde os pulsos rodam por cima da barra.', 'Nunca até à falha: quando a descida deixar de durar 3 a 5 segundos controlados, a série acabou. Descer devagar carrega muito os cotovelos.'],
+    cues: ['Agarra em pegada falsa (pulso por cima da barra) antes de começares; se o pulso doer, usa a pegada normal ou a meia pegada falsa.', 'Sobe para cima da barra com um salto (ou com um apoio), não a puxar: guarda a força dos braços para as pull-ups.', 'Desce devagar, em 3 a 5 segundos, passando pela transição até aos braços estendidos. Se a descida for fácil, podes descer mais devagar (até 8 s).', 'Sente onde os pulsos rodam por cima da barra.', 'Faz só as reps marcadas, mesmo que a descida esteja fácil: aqui o limite são os cotovelos e os pulsos, não a força. Se doerem, para.'],
   },
   mu_band: {
     name: 'Band-assisted muscle-ups', kind: 'band', tier: 'skill', group: 'skill',
@@ -327,7 +327,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.23.0';
+export const APP_VERSION = '1.23.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

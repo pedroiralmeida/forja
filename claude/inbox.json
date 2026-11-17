@@ -490,17 +490,17 @@
    "from": "2026-11-18",
    "id": "estadio-cotovelos-2026-11-17",
    "items": [
-    "No treino de 17/11 doeram os cotovelos e os pulsos: foram muitas séries à falha, sobretudo a descer devagar.",
-    "Negatives: a série acaba quando a descida deixar de durar 3 a 5 segundos controlados. Nunca à falha.",
-    "Slow eccentric pull-ups: RPE 8 (1 a 2 reps de reserva). Se só saírem 3 ou 4 reps assim, está certo. Agora são 3 séries em vez de 4.",
+    "No treino de 17/11 doeram os cotovelos e os pulsos, e as slow eccentric pull-ups acabaram todas em falha na subida (4, 4, 3, 3).",
+    "Negatives: sobe para cima da barra com um salto, não a puxar, e faz só as reps marcadas, mesmo que a descida esteja fácil.",
+    "Slow eccentric pull-ups: o esforço conta-se pela subida. Para quando a subida já estiver lenta e só conseguirias mais 1 ou 2 (RPE 8). Se só saírem 3 ou 4 reps, está certo. Agora são 3 séries em vez de 4.",
     "O teste de máximo de pull-ups só se repete daqui a umas 4 semanas (a app avisa a 15/12).",
     "O treino deve ficar perto dos 60 minutos.",
     "Se a dor no cotovelo durar mais de 2 ou 3 dias, ou for aguda, diz ao Claude para reduzir mais."
    ],
-   "short": "Cotovelos: negatives e slow eccentric sem ir à falha.",
+   "short": "Negatives com salto para cima; slow eccentric a parar antes de a subida falhar.",
    "source": "Análise do Claude ao treino de 17/11",
    "title": "do treino de 17/11",
-   "updatedAt": 1794955962863
+   "updatedAt": 1794957927586
   },
   "magnesio-barra-2026-11-17": {
    "createdAt": 1794921447201,
