@@ -45,7 +45,7 @@ export const EX = {
   pullup_slow: {
     name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce em 3 segundos, contados, até aos braços estendidos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).'],
+    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).'],
   },
   archer_pull: {
     name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
@@ -318,7 +318,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.20.1';
+export const APP_VERSION = '1.20.2';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
