@@ -17,6 +17,7 @@ const OPTIONS = {
     { id: 'pa-shake', text: 'Leite com whey no shaker (300 ml de leite e 1 medida) e pão com queijo.', items: [['leite', 1.2], ['whey', 1], ['pao', 1], ['queijo', 1]], needs: ['whey'] },
     { id: 'pa-ovos', text: '2 ovos mexidos, pão e um copo de leite.', items: [['ovo', 2], ['pao', 1], ['leite', 1]] },
     { id: 'pa-sandes', text: 'Pão com queijo e fiambre de peru, um copo de leite e uma banana.', items: [['pao', 1], ['queijo', 1], ['fiambre_peru', 0.5], ['leite', 1], ['banana', 1]] },
+    { id: 'pa-aveia-pb', text: 'Aveia com leite (300 ml), uma colher de manteiga de amendoim e uma banana.', items: [['leite', 1.2], ['aveia', 1], ['manteiga_amendoim', 1], ['banana', 1]], needs: ['oats', 'pb'] },
     { id: 'pa-paes', text: 'Um pão com fiambre de peru, um pão com queijo, um copo de leite e uma banana.', items: [['pao_fiambre', 1], ['pao_queijo', 1], ['leite', 1], ['banana', 1]] },
   ],
   almoco: [
@@ -27,6 +28,8 @@ const OPTIONS = {
     { id: 'la-yopro', text: 'Um YoPro e uma banana.', items: [['yopro', 1], ['banana', 1]], needs: ['yopro'] },
     { id: 'la-cavala', text: 'Pão com uma lata de cavala e uma pera.', items: [['pao', 1], ['cavala', 1], ['pera', 1]], needs: ['cavala'] },
     { id: 'la-sandes', text: 'Sandes de queijo e fiambre de peru e um punhado de amêndoas.', items: [['pao', 1], ['queijo', 1], ['fiambre_peru', 0.5], ['amendoas', 1]] },
+    { id: 'la-aveia', text: 'Aveia com leite (300 ml) e uma colher de manteiga de amendoim. Boa 1 a 2 horas antes do treino.', items: [['leite', 1.2], ['aveia', 1], ['manteiga_amendoim', 1]], needs: ['oats', 'pb'] },
+    { id: 'la-iogurte', text: 'Iogurte grego, um punhado de nozes ou amêndoas e uma peça de fruta.', items: [['iogurte_grego', 1], ['amendoas', 1], ['maca', 1]] },
     { id: 'la-paes', text: 'Um pão com fiambre de peru, um pão com queijo e uma banana.', items: [['pao_fiambre', 1], ['pao_queijo', 1], ['banana', 1]] },
     { id: 'la-pb', text: 'Pão com manteiga de amendoim, um copo de leite e uma banana.', items: [['pao', 1], ['manteiga_amendoim', 1], ['leite', 1], ['banana', 1]], needs: ['pb'] },
   ],

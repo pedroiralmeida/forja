@@ -28,7 +28,7 @@ export const FOODS = [
   { id: 'skyr', name: 'Skyr', portion: '1 copo', g: 16, meals: PL },
   { id: 'leite', name: 'Leite', portion: '1 copo (250 ml)', g: 8, meals: PL },
   { id: 'amendoas', name: 'Amêndoas', portion: 'um punhado (30 g)', g: 6, meals: L },
-  { id: 'aveia', name: 'Aveia instantânea', portion: '45 g', g: 6, meals: P },
+  { id: 'aveia', name: 'Aveia instantânea', portion: '45 g', g: 6, meals: PL },
   { id: 'manteiga_amendoim', name: 'Manteiga de amendoim', portion: '1 colher (15 g)', g: 4, meals: PL },
   { id: 'pao', name: 'Pão', portion: '1 carcaça', g: 5, meals: ALL },
   { id: 'arroz', name: 'Arroz', portion: '1 prato', g: 4, meals: AJ },
@@ -38,6 +38,24 @@ export const FOODS = [
   { id: 'brocolos', name: 'Brócolos', portion: '1 porção', g: 3, meals: AJ },
   { id: 'banana', name: 'Banana', portion: '1 banana', g: 1, meals: ALL },
   { id: 'pera', name: 'Pera', portion: '1 pera', g: 0.5, meals: ALL },
+  // Mais alimentos do dia a dia
+  { id: 'frango', name: 'Frango', portion: 'palma da mão (~120 g)', g: 30, meals: AJ },
+  { id: 'porco', name: 'Carne de porco', portion: 'palma da mão (~120 g)', g: 28, meals: AJ },
+  { id: 'vaca', name: 'Carne de vaca', portion: 'palma da mão (~120 g)', g: 28, meals: AJ },
+  { id: 'hamburguer', name: 'Hambúrguer', portion: '1 hambúrguer (~100 g)', g: 18, meals: AJ },
+  { id: 'peixe', name: 'Peixe branco (pescada, dourada…)', portion: 'palma da mão (~120 g)', g: 22, meals: AJ },
+  { id: 'bacalhau', name: 'Bacalhau', portion: '1 posta (~120 g)', g: 25, meals: AJ },
+  { id: 'leguminosas', name: 'Feijão, grão ou lentilhas', portion: '1 concha (~150 g cozido)', g: 10, meals: AJ },
+  { id: 'salada', name: 'Salada', portion: '1 prato', g: 1, meals: AJ },
+  { id: 'iogurte', name: 'Iogurte natural', portion: '1 iogurte (125 g)', g: 5, meals: PL },
+  { id: 'iogurte_grego', name: 'Iogurte grego', portion: '1 iogurte (~120 g)', g: 8, meals: PL },
+  { id: 'cereais', name: 'Cereais', portion: '1 taça (40 g)', g: 3, meals: P },
+  { id: 'pao_forma', name: 'Pão de forma', portion: '2 fatias', g: 5, meals: PL },
+  { id: 'tosta_mista', name: 'Tosta mista', portion: '1 tosta (queijo e fiambre)', g: 15, meals: PL },
+  { id: 'nozes', name: 'Nozes', portion: 'um punhado (30 g)', g: 4, meals: L },
+  { id: 'maca', name: 'Maçã', portion: '1 maçã', g: 0.5, meals: ALL },
+  { id: 'laranja', name: 'Laranja', portion: '1 laranja', g: 1, meals: ALL },
+  { id: 'kiwi', name: 'Kiwi', portion: '1 kiwi', g: 1, meals: ALL },
 ];
 
 // Compatibilidade com quem importava a lista antiga
@@ -45,6 +63,7 @@ export const PROTEIN_REF = FOODS.filter((f) => f.g !== null).map((f) => [`${f.na
 
 const MULTS = [[0.5, '½'], [1, '1'], [1.5, '1½'], [2, '2']];
 const TOP = 10;
+const TOP_MEAL = 20;
 let mult = 1;
 let pickMeal = null; // refeição escolhida no bloco da proteína; null = pela hora do dia
 
@@ -118,8 +137,11 @@ export function mealTotals(h) {
 // Escolha de alimentos. meal fixa (painel das refeições) ou escolhida aqui (bloco da proteína).
 export function foodPicker(meal = null) {
   const foods = catalog(meal || pickMeal || mealAt());
-  const top = foods.slice(0, TOP);
-  const rest = foods.slice(TOP);
+  // À vista: o que já comeste nesta refeição e o que costuma entrar nela; o resto fica em "Mais alimentos"
+  let top = foods.filter((f) => f.mealUses > 0 || f.hint).slice(0, TOP_MEAL);
+  if (top.length < TOP) top = foods.slice(0, TOP);
+  const topIds = new Set(top.map((f) => f.id));
+  const rest = foods.filter((f) => !topIds.has(f.id));
   const cur = pickMeal || mealAt();
   return `<div class="food-pick" ${meal ? `data-meal-scope="${meal}"` : ''}>
     ${meal ? '' : `<div class="mult-row" role="group" aria-label="Refeição">
