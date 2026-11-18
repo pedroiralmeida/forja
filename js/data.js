@@ -7,7 +7,8 @@ export const EX = {
     name: 'Bench press', kind: 'barbell', tier: 'main', group: 'peito',
     cues: [
       'Omoplatas juntas e para baixo antes de tirar a barra.',
-      'Pés firmes no chão e empurra o chão com as pernas (leg drive).',
+      'Pés firmes, com os calcanhares sempre no chão: leva-os para trás só até onde os calcanhares ainda assentam (mais ou menos debaixo dos joelhos).',
+      'Leg drive: empurra o chão para trás, como se quisesses deslizar no banco em direção à cabeça. O rabo fica no banco.',
       'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
       'Pulso direito, com a barra na base da palma e não nos dedos. Nas séries pesadas usa as fitas de pulso.',
       'Desce controlado, sobe com intenção. Sem barras de segurança no Supera: nunca até à falha, deixa sempre 1 a 2 reps de reserva.',
@@ -329,7 +330,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.24.0';
+export const APP_VERSION = '1.24.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -477,7 +478,7 @@ export const GUIDE = [
     body: `
 <p>A técnica dá quilos sem precisares de ganhar força. Antes de tirar a barra: omoplatas juntas e puxadas para baixo, arco moderado na zona das costas (o rabo fica no banco) e pés bem firmes.</p>
 <p>A pegada deve deixar os antebraços na vertical quando a barra está no peito. A barra desce em direção à parte de baixo do peito e sobe ligeiramente para trás, até ficar por cima dos ombros.</p>
-<p>O <strong>leg drive</strong> é empurrar o chão com os pés durante a subida, sem levantar o rabo. Transmite força das pernas para o tronco.</p>
+<p>O <strong>leg drive</strong> é empurrar o chão com os pés durante a subida, sem levantar o rabo. Transmite força das pernas para o tronco. Calcanhares sempre no chão: os pés vão para trás só até onde os calcanhares ainda assentam, e empurras o chão para trás (em direção à cabeça), não para cima.</p>
 <p>Filma-te de lado de vez em quando. O banco do Supera não tem barras de segurança: nunca vás até à falha e deixa sempre 1 a 2 reps de reserva, ou pede a alguém que te ajude nas séries pesadas.</p>`,
   },
   {
