@@ -45,12 +45,12 @@ export const EX = {
   pullup_slow: {
     name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Esforço: RPE 8, contado pela subida. A descida lenta é fácil, por isso não te guies por ela: para quando a subida já estiver lenta e só conseguirias mais 1 ou 2 pull-ups. Se assim só saírem 3 ou 4 reps, está certo.', 'Nunca subas até já não conseguires mais nenhuma: cansa demasiado para o resto do treino e carrega os cotovelos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.'],
+    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Esforço: RPE 8, contado pela subida. A descida lenta é fácil, por isso não te guies por ela: para quando a subida já estiver lenta e só conseguirias mais 1 ou 2 pull-ups. Se assim só saírem 3 ou 4 reps, está certo.', 'Nunca subas até já não conseguires mais nenhuma: cansa demasiado para o resto do treino e carrega os cotovelos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
   },
   archer_pull: {
     name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
     note: 'reps por cada lado',
-    cues: ['Pega larga. Puxa para um lado, com o outro braço quase esticado a ajudar.', 'Alterna os lados; regista as reps de cada lado.', 'Dá força de um braço sem precisares de pesos.', 'Pernas sempre juntas.'],
+    cues: ['Pega larga. Puxa para um lado, com o outro braço quase esticado a ajudar.', 'Alterna os lados; regista as reps de cada lado.', 'Dá força de um braço sem precisares de pesos.', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
   },
   pullup: {
     name: 'Pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas',
@@ -60,12 +60,13 @@ export const EX = {
       'Puxa os cotovelos para baixo, em direção às costelas, até o queixo passar a barra. Peito para a frente, olhar para a barra.',
       'Pernas juntas e corpo firme, ligeiramente "côncavo" (abdominais apertados): nada de pontapés nem balanço.',
       'Desce controlado até aos braços totalmente esticados. Só conta a rep se o queixo passar a barra e voltares a esticar os braços.',
+      'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.',
     ],
   },
   c2b: {
     name: 'Chest-to-bar pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o peito toca na barra',
-    cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Pernas sempre juntas.'],
+    cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
   },
   explosive_pull: {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
@@ -77,6 +78,7 @@ export const EX = {
       'Corpo firme e pernas juntas e à frente (ligeiramente "côncavo"), para a força não se perder no balanço.',
       'Desce controlado até aos braços esticados, para um segundo e faz a rep seguinte do zero.',
       'Poucas reps e todas rápidas: se uma rep sair lenta ou mais baixa, a série acabou. Descansa 2 a 3 minutos entre séries.',
+      'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.',
     ],
   },
   waist_pull: {
@@ -327,7 +329,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.23.1';
+export const APP_VERSION = '1.23.2';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

@@ -559,6 +559,31 @@
    "title": "magnésio líquido",
    "updatedAt": 1794937747150
   },
+  "pullups-video-2026-11-17": {
+   "createdAt": 1794960158757,
+   "ex": [
+    "explosive_pull",
+    "pullup",
+    "pullup_slow",
+    "c2b",
+    "archer_pull",
+    "waist_pull",
+    "mu_band"
+   ],
+   "from": "2026-11-18",
+   "id": "pullups-video-2026-11-17",
+   "items": [
+    "Em cima: olha em frente e leva o peito à barra. No vídeo, a partir da 4.ª rep, o queixo só chegava à barra a inclinar a cabeça para trás.",
+    "Início de cada rep: puxa primeiro os ombros para baixo (sem dobrar os braços) e só depois puxa com os braços. Em baixo ficavam soltos, encostados às orelhas.",
+    "Pernas juntas e esticadas até ao fim da série: nas últimas reps os joelhos dobravam.",
+    "Mantém o que já está bem: braços totalmente esticados em baixo e sem balanço.",
+    "Para o muscle-up, a barra tem de chegar ao peito: nas explosive pull-ups, puxa a pensar em levar a barra ao peito, não ao queixo."
+   ],
+   "short": "Olha em frente e leva o peito à barra; ombros para baixo antes de cada rep.",
+   "source": "Análise do Claude ao vídeo do teste de pull-ups de 17/11 (Histórico → Estádio 1 de 17/11 → Vídeos)",
+   "title": "do vídeo das pull-ups (17/11)",
+   "updatedAt": 1794960158757
+  },
   "supera-cotovelo-2026-11-17": {
    "createdAt": 1794955962863,
    "ex": [
@@ -596,14 +621,14 @@
    "items": [
     "Passaram cerca de 4 semanas desde o último teste (17/11: 9 pull-ups). Hoje repete-se.",
     "Logo a seguir ao aquecimento: 1 série de pull-ups estritas até já não conseguires mais nenhuma bem feita (braços esticados em baixo, queixo acima da barra, pernas juntas, sem balanço).",
-    "Regista com \"Adicionar exercício\" → \"Pull-ups\" → 1 série. Se puderes, filma de lado.",
+    "Regista com \"Adicionar exercício\" → \"Pull-ups\" → 1 série. Filma de lado, com o telemóvel parado à altura da barra, para se ver onde fica o queixo.",
     "Descansa 4 a 5 minutos e segue o treino. Nas negatives e slow eccentric, nada de falha.",
     "Depois do teste, carrega em \"Já não preciso deste lembrete\"."
    ],
    "short": "Hoje há teste de máximo de pull-ups.",
    "source": "Plano do Claude (teste de 4 em 4 semanas)",
    "title": "teste de pull-ups",
-   "updatedAt": 1794955962863
+   "updatedAt": 1794960158757
   }
  },
  "settingsPatch": {
