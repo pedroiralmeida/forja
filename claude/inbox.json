@@ -366,6 +366,36 @@
    "summary": "9 pull-ups estritas: braços esticados em baixo em todas as reps, pernas juntas, sem balanço. Do 8.º rep em diante o queixo só chega à barra inclinando a cabeça para trás; a 9.ª demorou cerca de 4 s a subir.",
    "title": "Teste de máximo de pull-ups",
    "updatedAt": 1794958958940
+  },
+  "video-2026-11-18-bench-last": {
+   "createdAt": 1795016853763,
+   "date": "2026-11-18",
+   "day": "B",
+   "durationS": 27,
+   "ex": "bench",
+   "file": "videos/2026-11-18/bench-ultima-serie-62.5x6.mp4",
+   "findings": [
+    "Fitas de pulso: os pulsos estão bem mais direitos do que a 16/11, sobretudo a mão do lado da câmara. Sem dor ou quase nenhuma.",
+    "Toque no peito: a barra desce até ao meio do peito, já não perto das clavículas. Ainda pode descer um pouco mais, até à linha dos mamilos.",
+    "Pés: debaixo dos joelhos, com as canelas quase na vertical (a 16/11 estavam à frente). Para o leg drive, experimenta pô-los um pouco mais para trás, com o calcanhar ligeiramente atrás do joelho.",
+    "Leg drive e arco: ainda pouco (o próprio Pedro sentiu isso). Treinar a posição completa também nos aquecimentos a partir dos 40 a 50 kg.",
+    "Velocidade: as 6 reps subiram todas à mesma velocidade (cerca de 2 s cada): RPE 7,5 bate certo e há margem para 7 reps no próximo B.",
+    "Rabo sempre no banco e descida controlada, sem ressalto.",
+    "Gravação: a câmara mexeu-se bastante (na mão). Encostada a um disco ou num banco, ao lado, dá para ver melhor o percurso da barra."
+   ],
+   "id": "video-2026-11-18-bench-last",
+   "kind": "video",
+   "order": 1,
+   "original": "VID_20261118_134012.mp4 (1080p, 54,5 MB): comprimido para 720p (2,7 MB); o original ficou no telemóvel",
+   "recordedBy": "telemóvel na mão de outra pessoa, na diagonal a partir dos pés, perto do chão",
+   "sessionId": "mwm566uf5b5nhi",
+   "set": "62,5 kg × 6, RPE 7,5 registada, com fitas de pulso",
+   "sizeKB": 2681,
+   "slotId": "B_bench",
+   "source": "Análise do Claude",
+   "summary": "Melhor que a 16/11: pulsos mais direitos com as fitas, a barra toca mais abaixo no peito e os pés já estão debaixo dos joelhos. A velocidade das 6 reps foi igual do princípio ao fim: sobravam 2 a 3 reps.",
+   "title": "Bench press, última série",
+   "updatedAt": 1795016853763
   }
  },
  "purchases": {
