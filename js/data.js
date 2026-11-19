@@ -96,7 +96,8 @@ export const EX = {
     cues: [
       'Pegada um pouco mais aberta que a largura dos ombros, com as mãos por cima da barra.',
       'Ombros para baixo e rodados para fora: afasta-os das orelhas e aponta a dobra dos cotovelos para a frente. Mantém-nos assim a série toda, porque é isto que protege o ombro.',
-      'Antebraços sempre na vertical (perpendiculares ao chão): ao descer, os cotovelos vão para trás, não para os lados.',
+      'Antebraços sempre na vertical (perpendiculares ao chão): ao descer, os cotovelos vão para trás, não para os lados. Vistos de frente, os cotovelos não devem sair para fora do tronco, como asas.',
+      'Cabeça em linha com o tronco: olha para a barra um pouco à frente, não para os pés.',
       'Inclina o tronco ligeiramente à frente e desce até o peito tocar na barra.',
       'Sobe até os braços ficarem totalmente esticados, com os cotovelos trancados em cima.',
       'Pernas sempre juntas e corpo firme, sem balançar.',
@@ -160,9 +161,9 @@ export const EX = {
     note: 'pendurado, pernas esticadas até 90°, a formar um L',
     cues: [
       'Pendura-te com os braços esticados e os ombros "ligados": puxa-os um pouco para baixo, sem dobrar os braços.',
-      'Sobe as pernas juntas e esticadas até à altura da anca (90°), pausa 1 s e desce em 2 s.',
+      'Sobe as pernas juntas e esticadas até à altura da anca (90°), pausa 1 s e desce em 2 s, a contar "mil e um, mil e dois". Não deixes cair as pernas: é isso que faz o corpo balançar.',
       'Sem balançar: se o corpo começar a balançar, para um segundo entre reps.',
-      'Deita o ar fora ao subir. Se ainda não chegas aos 90° com as pernas esticadas, dobra os joelhos.',
+      'Deita o ar fora ao subir. Se ainda não chegas aos 90° com as pernas esticadas, dobra os joelhos e leva-os ao peito, a enrolar a bacia. Quando fizeres 3 séries de 12 assim, devagar, passa para as pernas esticadas.',
     ],
   },
   toes_to_bar: {
@@ -356,7 +357,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.1';
+export const APP_VERSION = '1.26.2';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

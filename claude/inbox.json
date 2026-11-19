@@ -618,6 +618,69 @@
      "caption": "Fundo do dip e transição nas 3 negativas (uma rep por linha): os cotovelos saem para os lados do tronco, como asas. Deviam apontar para trás e roçar nas costelas."
     }
    ]
+  },
+  "video-2026-11-17-sbd": {
+   "id": "video-2026-11-17-sbd",
+   "kind": "video",
+   "order": 4,
+   "title": "Straight bar dips, série de 8",
+   "date": "2026-11-17",
+   "day": "E1",
+   "sessionId": "mwl674x9m90e80",
+   "ex": "sbd",
+   "file": "videos/2026-11-17/straight-bar-dips-8reps.mp4",
+   "durationS": 48,
+   "sizeKB": 3020,
+   "original": "Straight_bar_dips.mp4 (478×850, 60 fps, 59 s, 12 MB): cortados os segundos vazios e recomprimido para 30 fps (2,9 MB)",
+   "recordedBy": "telemóvel parado, de frente, um pouco abaixo da barra",
+   "set": "uma das séries de 8 (registadas 6, 8 e 8, com RPE 6, 8 e 8)",
+   "summary": "8 dips limpos: descida controlada, boa profundidade, braços totalmente esticados em cima, pernas juntas e sem balanço. O que falta: no fundo os cotovelos abrem para os lados e a cabeça cai toda para baixo.",
+   "findings": [
+    "Ritmo: cerca de 1 s a descer, uma pausa curta em baixo e cerca de 0,5 s a subir. Bem.",
+    "Profundidade: em baixo a parte de cima do braço fica pelo menos na horizontal. Bem.",
+    "Em cima: braços totalmente esticados. Pernas juntas e sem balanço em toda a série. Bem.",
+    "Cotovelos: no fundo abrem para os lados, como asas (vistos de frente, saem para fora do tronco). Deviam ir para trás, com os antebraços na vertical. É o mesmo hábito das negativas e das explosive pull-ups, e com os cotovelos abertos os ombros e os cotovelos ficam numa posição pior (o cotovelo esquerdo já se queixou nos dips de 18/11).",
+    "Cabeça: no fundo cai toda para baixo, a olhar para os pés. Deve ficar em linha com o tronco, a olhar para a barra um pouco à frente.",
+    "Antes da 1.ª rep ficaste cerca de 10 s em cima da barra, e entre reps 2 a 3 s. Não é grave, mas em cima também cansa: arranca em 1 a 2 s.",
+    "Próximo vídeo: filmar de lado, telemóvel à altura da barra, para se ver a profundidade (peito à barra) e se os antebraços ficam na vertical."
+   ],
+   "stills": [
+    {
+     "file": "videos/2026-11-17/straight-bar-dips-cotovelos.jpg",
+     "caption": "Em cima à esquerda, a posição de partida; as outras 7 são o fundo de cada dip: os cotovelos saem para os lados e a cabeça cai toda para baixo."
+    }
+   ],
+   "source": "Análise do Claude",
+   "createdAt": 1795118828520,
+   "updatedAt": 1795118828520
+  },
+  "video-2026-11-17-leg-raises": {
+   "id": "video-2026-11-17-leg-raises",
+   "kind": "video",
+   "order": 5,
+   "title": "Hanging leg raises, série de 8",
+   "date": "2026-11-17",
+   "day": "E1",
+   "sessionId": "mwl674x9m90e80",
+   "ex": "hanging_leg_raise",
+   "file": "videos/2026-11-17/hanging-leg-raises-8reps.mp4",
+   "durationS": 34,
+   "sizeKB": 1856,
+   "original": "Leg_Raises.mp4 (478×850, 60 fps, 41 s, 8,6 MB): cortados os segundos vazios e recomprimido para 30 fps (1,8 MB)",
+   "recordedBy": "telemóvel parado, de frente, um pouco abaixo da barra",
+   "set": "uma das 3 séries de 8 (registadas com RPE 8, 8 e 9)",
+   "summary": "8 reps com os joelhos dobrados que chegam alto (joelhos ao peito), mas rápidas: as pernas sobem e caem sem pausa, o corpo balança e tens de esperar cerca de 2 s entre reps para parar.",
+   "findings": [
+    "Altura: os joelhos chegam ao peito, com a bacia a enrolar. Bem.",
+    "Pernas: dobradas (versão de joelhos ao peito). As dicas pedem pernas esticadas até 90°; com joelhos dobrados está bem para já, desde que seja lento.",
+    "Velocidade: sobes em cerca de 0,5 s, não há pausa em cima e as pernas caem em cerca de 0,5 s. As dicas pedem 1 s de pausa em cima e 2 s a descer.",
+    "Balanço: como as pernas caem, o corpo balança e ficas cerca de 2 s pendurado à espera que pare antes da rep seguinte. Bom instinto esperar, mas com a descida lenta o balanço quase não aparece e os abdominais trabalham mais.",
+    "Ombros: pendurado, a cabeça parece enterrada entre os braços (ombros soltos). Puxa-os um pouco para baixo antes de cada rep.",
+    "Próximo vídeo: de lado, para se ver a bacia a enrolar e o balanço."
+   ],
+   "source": "Análise do Claude",
+   "createdAt": 1795118828520,
+   "updatedAt": 1795118828520
   }
  },
  "purchases": {
@@ -947,6 +1010,46 @@
    "source": "Análise do Claude ao vídeo das negativas de 17/11 (Histórico → Estádio 1 de 17/11 → Vídeos)",
    "createdAt": 1795116038802,
    "updatedAt": 1795116670046
+  },
+  "sbd-video-2026-11-19": {
+   "id": "sbd-video-2026-11-19",
+   "ex": [
+    "sbd"
+   ],
+   "from": "2026-11-19",
+   "title": "do vídeo dos straight bar dips (17/11)",
+   "short": "Cotovelos para trás (não para os lados) e cabeça em linha com o tronco.",
+   "items": [
+    "Cotovelos para trás, com os antebraços na vertical. No vídeo, no fundo, abriam para os lados, como asas: é o mesmo hábito das negativas e das explosive pull-ups. Vistos de frente, os cotovelos não devem sair para fora do tronco.",
+    "Cabeça em linha com o tronco: olha para a barra um pouco à frente. No vídeo, no fundo, a cabeça caía toda para baixo, a olhar para os pés.",
+    "Arranca em 1 a 2 s depois de subires para a barra (no vídeo ficaste cerca de 10 s em cima antes da 1.ª rep).",
+    "Mantém o que já está bem: descida controlada, boa profundidade, braços totalmente esticados em cima, pernas juntas e sem balanço.",
+    "Se o cotovelo esquerdo se queixar, para a série: com os cotovelos para trás deve doer menos.",
+    "Tens a imagem dos cotovelos em Histórico → Estádio 1 de 17/11 → Vídeos."
+   ],
+   "source": "Análise do Claude ao vídeo dos straight bar dips de 17/11",
+   "createdAt": 1795118828520,
+   "updatedAt": 1795118828520
+  },
+  "legraise-video-2026-11-19": {
+   "id": "legraise-video-2026-11-19",
+   "ex": [
+    "hanging_leg_raise",
+    "toes_to_bar"
+   ],
+   "from": "2026-11-19",
+   "title": "do vídeo dos leg raises (17/11)",
+   "short": "Devagar: 1 s de pausa em cima e 2 s a descer, sem deixar cair as pernas.",
+   "items": [
+    "No vídeo as pernas subiam em cerca de 0,5 s e caíam logo, sem pausa. O corpo balançava e tinhas de esperar cerca de 2 s entre reps para parar.",
+    "Sobe, pausa 1 s em cima e desce em 2 s, a contar \"mil e um, mil e dois\". Com a descida lenta o balanço quase não aparece e os abdominais trabalham mais. Vão sair menos reps; está certo.",
+    "A altura está bem: os joelhos chegavam ao peito, com a bacia a enrolar. Mantém.",
+    "Antes de cada rep, puxa os ombros um pouco para baixo (no vídeo a cabeça parecia enterrada entre os braços).",
+    "Nos toes-to-bar vale o mesmo: descida lenta e sem balanço."
+   ],
+   "source": "Análise do Claude ao vídeo dos hanging leg raises de 17/11",
+   "createdAt": 1795118828520,
+   "updatedAt": 1795118828520
   }
  },
  "settingsPatch": {
