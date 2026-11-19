@@ -1,5 +1,5 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import {
+import { PAUSED_EX,
   EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, CORE_DAYS, EXTRA_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES, MISS_REASONS, APP_VERSION,
 } from './data.js';
 import { state, list, get } from './store.js';
@@ -751,7 +751,11 @@ function lastBand() {
 
 function buildSkill(slot, deload) {
   const stage = MU_STAGES[muStage() - 1];
-  const drills = stage[slot.focus] || stage.main;
+  const today = todayISO();
+  const all = stage[slot.focus] || stage.main;
+  const paused = all.filter((d) => PAUSED_EX[d.ex] && today <= PAUSED_EX[d.ex].until);
+  const drills = all.filter((d) => !paused.includes(d));
+  const pausedNote = paused.map((d) => ` ${EX[d.ex].name} em pausa até ${fmtDate(PAUSED_EX[d.ex].until)} (${PAUSED_EX[d.ex].reason}).`).join('');
   return drills.map((d, i) => {
     const info = EX[d.ex];
     const n = deload ? deloadSets(d.sets) : d.sets;
@@ -763,7 +767,7 @@ function buildSkill(slot, deload) {
       ex: d.ex,
       mode: 'skill',
       target: `${n}×${range}`,
-      note: i === 0 ? `Fase ${stage.n} do muscle-up (${stage.name.toLowerCase()}). Aquece os pulsos primeiro. Escreve as reps que fizeste de facto (0 se falhaste) e descansa 2 min entre séries.` : '',
+      note: i === 0 ? `Fase ${stage.n} do muscle-up (${stage.name.toLowerCase()}). Aquece os pulsos primeiro. Escreve as reps que fizeste de facto (0 se falhaste) e descansa 2 min entre séries.${pausedNote}` : '',
       sets: Array.from({ length: n }, () => setObj('work', null, null, { tReps: range, ...(band ? { band } : {}) })),
     };
   }).map((e) => ({ ...e, prescribed: prescribedOf(e.sets) }));
@@ -783,7 +787,7 @@ function prescribedOf(sets) {
 // aguentaste o tempo pedido em todas as séries, sobe step segundos, até max.
 function buildHold(slot) {
   let sec = slot.seconds || 60;
-  let note = slot.note || 'Para alongar e melhorar a pegada. Regista os segundos que aguentaste.';
+  let note = slot.note || 'Braços esticados e ombros para baixo, afastados das orelhas: é a posição de partida das pull-ups. Regista os segundos que aguentaste.';
   if (slot.progress) {
     // Última vez que fizeste este exercício, em qualquer treino (o E1 e o E2 partilham a progressão)
     const exId = slotEx(slot);

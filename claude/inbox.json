@@ -1048,6 +1048,21 @@
    "source": "Análise do Claude ao vídeo dos hanging leg raises de 17/11",
    "createdAt": 1795118828520,
    "updatedAt": 1795118828520
+  },
+  "cotovelos-2026-11-19": {
+   "id": "cotovelos-2026-11-19",
+   "ex": [],
+   "from": "2026-11-20",
+   "until": "2026-11-23",
+   "title": "Cotovelos",
+   "short": "Dor nos dois cotovelos depois das negativas de 19/11. Nada de barra nem dips até ao treino de segunda.",
+   "items": [
+    "Repara como estão no dia a dia (pegar num saco, rodar uma maçaneta) e diz ao Claude no fim de semana, para ajustar os treinos de segunda e terça.",
+    "Se ainda doer parado no fim de semana, ou piorar, marca um fisioterapeuta antes de voltares à barra."
+   ],
+   "source": "Treino de 19/11",
+   "createdAt": 1795128831097,
+   "updatedAt": 1795128831097
   }
  },
  "settingsPatch": {

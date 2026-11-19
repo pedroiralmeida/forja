@@ -92,7 +92,7 @@ const WARMUPS = {
     { id: 'pulsos', text: 'Pulsos: roda-os 10 vezes para cada lado. Depois apoia as mãos no chão (dedos para a frente e depois para trás) e balança devagar 10 vezes.' },
     { id: 'ombros', text: 'Ombros: 2 × 15 band pull-aparts (banda à frente do peito, braços esticados, abre para os lados) e 10 rotações de braços.' },
     { id: 'flexoes', text: '5 flexões com as mãos debaixo dos ombros e os braços a roçar nas costelas: no fundo, os cotovelos apontam para trás. É a posição dos cotovelos no fundo do dip e na transição do muscle-up.' },
-    { id: 'hang', text: 'Dead hang de 20 a 30 s.' },
+    { id: 'hang', text: 'Dead hang de 20 a 30 s, com os ombros para baixo (afastados das orelhas) e os braços esticados.' },
     { id: 'scap', text: '5 scapular pulls: pendurado, puxa os ombros para baixo sem dobrar os braços.' },
     { id: 'pullups', text: '3 a 4 pull-ups fáceis e a ritmo normal, longe do limite, para acertar a forma: ombros para baixo, cotovelos até às costelas, corpo um pouco inclinado para trás. As reps rápidas e explosivas só vêm depois.' },
     { id: 'magnesio', text: 'Magnésio nas mãos e 2 a 3 minutos de descanso antes da primeira série.' },

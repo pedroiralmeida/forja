@@ -182,8 +182,8 @@ export const EX = {
   },
   dead_hang: {
     name: 'Dead hang', kind: 'hold', tier: 'accessory', group: 'pegada',
-    note: 'pendurado na barra, braços estendidos',
-    cues: ['Pendura-te com os braços totalmente estendidos e os ombros relaxados.', 'Respira devagar e deixa as costas e os ombros alongar.', 'Serve para alongar no fim do treino e para a pegada aguentar mais tempo na barra.'],
+    note: 'pendurado na barra, braços esticados, ombros para baixo',
+    cues: ['Pendura-te com os braços totalmente esticados e puxa os ombros para baixo, afastados das orelhas, sem dobrar os braços. É a posição de partida das pull-ups: assim treinas sempre essa posição.', 'Mantém os ombros em baixo o tempo todo. Se subirem para as orelhas, puxa-os outra vez para baixo.', 'Pernas juntas e corpo quieto. Respira devagar.', 'Com os ombros em baixo custa mais do que pendurado solto: se não aguentares o tempo todo, regista os segundos que fizeste.'],
   },
   muscle_up: {
     name: 'Muscle-up', kind: 'bodyweight', tier: 'skill', group: 'skill',
@@ -360,11 +360,16 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.6';
+export const APP_VERSION = '1.26.7';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 // Fases do muscle-up. Cada fase define os exercícios do bloco de skill.
+// Exercícios em pausa (até à data indicada, inclusive): a app não os receita nos blocos de muscle-up.
+export const PAUSED_EX = {
+  mu_negative: { until: '2026-12-06', reason: 'dor nos cotovelos depois das negativas de 19/11' },
+};
+
 export const MU_STAGES = [
   {
     n: 1, name: 'Fundação',
