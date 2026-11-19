@@ -109,8 +109,11 @@ export const EX = {
   },
   mu_negative: {
     name: 'Muscle-up negatives', kind: 'bodyweight', tier: 'skill', group: 'skill',
-    note: 'começa por cima da barra e desce em 3–5 s',
-    cues: ['Agarra em pegada falsa (pulso por cima da barra) antes de começares; se o pulso doer, usa a pegada normal ou a meia pegada falsa.', 'Sobe para cima da barra com um salto (ou com um apoio), não a puxar: guarda a força dos braços para as pull-ups.', 'Desce devagar, em 3 a 5 segundos, passando pela transição até aos braços estendidos. Se a descida for fácil, podes descer mais devagar (até 8 s).', 'Sente onde os pulsos rodam por cima da barra.', 'Faz só as reps marcadas, mesmo que a descida esteja fácil: aqui o limite são os cotovelos e os pulsos, não a força. Se doerem, para.'],
+    note: 'começa por cima da barra e desce em 4–5 s',
+    cues: ['Agarra em pegada falsa (pulso por cima da barra) antes de começares; se o pulso doer, usa a pegada normal ou a meia pegada falsa.', 'Sobe para cima da barra com um salto (ou com um apoio), não a puxar: guarda a força dos braços para as pull-ups.', 'Em cima, estabiliza 1 segundo com os braços esticados e começa logo a descer. Ficar 3 ou 4 segundos lá em cima cansa os tríceps antes da parte que interessa.',
+      'Desce devagar, em 4 a 5 segundos no total, a contar "mil e um, mil e dois…": cerca de 2 s até o peito chegar à barra (como num dip), 1 a 2 s na transição e o resto até aos braços esticados. Se a descida for fácil, podes descer mais devagar (até 8 s).',
+      'A transição é a parte mais importante, porque é aí que o muscle-up costuma falhar: o peito passa de cima para baixo da barra com os cotovelos dobrados e junto ao corpo e o peito colado à barra. Se não a consegues travar e o corpo cai, usa as pontas dos pés no chão (numa barra baixa) para ajudar. Tira a ajuda aos poucos.',
+      'No fim, trava até aos braços esticados. Não caias: o esticão faz mal aos cotovelos e aos ombros.', 'Sente onde os pulsos rodam por cima da barra.', 'Faz só as reps marcadas, mesmo que a descida esteja fácil: aqui o limite são os cotovelos e os pulsos, não a força. Se doerem, para.', 'RPE: escreve 10 se não conseguiste travar a descida e o corpo caiu na transição. Só as séries com RPE 9 ou menos contam como controladas para o marco.'],
   },
   mu_band: {
     name: 'Band-assisted muscle-ups', kind: 'band', tier: 'skill', group: 'skill',
@@ -347,7 +350,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.25.6';
+export const APP_VERSION = '1.25.7';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -400,7 +403,7 @@ export const MILESTONES = [
   { id: 'pull10', label: '10 pull-ups seguidos', ex: ['pullup', 'pullup_slow', 'weighted_pullup'], reps: 10, baseline: true },
   { id: 'c2b5', label: '5 chest-to-bar seguidos', ex: ['c2b', 'explosive_pull'], reps: 5 },
   { id: 'sbd8', label: '8 straight bar dips', ex: ['sbd'], reps: 8 },
-  { id: 'neg3', label: '3 muscle-up negatives controladas', ex: ['mu_negative'], reps: 3 },
+  { id: 'neg3', label: '3 muscle-up negatives controladas', ex: ['mu_negative'], reps: 3, maxRpe: 9 },
   { id: 'waist3', label: '3 high pull-ups até à barriga', ex: ['waist_pull'], reps: 3 },
   { id: 'band3', label: '3 band-assisted muscle-ups', ex: ['mu_band'], reps: 3 },
   { id: 'mu1', label: 'Primeiro muscle-up', ex: ['muscle_up'], reps: 1, goal: true },

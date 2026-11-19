@@ -499,6 +499,8 @@ export function milestoneMap() {
           for (const set of workSets(e)) {
             // Séries com banda não contam para os marcos (excepto nos exercícios que são com banda)
             if (set.band && EX[e.ex] && EX[e.ex].kind !== 'band') continue;
+            // Marcos que exigem controlo (ex.: negatives): séries à falha não contam
+            if (m.maxRpe && (set.rpe || 0) > m.maxRpe) continue;
             if (set.reps >= m.reps) { achieved = true; date = s.date; how = 'registo'; break outer; }
           }
         }

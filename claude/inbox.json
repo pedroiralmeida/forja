@@ -581,6 +581,36 @@
    "source": "Análise do Claude",
    "createdAt": 1795097348424,
    "updatedAt": 1795097348424
+  },
+  "video-2026-11-17-mu-negatives": {
+   "id": "video-2026-11-17-mu-negatives",
+   "kind": "video",
+   "order": 3,
+   "title": "Muscle-up negatives, série de 3",
+   "date": "2026-11-17",
+   "day": "E1",
+   "sessionId": "mwl674x9m90e80",
+   "ex": "mu_negative",
+   "file": "videos/2026-11-17/muscle-up-negatives-3reps.mp4",
+   "durationS": 37,
+   "sizeKB": 2875,
+   "original": "Muscle-up_negatives.mp4 (478×850, 60 fps, 45 s, 9,6 MB): cortados os segundos vazios do início e do fim e recomprimido para 30 fps (2,9 MB)",
+   "recordedBy": "telemóvel parado, de frente, um pouco abaixo da barra",
+   "set": "uma das 3 séries de 3 (registadas com RPE 10)",
+   "summary": "3 negativas com salto para cima da barra. Em cima está bem (braços esticados, ombros à frente da barra, pernas juntas), mas cada descida dura só 1 a 1,5 s: o corpo cai na transição e até aos braços esticados.",
+   "findings": [
+    "Subida: com salto, como está nas dicas. Bem.",
+    "Em cima: braços esticados, ombros à frente da barra e pernas juntas. Bem. Mas ficas 3 a 4 s parado lá em cima antes de começar a descer, o que cansa os tríceps antes da parte que interessa.",
+    "Descida até o peito chegar à barra (a parte do dip): 0,5 a 1 s. Devia ser cerca de 2 s.",
+    "Transição (o peito passa de cima para baixo da barra): 0,2 a 0,3 s, ou seja, o corpo cai. É a parte mais importante da negativa e a que mais falta treinar.",
+    "Do queixo à barra até aos braços esticados: cerca de 0,2 s, também a cair, com um esticão no fim. Mau para os cotovelos e os ombros.",
+    "Total de cada descida: 1 a 1,5 s, quando o objetivo é 4 a 5 s. Bate certo com o RPE 10 registado nas 3 séries: a transição ainda não se consegue travar.",
+    "A barra é baixa: na transição os pés ficam perto do chão, por isso dá para usar as pontas dos pés para ajudar a travar.",
+    "Próximo vídeo: filmar de lado, telemóvel parado à altura da barra, para se ver a transição."
+   ],
+   "source": "Análise do Claude",
+   "createdAt": 1795116038802,
+   "updatedAt": 1795116038802
   }
  },
  "purchases": {
@@ -883,6 +913,29 @@
    "source": "Pedido do Pedro (19/11)",
    "createdAt": 1795104503652,
    "updatedAt": 1795104503652
+  },
+  "negativas-video-2026-11-19": {
+   "id": "negativas-video-2026-11-19",
+   "ex": [
+    "mu_negative"
+   ],
+   "from": "2026-11-19",
+   "title": "do vídeo das negativas (17/11)",
+   "short": "Desce em 4 a 5 s e trava a transição; se cair, ajuda com as pontas dos pés.",
+   "items": [
+    "No vídeo cada descida durou só 1 a 1,5 s: cerca de 1 s até o peito chegar à barra e depois o corpo caiu na transição e até aos braços esticados. Foi por isso que as 3 séries ficaram com RPE 10.",
+    "Hoje faz 2 reps por série, cada uma em 4 a 5 s, a contar \"mil e um, mil e dois…\": cerca de 2 s até o peito chegar à barra, 1 a 2 s na transição e o resto até aos braços esticados.",
+    "Em cima, 1 segundo para estabilizar e começa logo a descer. No vídeo ficavas 3 a 4 s inclinado lá em cima.",
+    "Na transição: cotovelos dobrados e junto ao corpo, peito colado à barra, e desce o tronco devagar até a barra passar do peito para o queixo.",
+    "Se a transição cair na mesma, toca com as pontas dos pés no chão para travar (a barra é baixa, dá para isso). É melhor uma negativa lenta com ajuda dos pés do que uma rápida sem ajuda. Vai tirando a ajuda à medida que ficares mais forte.",
+    "No fim, trava até aos braços esticados. Não caias: o esticão faz mal aos cotovelos.",
+    "Mantém o que já está bem: subida com salto, braços esticados e ombros à frente da barra em cima, pernas juntas.",
+    "RPE: escreve 10 se não conseguiste travar a transição. O marco \"3 negatives controladas\" só conta com RPE 9 ou menos.",
+    "Quando voltares a filmar: de lado, telemóvel parado à altura da barra, para se ver a transição."
+   ],
+   "source": "Análise do Claude ao vídeo das negativas de 17/11 (Histórico → Estádio 1 de 17/11 → Vídeos)",
+   "createdAt": 1795116038802,
+   "updatedAt": 1795116038802
   }
  },
  "settingsPatch": {
