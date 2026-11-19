@@ -96,7 +96,7 @@ export const EX = {
     cues: [
       'Pegada um pouco mais aberta que a largura dos ombros, com as mãos por cima da barra.',
       'Ombros para baixo e rodados para fora: afasta-os das orelhas e aponta a dobra dos cotovelos para a frente. Mantém-nos assim a série toda, porque é isto que protege o ombro.',
-      'Antebraços sempre na vertical (perpendiculares ao chão): ao descer, os cotovelos vão para trás, não para os lados. Vistos de frente, os cotovelos não devem sair para fora do tronco, como asas.',
+      'Antebraços sempre na vertical (perpendiculares ao chão): ao descer, os cotovelos ficam por cima das mãos e vão para trás, não para os lados. Com as mãos um pouco mais abertas que os ombros, os cotovelos ficam um pouco por fora do tronco, e está certo; não precisam de roçar nas costelas. O que não pode acontecer é passarem para fora das mãos, com a parte de cima do braço aberta para os lados, como asas.',
       'Cabeça em linha com o tronco: olha para a barra um pouco à frente, não para os pés.',
       'Inclina o tronco ligeiramente à frente e desce até o peito tocar na barra.',
       'Sobe até os braços ficarem totalmente esticados, com os cotovelos trancados em cima.',
@@ -357,7 +357,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.2';
+export const APP_VERSION = '1.26.3';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
