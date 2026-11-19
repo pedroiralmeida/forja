@@ -550,6 +550,37 @@
    "summary": "Melhor que a 16/11: pulsos mais direitos com as fitas, a barra toca mais abaixo no peito e os pés já estão debaixo dos joelhos. A velocidade das 6 reps foi igual do princípio ao fim: sobravam 2 a 3 reps.",
    "title": "Bench press, última série",
    "updatedAt": 1795016853763
+  },
+  "video-2026-11-17-explosive-pulls": {
+   "id": "video-2026-11-17-explosive-pulls",
+   "kind": "video",
+   "order": 2,
+   "title": "Explosive pull-ups, série de 3",
+   "date": "2026-11-17",
+   "day": "E1",
+   "sessionId": "mwl674x9m90e80",
+   "ex": "explosive_pull",
+   "file": "videos/2026-11-17/explosive-pullups-3reps.mp4",
+   "durationS": 27,
+   "sizeKB": 2486,
+   "original": "Explosive_Pull_Ups.mp4 (478×850, 60 fps, 5,7 MB): recomprimido para 30 fps (2,5 MB)",
+   "recordedBy": "telemóvel parado, de frente, um pouco abaixo da barra",
+   "set": "uma das 5 séries de 3 (registadas com RPE 7,5 a 8)",
+   "summary": "3 explosive pull-ups estritas, pernas juntas e sem balanço. Em todas o queixo passa a barra, mas a barra fica no pescoço: o peito não chega. No topo os cotovelos ficam abertos para os lados e a subida abranda quando o queixo chega à barra.",
+   "findings": [
+    "Altura: as 3 reps passam o queixo, mas a barra fica no pescoço. Na melhor (a 2.ª) chega à base do pescoço. O peito não chega à barra.",
+    "Cabeça: na 1.ª e na 3.ª a cabeça vai para trás, a olhar para cima, para o queixo passar. É o mesmo que no teste das 9 pull-ups.",
+    "Cotovelos: no topo ficam abertos para os lados, à altura dos ombros e um pouco à frente do corpo. Para a barra chegar ao peito, têm de continuar a descer até junto das costelas, atrás do tronco.",
+    "Velocidade: cada subida demora cerca de 0,6 a 0,75 s e abranda no fim, quando o queixo chega à barra. Numa explosive pull-up o corpo ainda deve ir a subir nesse momento.",
+    "Descida: cerca de 1 s, controlada, até aos braços esticados. Bem.",
+    "Pausas: cerca de 5 s pendurado antes da 1.ª rep; menos de 1 s entre a 1.ª e a 2.ª e cerca de 2 s entre a 2.ª e a 3.ª. Ficar muito tempo pendurado cansa a pegada sem ganhar nada.",
+    "Corpo: pernas juntas, sem balanço nem pontapés. Bem.",
+    "Pegada: normal (sem false grip), com as mãos um pouco mais abertas que os ombros.",
+    "Próximo vídeo: filmar de lado, com o telemóvel parado à altura da barra e a uns 3 m, para se ver até onde a barra chega no tronco e se o tronco inclina para trás."
+   ],
+   "source": "Análise do Claude",
+   "createdAt": 1795097348424,
+   "updatedAt": 1795097348424
   }
  },
  "purchases": {
@@ -747,7 +778,6 @@
   "pullups-video-2026-11-17": {
    "createdAt": 1794960158757,
    "ex": [
-    "explosive_pull",
     "pullup",
     "pullup_slow",
     "c2b",
@@ -761,13 +791,12 @@
     "Em cima: olha em frente e leva o peito à barra. No vídeo, a partir da 4.ª rep, o queixo só chegava à barra a inclinar a cabeça para trás.",
     "Início de cada rep: puxa primeiro os ombros para baixo (sem dobrar os braços) e só depois puxa com os braços. Em baixo ficavam soltos, encostados às orelhas.",
     "Pernas juntas e esticadas até ao fim da série: nas últimas reps os joelhos dobravam.",
-    "Mantém o que já está bem: braços totalmente esticados em baixo e sem balanço.",
-    "Para o muscle-up, a barra tem de chegar ao peito: nas explosive pull-ups, puxa a pensar em levar a barra ao peito, não ao queixo."
+    "Mantém o que já está bem: braços totalmente esticados em baixo e sem balanço."
    ],
    "short": "Olha em frente e leva o peito à barra; ombros para baixo antes de cada rep.",
    "source": "Análise do Claude ao vídeo do teste de pull-ups de 17/11 (Histórico → Estádio 1 de 17/11 → Vídeos)",
    "title": "do vídeo das pull-ups (17/11)",
-   "updatedAt": 1794960158757
+   "updatedAt": 1795097348424
   },
   "supera-cotovelo-2026-11-17": {
    "createdAt": 1794955962863,
@@ -814,6 +843,29 @@
    "source": "Plano do Claude (teste de 4 em 4 semanas)",
    "title": "teste de pull-ups",
    "updatedAt": 1794960158757
+  },
+  "explosive-video-2026-11-19": {
+   "id": "explosive-video-2026-11-19",
+   "ex": [
+    "explosive_pull",
+    "c2b"
+   ],
+   "from": "2026-11-19",
+   "title": "do vídeo das explosive pull-ups (17/11)",
+   "short": "Arranca logo, cotovelos até às costelas e acelera até ao fim.",
+   "items": [
+    "Agarra a barra, puxa os ombros para baixo e arranca em 1 a 2 segundos. No vídeo ficaste cerca de 5 s pendurado antes da 1.ª rep. Entre reps, 1 segundo em baixo com os braços esticados, sempre igual.",
+    "Cotovelos até às costelas: pensa em levar os cotovelos aos bolsos de trás das calças. No vídeo ficavam abertos para os lados, à altura dos ombros, e é por isso que a barra parava no pescoço.",
+    "Acelera até ao fim: o corpo ainda deve ir a subir quando o queixo passa a barra, como se quisesses empurrar a barra para baixo, em direção às ancas.",
+    "Olha em frente e mantém a cabeça quieta: na 1.ª e na 3.ª rep a cabeça ia para trás para o queixo passar.",
+    "Experimenta as mãos à largura dos ombros (estavam um pouco mais abertas): ajuda os cotovelos a descer junto ao corpo.",
+    "Mantém o que já está bem: pernas juntas, sem balanço e descida controlada.",
+    "Nas chest-to-bar com banda, usa a mesma ideia dos cotovelos: é aí que treinas a posição do peito na barra.",
+    "Quando voltares a filmar: de lado, telemóvel parado à altura da barra, a uns 3 m."
+   ],
+   "source": "Análise do Claude ao vídeo das explosive pull-ups de 17/11 (Histórico → Estádio 1 de 17/11 → Vídeos)",
+   "createdAt": 1795097348424,
+   "updatedAt": 1795097348424
   }
  },
  "settingsPatch": {

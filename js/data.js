@@ -67,15 +67,16 @@ export const EX = {
   c2b: {
     name: 'Chest-to-bar pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o peito toca na barra',
-    cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
+    cues: ['Puxa os cotovelos para baixo e para trás, até junto às costelas.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
   },
   explosive_pull: {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o mais alto possível, peito à barra',
     cues: [
-      'Começa parado, pendurado com os braços esticados e os ombros já puxados para baixo. Sem balanço para "ganhar embalo".',
+      'Começa parado, pendurado com os braços esticados e os ombros já puxados para baixo. Agarra e arranca em 1 a 2 segundos: não fiques pendurado à espera. Sem balanço para "ganhar embalo".',
       'Puxa o mais depressa e com o máximo de força que conseguires, desde baixo: a ideia é a barra chegar ao peito ou mais abaixo.',
-      'Puxa os cotovelos para baixo e para trás e leva o peito à barra, inclinando ligeiramente o tronco para trás no topo.',
+      'Puxa os cotovelos para baixo e para trás até ficarem junto às costelas (não abertos para os lados à altura dos ombros) e leva o peito à barra, inclinando ligeiramente o tronco para trás no topo.',
+      'Acelera até ao fim: o corpo ainda deve ir a subir quando o queixo passa a barra. Se a subida abrandar aí, a barra fica no pescoço.',
       'Corpo firme e pernas juntas e à frente (ligeiramente "côncavo"), para a força não se perder no balanço.',
       'Desce controlado até aos braços esticados, para um segundo e faz a rep seguinte do zero.',
       'Poucas reps e todas rápidas: se uma rep sair lenta ou mais baixa, a série acabou. Descansa 2 a 3 minutos entre séries.',
@@ -330,7 +331,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.25.0';
+export const APP_VERSION = '1.25.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
