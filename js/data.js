@@ -114,6 +114,7 @@ export const EX = {
       'Desce devagar, em 4 a 5 segundos no total, a contar "mil e um, mil e dois…": cerca de 2 s até o peito chegar à barra (como num dip), 1 a 2 s na transição e o resto até aos braços esticados. Se a descida for fácil, podes descer mais devagar (até 8 s).',
       'A transição é a parte mais importante, porque é aí que o muscle-up costuma falhar: o peito passa de cima para baixo da barra com os cotovelos dobrados e junto ao corpo e o peito colado à barra. Se não a consegues travar e o corpo cai, usa as pontas dos pés no chão (numa barra baixa) para ajudar. Tira a ajuda aos poucos.',
       'Na transição é normal sentir que se vai cair: é o ponto mais fraco do movimento, porque os músculos do dip (peito e tríceps) deixam de conseguir segurar e os da pull-up (costas e bíceps) ainda não estão em posição de travar. Mantém a barra colada ao corpo e roda o tronco para trás à volta da barra, em vez de cair a direito: quanto mais longe da barra, mais pesado fica.',
+      'Cotovelos junto ao corpo: no fundo do dip apontam para trás, não para os lados, e os braços roçam nas costelas, como se segurasses uma folha de papel debaixo de cada braço. Na transição continuam a roçar no corpo enquanto rodam de trás para a frente. Mãos à largura dos ombros: com a pegada mais aberta os cotovelos fogem para os lados.',
       'Para aprender a travar: negativas com 2 pausas, 2 s com o peito na barra por cima (fundo do dip) e 2 s com o peito na barra por baixo (topo da pull-up). A transição é o caminho entre as duas, feito devagar e com a ajuda dos pés se for preciso.',
       'A pegada falsa torna a transição mais fácil de controlar, porque o pulso já está por cima da barra e não tem de rodar. Usa-a quando o pulso deixar.',
 'No fim, trava até aos braços esticados. Não caias: o esticão faz mal aos cotovelos e aos ombros.', 'Sente onde os pulsos rodam por cima da barra.', 'Faz só as reps marcadas, mesmo que a descida esteja fácil: aqui o limite são os cotovelos e os pulsos, não a força. Se doerem, para.', 'RPE: escreve 10 se não conseguiste travar a descida e o corpo caiu na transição. Só as séries com RPE 9 ou menos contam como controladas para o marco.'],
@@ -353,7 +354,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.25.8';
+export const APP_VERSION = '1.25.9';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
