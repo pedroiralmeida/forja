@@ -74,7 +74,7 @@ export const EX = {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o mais alto possível, peito à barra',
     cues: [
-      'Começa parado, pendurado com os braços esticados e os ombros já puxados para baixo. Agarra e arranca em 1 a 2 segundos: não fiques pendurado à espera. Sem balanço para "ganhar embalo".',
+      'Começa parado, pendurado com os braços esticados e os ombros já puxados para baixo. Sem balanço para "ganhar embalo".',
       'Puxa o mais depressa e com o máximo de força que conseguires, desde baixo: a ideia é a barra chegar ao peito ou mais abaixo.',
       'Puxa os cotovelos para baixo e para trás até ficarem junto às costelas (não abertos para os lados à altura dos ombros) e leva o peito à barra, inclinando ligeiramente o tronco para trás no topo.',
       'Puxa sem parar até ao topo: o arranque sozinho não te leva lá acima. Continua a puxar, com os cotovelos a descer até às costelas, até o peito chegar à barra. O corpo ainda deve ir a subir quando o queixo passa a barra.',
@@ -360,7 +360,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.5';
+export const APP_VERSION = '1.26.6';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
