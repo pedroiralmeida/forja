@@ -67,7 +67,7 @@ export const EX = {
   c2b: {
     name: 'Chest-to-bar pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o peito toca na barra',
-    cues: ['Puxa os cotovelos para baixo e para trás, até junto às costelas.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Pernas sempre juntas e um pouco à frente: corpo direito e ligeiramente inclinado para trás, nunca na vertical. A inclinação aumenta ao subir.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
+    cues: ['Puxa os cotovelos para baixo e para trás, até junto às costelas.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva e a puxar sem parar até o peito tocar; para quando deixar de tocar.', 'Pernas sempre juntas e um pouco à frente: corpo direito e ligeiramente inclinado para trás, nunca na vertical. A inclinação aumenta ao subir.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
   },
   explosive_pull: {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
@@ -76,7 +76,7 @@ export const EX = {
       'Começa parado, pendurado com os braços esticados e os ombros já puxados para baixo. Agarra e arranca em 1 a 2 segundos: não fiques pendurado à espera. Sem balanço para "ganhar embalo".',
       'Puxa o mais depressa e com o máximo de força que conseguires, desde baixo: a ideia é a barra chegar ao peito ou mais abaixo.',
       'Puxa os cotovelos para baixo e para trás até ficarem junto às costelas (não abertos para os lados à altura dos ombros) e leva o peito à barra, inclinando ligeiramente o tronco para trás no topo.',
-      'Acelera até ao fim: o corpo ainda deve ir a subir quando o queixo passa a barra. Se a subida abrandar aí, a barra fica no pescoço.',
+      'Puxa sem parar até ao topo: o arranque sozinho não te leva lá acima. Continua a puxar, com os cotovelos a descer até às costelas, até o peito chegar à barra. O corpo ainda deve ir a subir quando o queixo passa a barra.',
       'Corpo direito e firme, nunca na vertical: pernas juntas e um pouco à frente (corpo ligeiramente "côncavo"), o que já o inclina um pouco para trás. À medida que sobes, a inclinação aumenta, para o peito ir à barra. A inclinação vem de levar os cotovelos para trás, não de dobrar as costas nem de atirar a cabeça para trás.',
       'Desce controlado até aos braços esticados, para um segundo e faz a rep seguinte do zero.',
       'Poucas reps e todas rápidas: se uma rep sair lenta ou mais baixa, a série acabou. Descansa 2 a 3 minutos entre séries.',
@@ -331,7 +331,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.25.2';
+export const APP_VERSION = '1.25.3';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
