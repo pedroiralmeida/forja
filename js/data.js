@@ -80,6 +80,7 @@ export const EX = {
       'Corpo direito e firme, nunca na vertical: pernas juntas e um pouco à frente (corpo ligeiramente "côncavo"), o que já o inclina um pouco para trás. À medida que sobes, a inclinação aumenta, para o peito ir à barra. A inclinação vem de levar os cotovelos para trás, não de dobrar as costas nem de atirar a cabeça para trás.',
       'Desce controlado até aos braços esticados, para um segundo e faz a rep seguinte do zero.',
       'Poucas reps e todas rápidas: se uma rep sair lenta ou mais baixa, a série acabou. Descansa 2 a 3 minutos entre séries.',
+      'A forma acerta-se antes: nas pull-ups do aquecimento (normais e controladas) e nas australian pull-ups. Aqui todas as reps são explosivas, desde a primeira: reps normais antes, na mesma série, gastavam a força e as explosivas saíam mais baixas.',
       'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.',
     ],
   },
@@ -115,6 +116,19 @@ export const EX = {
     name: 'Band-assisted muscle-ups', kind: 'band', tier: 'skill', group: 'skill',
     note: 'banda presa na barra, sob os joelhos ou pés',
     cues: ['Pegada falsa: pulso por cima da barra desde o início.', 'Usa a banda mais leve que te deixe fazer reps limpas.', 'Puxa para trás e à volta da barra, não na vertical.', 'Passa os cotovelos por cima depressa.'],
+  },
+  australian_pull: {
+    name: 'Australian pull-ups explosivas', kind: 'bodyweight', tier: 'secondary', group: 'costas',
+    note: 'barra baixa, corpo por baixo dela, calcanhares no chão',
+    cues: [
+      'Numa barra baixa (à altura da cintura ou do peito), põe-te por baixo dela e agarra com as mãos à largura dos ombros. Calcanhares no chão e corpo direito como uma prancha, das orelhas aos calcanhares.',
+      'Cada série começa com 2 reps normais e controladas, para acertar a forma (corpo direito, cotovelos até às costelas, peito à barra). Logo a seguir, sem parar, 5 reps explosivas.',
+      'Nas explosivas, sobe o mais depressa que conseguires: cotovelos para baixo e para trás até às costelas, e o peito (a parte de baixo) toca na barra.',
+      'Puxa sem parar até o peito tocar. É o mesmo gesto que falta nas explosive pull-ups, mas com menos peso, para o aprenderes rápido.',
+      'Desce controlado, em cerca de 1 s, até aos braços esticados.',
+      'A anca não desce nem sobe: corpo sempre direito e pernas juntas.',
+      'Se uma rep explosiva sair lenta ou o peito não tocar, a série acabou. Se as 5 explosivas saírem fáceis, põe os pés mais à frente (corpo mais deitado).',
+    ],
   },
   mu_low_bar: {
     name: 'Low bar transitions', kind: 'bodyweight', tier: 'skill', group: 'skill',
@@ -254,6 +268,7 @@ export const DAYS = {
     blurb: 'Muscle-up primeiro, depois slow eccentric pull-ups, straight bar dips e hanging leg raises. Sem pesos: vais a pé.',
     slots: [
       { id: 'E1_fg', ex: 'false_grip_hang', mode: 'hold', sets: 2, seconds: 10, progress: { max: 30, step: 5 }, note: 'Faz isto depois de aquecer, antes do muscle-up. Usa a mesma pegada no resto do bloco de muscle-up.' },
+      { id: 'E1_aus', ex: 'australian_pull', mode: 'reps', sets: 2, min: 7, max: 7, note: 'Antes das explosive pull-ups, para treinar a explosão com menos peso. Cada série: 2 reps normais para acertar a forma e logo a seguir 5 explosivas, peito à barra (escreve 7). Descansa 1 minuto entre as séries.' },
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
       { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 3, min: 5, max: 8 },
       { id: 'E1_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
@@ -266,6 +281,7 @@ export const DAYS = {
     blurb: 'Muscle-up primeiro, depois chest-to-bar pull-ups, straight bar dips e toes-to-bar.',
     slots: [
       { id: 'E2_fg', ex: 'false_grip_hang', mode: 'hold', sets: 2, seconds: 10, progress: { max: 30, step: 5 }, note: 'Faz isto depois de aquecer, antes do muscle-up. Usa a mesma pegada no resto do bloco de muscle-up.' },
+      { id: 'E2_aus', ex: 'australian_pull', mode: 'reps', sets: 2, min: 7, max: 7, note: 'Antes das explosive pull-ups, para treinar a explosão com menos peso. Cada série: 2 reps normais para acertar a forma e logo a seguir 5 explosivas, peito à barra (escreve 7). Descansa 1 minuto entre as séries.' },
       { id: 'E2_skill', mode: 'skill', focus: 'main' },
       { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
       { id: 'E2_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
@@ -331,7 +347,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.25.3';
+export const APP_VERSION = '1.25.5';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

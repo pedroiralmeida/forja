@@ -643,7 +643,7 @@ function buildDouble(slot, exId, deload) {
   const info = exInfo(exId);
   const inc = incFor(exId);
   const hist = lastEntries(slot.id, exId);
-  const range = `${slot.min}–${slot.max}`;
+  const range = slot.min === slot.max ? `${slot.min}` : `${slot.min}–${slot.max}`;
   let w = null;
   let reps = Array(slot.sets).fill(slot.min);
   let note = '';
@@ -709,9 +709,9 @@ function buildDouble(slot, exId, deload) {
 
 function buildReps(slot, exId, deload) {
   const hist = lastEntries(slot.id, exId);
-  const range = `${slot.min}–${slot.max}`;
+  const range = slot.min === slot.max ? `${slot.min}` : `${slot.min}–${slot.max}`;
   let reps = Array(slot.sets).fill(slot.min);
-  let note = `Reps limpas, todas iguais. Para quando a técnica falhar.`;
+  let note = slot.note || `Reps limpas, todas iguais. Para quando a técnica falhar.`;
   if (hist.length) {
     const ws = workSets(hist[0].entry);
     const allMax = ws.length >= slot.sets && ws.every((s) => s.reps >= slot.max);
@@ -724,6 +724,7 @@ function buildReps(slot, exId, deload) {
       reps = Array.from({ length: slot.sets }, (_, i) => clamp((ws[i] ? ws[i].reps : slot.min) + 1, slot.min, slot.max));
       note = allMax ? 'Já fazes o topo da gama: mantém e foca-te em reps mais explosivas.' : 'Tenta mais uma rep por série.';
     }
+    if (slot.note) note = `${slot.note} ${note}`;
   }
   // Banda elástica: repete a da última vez em cada série (podes trocar ou tirar na série)
   let bands = [];
