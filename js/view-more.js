@@ -4,7 +4,7 @@ import * as E from './engine.js';
 import {
   local, persistLocal, setSettings, list, put, remove, exportJSON, importJSON, resetAll, connectSync, disconnectSync, syncNow, dataSize, state, COLLS,
 } from './store.js';
-import { icons, navigate, rerender, toast, header, segmented, confirmDialog, downloadFile, startRest, unlockAudio } from './ui.js';
+import { icons, navigate, rerender, toast, header, segmented, confirmDialog, downloadFile, startRest, unlockAudio, modal } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { esc, fmtNum, fmt1, todayISO, parseNum } from './util.js';
 
@@ -189,6 +189,12 @@ export function renderSettings(root) {
         <label class="check line"><input type="checkbox" name="wakeLock" ${S.wakeLock ? 'checked' : ''}><span>Manter o ecrã ligado durante o treino</span></label>
         <label class="check line"><input type="checkbox" name="lockScreenRest" ${S.lockScreenRest !== false ? 'checked' : ''}><span>Descanso no ecrã bloqueado (aparece nos controlos de multimédia; a contagem e o apito continuam com o telemóvel bloqueado)</span></label>
       </section>
+      <section class="panel bands-panel">
+        <h2 class="panel-title">Bandas elásticas</h2>
+        <p class="muted small">As bandas que tens. Nos exercícios com o peso do corpo escolhes em cada série se usaste banda e qual.</p>
+        <div class="chips">${E.bandList().map((b) => `<span class="eaten-item">${esc(b.label)}<button type="button" class="eaten-del" data-band-del="${esc(b.id)}" aria-label="Tirar a banda ${esc(b.label)}">×</button></span>`).join('') || '<span class="muted small">Ainda não tens bandas.</span>'}</div>
+        <button type="button" class="btn secondary small" data-band-add>Juntar banda</button>
+      </section>
       <section class="panel">
         <h2 class="panel-title">Alimentação</h2>
         <div class="field"><span>Objetivo de peso</span>${segmented('bwGoal', [{ value: 'gain', label: 'Ganhar devagar' }, { value: 'maintain', label: 'Manter' }], S.bwGoal)}</div>
@@ -239,6 +245,37 @@ export function renderSettings(root) {
     toast('Definições guardadas', { timeout: 1500 });
   };
   f.addEventListener('change', apply);
+  // Bandas elásticas: juntar e tirar (fora do formulário, guarda logo)
+  root.addEventListener('click', async (e) => {
+    const del = e.target.closest('[data-band-del]');
+    if (del) {
+      const b = E.bandList().find((x) => x.id === del.dataset.bandDel);
+      if (!b || !(await confirmDialog(`Tirar a banda de ${b.label}? Os treinos em que a usaste continuam a mostrá-la.`, { ok: 'Tirar' }))) return;
+      setSettings({ bands: E.bandList().filter((x) => x.id !== b.id) });
+      rerender();
+      return;
+    }
+    if (!e.target.closest('[data-band-add]')) return;
+    let wrap = null;
+    const ok = await modal({
+      title: 'Nova banda elástica',
+      body: `<p class="muted small">Escreve quanto ajuda (em kg, como vem na banda) e, se quiseres, um nome (por exemplo, a cor).</p>
+        <label class="field"><span>Ajuda</span><span class="with-unit"><input name="kg" inputmode="decimal" class="input num" placeholder="15"><i>kg</i></span></label>
+        <label class="field"><span>Nome (opcional)</span><input name="name" class="input" placeholder="por exemplo: verde"></label>`,
+      actions: [{ label: 'Cancelar', value: false, kind: 'ghost' }, { label: 'Juntar banda', value: true, kind: 'primary' }],
+      onMount: (w) => { wrap = w; },
+    });
+    if (!ok || !wrap) return;
+    const kg = parseNum(wrap.querySelector('[name="kg"]').value);
+    const name = wrap.querySelector('[name="name"]').value.trim();
+    if (kg === null && !name) { toast('Escreve pelo menos os kg ou um nome.'); return; }
+    const label = [kg !== null ? `${fmtNum(kg)} kg` : '', name].filter(Boolean).join(' ');
+    if (!E.bandList().some((b) => b.label === label)) {
+      setSettings({ bands: [...E.bandList(), { id: 'b' + Date.now().toString(36), label, kg: kg ?? null, addedOn: todayISO() }] });
+    }
+    rerender();
+    toast(`Banda de ${label} juntada`);
+  });
   f.addEventListener('submit', (e) => e.preventDefault());
   root.addEventListener('click', (e) => {
     const u = e.target.closest('[data-unswap]');

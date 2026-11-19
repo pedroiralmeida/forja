@@ -830,3 +830,8 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .video-item details { margin: 6px 0; }
 .video-item details ul { margin: 6px 0; padding-left: 18px; }
 .video-box video { width: 100%; max-height: 70vh; border-radius: 10px; background: #000; margin: 8px 0; }
+
+/* Banda elástica na série */
+.cell-input.assist { font-size: 14px; }
+.cell-input.assist.has-band { background: color-mix(in srgb, var(--yellow) 22%, var(--surface-2)); font-weight: 700; }
+.bands-panel .chips { margin: 8px 0 10px; }

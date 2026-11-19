@@ -67,7 +67,7 @@ export const EX = {
   c2b: {
     name: 'Chest-to-bar pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o peito toca na barra',
-    cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Se ainda não chegas ao peito: prende a banda elástica na barra e põe um pé ou o joelho nela, só com a ajuda suficiente para tocar. Na nota, escreve que usaste banda.', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
+    cues: ['Puxa os cotovelos para baixo e para trás.', 'O peito (não o queixo) tem de tocar na barra.', 'Cada rep explosiva; para quando deixar de tocar.', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
   },
   explosive_pull: {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
@@ -330,7 +330,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.24.2';
+export const APP_VERSION = '1.25.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -439,6 +439,10 @@ export const DEFAULT_SETTINGS = {
   vibrate: true,
   lockScreenRest: true,
   hiddenFoods: [], // alimentos escondidos dos botões de registo (continuam nas sugestões e no histórico)
+  bands: [ // bandas elásticas que tens (ajuda em kg); juntam-se mais no treino ou em Definições
+    { id: 'b10', label: '10 kg', kg: 10 },
+    { id: 'b20', label: '20 kg', kg: 20 },
+  ],
   deletedFoods: [], // alimentos criados à mão que foram apagados das opções (os registos feitos ficam)
   wakeLock: true,
   theme: 'auto',

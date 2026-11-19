@@ -478,6 +478,12 @@ function modeWeight(sets) {
 }
 
 // ---------- Marcos e fase do muscle-up ----------
+// Bandas elásticas do Pedro (da mais leve para a mais forte)
+export function bandList() {
+  const b = S().bands;
+  return (Array.isArray(b) && b.length ? b : []).slice().sort((x, y) => (x.kg || 0) - (y.kg || 0));
+}
+
 export function milestoneMap() {
   const out = {};
   const ss = sessions().slice().reverse();
@@ -491,6 +497,8 @@ export function milestoneMap() {
         for (const e of s.exercises) {
           if (!m.ex.includes(e.ex)) continue;
           for (const set of workSets(e)) {
+            // Séries com banda não contam para os marcos (excepto nos exercícios que são com banda)
+            if (set.band && EX[e.ex] && EX[e.ex].kind !== 'band') continue;
             if (set.reps >= m.reps) { achieved = true; date = s.date; how = 'registo'; break outer; }
           }
         }
@@ -717,16 +725,25 @@ function buildReps(slot, exId, deload) {
       note = allMax ? 'Já fazes o topo da gama: mantém e foca-te em reps mais explosivas.' : 'Tenta mais uma rep por série.';
     }
   }
+  // Banda elástica: repete a da última vez em cada série (podes trocar ou tirar na série)
+  let bands = [];
+  if (hist.length) {
+    const ws = workSets(hist[0].entry);
+    bands = ws.map((x) => x.band || null);
+    const used = [...new Set(bands.filter(Boolean))];
+    if (used.length) note = `Da última vez usaste a banda de ${used.join(' e ')}. Se as reps saírem fáceis, experimenta uma mais leve ou sem banda. ${note}`;
+  }
   let n = slot.sets;
   if (deload) { n = deloadSets(slot.sets); reps = Array(n).fill(slot.min); note = 'Semana de deload: menos séries.'; }
-  return { sets: Array.from({ length: n }, (_, i) => setObj('work', null, reps[i] ?? slot.min, { tReps: range })), note, target: `${n}×${range}` };
+  return { sets: Array.from({ length: n }, (_, i) => setObj('work', null, reps[i] ?? slot.min, { tReps: range, ...(bands[i] || bands[bands.length - 1] ? { band: bands[i] || bands[bands.length - 1] } : {}) })), note, target: `${n}×${range}` };
 }
 
 function lastBand() {
   const l = lastForExercise('mu_band');
   if (!l) return 'média';
   const ws = workSets(l.entry);
-  return (ws[ws.length - 1] && ws[ws.length - 1].band) || 'média';
+  const strongest = bandList().slice(-1)[0];
+  return (ws[ws.length - 1] && ws[ws.length - 1].band) || (strongest ? strongest.label : 'média');
 }
 
 function buildSkill(slot, deload) {

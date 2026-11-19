@@ -1,13 +1,13 @@
 // Treino em curso, edição de sessões passadas e detalhe de uma sessão
 import { EX, DAYS, BAND_LEVELS, PAIN_SPOTS, CONDITIONS } from './data.js';
 import * as E from './engine.js';
-import { local, persistLocal, put, get, remove, syncNow, list, fetchRepoBlob } from './store.js';
+import { local, persistLocal, put, get, remove, syncNow, list, fetchRepoBlob, setSettings } from './store.js';
 import {
   icons, navigate, rerender, toast, modal, confirmDialog, header, startRest, stopRest, unlockAudio, releaseWakeLock, requestWakeLock, applyPendingUpdate,
 } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { resetChosenDay } from './view-today.js';
-import { esc, fmtNum, fmt1, fmtDateLong, fmtDuration, parseNum, uid, now, debounce } from './util.js';
+import { esc, fmtNum, fmt1, fmtDateLong, fmtDuration, parseNum, uid, now, debounce, todayISO } from './util.js';
 
 const RPES = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
 let editing = null; // cópia de uma sessão passada em edição
@@ -30,14 +30,45 @@ function setLabels(entry) {
   });
 }
 
+// Bandas: as do Pedro (Definições) e, se a série tiver uma antiga que já não está na lista, essa também
+function bandOptions(s, withNone) {
+  const labels = E.bandList().map((b) => b.label);
+  if (s.band && !labels.includes(s.band)) labels.push(s.band);
+  return `${withNone ? `<option value="" ${s.band ? '' : 'selected'}>corpo</option>` : ''}${labels.map((l) => `<option value="${esc(l)}" ${s.band === l ? 'selected' : ''}>banda ${esc(l)}</option>`).join('')}<option value="__new">+ nova banda…</option>`;
+}
+
 function weightCell(kind, s) {
-  if (kind === 'bodyweight') return '<span class="cell-static">corpo</span>';
+  if (kind === 'bodyweight') return `<select data-f="assist" class="cell-input assist ${s.band ? 'has-band' : ''}" aria-label="Com ou sem banda elástica">${bandOptions(s, true)}</select>`;
   if (kind === 'hold') return '<span class="cell-static">barra</span>';
   if (kind === 'band') {
-    return `<select data-f="band" class="cell-input" aria-label="Banda">${BAND_LEVELS.map((b) => `<option ${s.band === b ? 'selected' : ''}>${b}</option>`).join('')}</select>`;
+    return `<select data-f="band" class="cell-input" aria-label="Banda">${bandOptions(s, false)}</select>`;
   }
   const unit = kind === 'weighted_bw' ? '+kg' : 'kg';
   return `<label class="cell"><input data-f="w" inputmode="decimal" autocomplete="off" class="cell-input num" value="${fmtIn(s.w)}" placeholder="—" aria-label="Peso"><span class="unit">${unit}</span></label>`;
+}
+
+// Juntar uma banda nova (fica nas Definições, para todos os treinos e dispositivos)
+async function addBand() {
+  let wrap = null;
+  const ok = await modal({
+    title: 'Nova banda elástica',
+    body: `<p class="muted small">Escreve quanto ajuda (em kg, como vem na banda) e, se quiseres, um nome (por exemplo, a cor).</p>
+      <label class="field"><span>Ajuda</span><span class="with-unit"><input name="kg" inputmode="decimal" class="input num" placeholder="15"><i>kg</i></span></label>
+      <label class="field"><span>Nome (opcional)</span><input name="name" class="input" placeholder="por exemplo: verde"></label>`,
+    actions: [{ label: 'Cancelar', value: false, kind: 'ghost' }, { label: 'Juntar banda', value: true, kind: 'primary', fn: (w) => { wrap = w; } }],
+    onMount: (w) => { wrap = w; },
+  });
+  if (!ok || !wrap) return null;
+  const kg = parseNum(wrap.querySelector('[name="kg"]').value);
+  const name = wrap.querySelector('[name="name"]').value.trim();
+  if (kg === null && !name) { toast('Escreve pelo menos os kg ou um nome.'); return null; }
+  const label = [kg !== null ? `${fmtNum(kg)} kg` : '', name].filter(Boolean).join(' ');
+  const bands = E.bandList();
+  if (!bands.some((b) => b.label === label)) {
+    setSettings({ bands: [...bands, { id: 'b' + Date.now().toString(36), label, kg: kg ?? null, addedOn: todayISO() }] });
+    toast(`Banda de ${label} juntada`);
+  }
+  return label;
 }
 
 function setRow(entry, s, si, ei, label, kind) {
@@ -235,7 +266,27 @@ export function renderWorkout(root, { mode = 'active', id } = {}) {
     if (f === 'w') { s.w = parseNum(el.value); s.auto = false; }
     else if (f === 'reps') s.reps = parseNum(el.value);
     else if (f === 'rpe') { s.rpe = parseNum(el.value); el.classList.toggle('is-empty', s.rpe === null); }
-    else if (f === 'band') s.band = el.value;
+    else if (f === 'band' || f === 'assist') {
+      if (el.value === '__new') {
+        const before = s.band || '';
+        el.value = before;
+        addBand().then((label) => {
+          if (label) { s.band = label; const b = E.bandList().find((x) => x.label === label); if (b) s.bandKg = b.kg; }
+          save(mode);
+          redrawCard(Number(row.dataset.e));
+        });
+        return;
+      }
+      if (el.value) {
+        s.band = el.value;
+        const b = E.bandList().find((x) => x.label === el.value);
+        if (b) s.bandKg = b.kg;
+      } else {
+        delete s.band;
+        delete s.bandKg;
+      }
+      el.classList.toggle('has-band', !!el.value);
+    }
     save(mode);
   };
 
@@ -528,6 +579,7 @@ export function setLine(exId, s, entry) {
   let w = '';
   if (info.kind === 'weighted_bw') w = s.w ? `+${fmtNum(s.w)} kg × ` : '';
   else if (info.kind === 'band') w = `banda ${s.band || ''} × `;
+  else if (info.kind === 'bodyweight' && s.band) w = `banda ${s.band} × `;
   else if (info.kind !== 'bodyweight' && info.kind !== 'hold' && s.w !== null && s.w !== undefined) w = `${fmtNum(s.w)} × `;
   if (info.kind === 'hold') return `${fmtNum(s.reps)} s`;
   return `${w}${fmtNum(s.reps)}${s.rpe ? ` @${fmtNum(s.rpe)}` : ''}`;
