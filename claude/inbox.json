@@ -296,6 +296,160 @@
    "shake": false,
    "sleep": null,
    "updatedAt": 1794872438278
+  },
+  "2026-11-18": {
+   "createdAt": 1794995553088,
+   "creatine": true,
+   "date": "2026-11-18",
+   "foods": [
+    {
+     "at": 1794998101062,
+     "food": "maca",
+     "g": 1,
+     "id": "mwlziuyuzlmu1b",
+     "meal": "pa",
+     "name": "Maçã",
+     "portion": "1 maçã",
+     "qty": 2
+    },
+    {
+     "at": 1794998107189,
+     "food": "whey",
+     "g": 21,
+     "id": "mwlzizp169tujj",
+     "meal": "pa",
+     "name": "Whey",
+     "portion": "1 dose",
+     "qty": 1
+    },
+    {
+     "at": 1794998110344,
+     "food": "aveia",
+     "g": 6,
+     "id": "mwlzj24n3r16uk",
+     "meal": "pa",
+     "name": "Aveia instantânea",
+     "portion": "45 g",
+     "qty": 1
+    },
+    {
+     "at": 1794998115032,
+     "food": "leite",
+     "g": 8,
+     "id": "mwlzj5qwpjupb5",
+     "meal": "pa",
+     "name": "Leite",
+     "portion": "1 copo (250 ml)",
+     "qty": 1
+    },
+    {
+     "at": 1795018031452,
+     "food": "carne",
+     "g": 35,
+     "id": "mwmbe1cs84cd07",
+     "meal": "almoco",
+     "name": "Carne, frango ou peixe",
+     "option": "al-casa",
+     "portion": "palma da mão",
+     "qty": 1
+    },
+    {
+     "at": 1795018031452,
+     "food": "arroz",
+     "g": 4,
+     "id": "mwmbe1csvlrefz",
+     "meal": "almoco",
+     "name": "Arroz",
+     "option": "al-casa",
+     "portion": "1 prato",
+     "qty": 1
+    },
+    {
+     "at": 1795018031452,
+     "food": "brocolos",
+     "g": 3,
+     "id": "mwmbe1cszzxmdn",
+     "meal": "almoco",
+     "name": "Brócolos",
+     "option": "al-casa",
+     "portion": "1 porção",
+     "qty": 1
+    },
+    {
+     "at": 1795018031452,
+     "food": "pera",
+     "g": 0.5,
+     "id": "mwmbe1csdot99i",
+     "meal": "almoco",
+     "name": "Pera",
+     "option": "al-casa",
+     "portion": "1 pera",
+     "qty": 1
+    },
+    {
+     "at": 1795022470944,
+     "food": "yopro",
+     "g": 25,
+     "id": "mwme16w0ep83fu",
+     "meal": "lanche",
+     "name": "YoPro",
+     "portion": "1 unidade",
+     "qty": 1
+    },
+    {
+     "at": 1795022477611,
+     "food": "maca",
+     "g": 1,
+     "id": "mwme1c17t0yjqy",
+     "meal": "lanche",
+     "name": "Maçã",
+     "portion": "1 maçã",
+     "qty": 2
+    },
+    {
+     "at": 1795033800000,
+     "food": "carne",
+     "g": 35,
+     "id": "claude-1811-j1",
+     "meal": "jantar",
+     "name": "Carne, frango ou peixe",
+     "option": "ja-casa",
+     "portion": "palma da mão",
+     "qty": 1,
+     "source": "claude, a pedido do Pedro (jantar sugerido pela app, registado no dia seguinte)"
+    },
+    {
+     "at": 1795033800000,
+     "food": "sopa",
+     "g": 3,
+     "id": "claude-1811-j2",
+     "meal": "jantar",
+     "name": "Sopa de legumes",
+     "option": "ja-casa",
+     "portion": "1 prato",
+     "qty": 1,
+     "source": "claude, a pedido do Pedro (jantar sugerido pela app, registado no dia seguinte)"
+    },
+    {
+     "at": 1795033800000,
+     "food": "pao",
+     "g": 2.5,
+     "id": "claude-1811-j3",
+     "meal": "jantar",
+     "name": "Pão",
+     "option": "ja-casa",
+     "portion": "1 carcaça",
+     "qty": 0.5,
+     "source": "claude, a pedido do Pedro (jantar sugerido pela app, registado no dia seguinte)"
+    }
+   ],
+   "protein": 145.0,
+   "shake": false,
+   "sleep": null,
+   "sleepAt": 1794995553088,
+   "sleepBand": "7to8",
+   "sleepOk": true,
+   "updatedAt": 1795049029873
   }
  },
  "mealPlans": {
