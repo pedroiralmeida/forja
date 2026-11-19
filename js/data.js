@@ -136,6 +136,7 @@ export const EX = {
       'Pegada falsa (pulso por cima da barra), se o pulso não doeu no false grip hang do início do treino. Com os pés no chão a barra só leva parte do peso, por isso é a forma mais fácil de treinar a pegada falsa a mexer. Se o pulso doer, usa a meia pegada falsa (mão rodada por cima da barra, sem dobrar o pulso todo) ou a pegada normal.',
       'Cada série começa com 2 reps normais e controladas, para acertar a forma (corpo direito, cotovelos até às costelas, peito à barra). Logo a seguir, sem parar, 5 reps explosivas.',
       'Nas explosivas, sobe o mais depressa que conseguires: cotovelos para baixo e para trás até às costelas, e o peito (a parte de baixo) toca na barra.',
+      'Axilas quase fechadas: os braços fazem um ângulo pequeno com o tronco (cerca de um palmo entre o braço e as costelas), nunca abertos em T, à altura dos ombros. No topo os cotovelos ficam atrás do corpo, ao lado das costelas. Não é preciso colar os braços ao corpo.',
       'Puxa sem parar até o peito tocar. É o mesmo gesto que falta nas explosive pull-ups, mas com menos peso, para o aprenderes rápido.',
       'Desce controlado, em cerca de 1 s, até aos braços esticados.',
       'A anca não desce nem sobe: corpo sempre direito e pernas juntas.',
@@ -359,7 +360,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.4';
+export const APP_VERSION = '1.26.5';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
