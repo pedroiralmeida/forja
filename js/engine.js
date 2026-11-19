@@ -1018,6 +1018,13 @@ export function remindersFor(exId, iso = todayISO()) {
     .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
 }
 
+// Lembretes gerais (sem exercício): aparecem todos os dias no ecrã Hoje
+export function generalReminders(iso = todayISO()) {
+  return list('reminders')
+    .filter((r) => !r.dismissedAt && !(r.ex || []).length && (!r.from || iso >= r.from) && (!r.until || iso <= r.until))
+    .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+}
+
 export function annotateSession(session) {
   let changed = false;
   for (const e of session.exercises || []) {

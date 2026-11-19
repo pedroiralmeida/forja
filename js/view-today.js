@@ -1,7 +1,7 @@
 // Ecrã "Hoje" e configuração inicial
 import { DAYS, PLACES, MU_STAGES, MISS_REASONS, WEEKDAYS } from './data.js';
 import * as E from './engine.js';
-import { local, put, setSettings, persistLocal, remove } from './store.js';
+import { local, put, get, setSettings, persistLocal, remove } from './store.js';
 import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, modal, confirmDialog, stopRest, releaseWakeLock, applyPendingUpdate } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
@@ -232,6 +232,7 @@ export function renderToday(root) {
   const trainingDay = plan === 'supera' || plan === 'estadio';
 
   let html = header('Hoje', { sub: fmtDateLong(today) });
+  html += E.generalReminders(today).map((r) => `<section class="daily-reminder"><p><strong>${esc(r.title || 'Lembrete')}:</strong> ${esc(r.short || '')}${(r.items || []).map((i) => ` <span class="muted">${esc(i)}</span>`).join('')}</p><button class="btn ghost small" data-act="general-reminder-done" data-id="${esc(r.id)}">Já não preciso</button></section>`).join('');
 
   if (staleActive) {
     const nDone = openActive.exercises.reduce((a, e) => a + e.sets.filter((x) => x.done && x.kind !== 'warm').length, 0);
@@ -468,6 +469,11 @@ export function renderToday(root) {
     } else if (a === 'deload-off') {
       const wk = weekStart(today);
       put('deloadWeeks', wk, { week: wk, on: false });
+      rerender();
+    } else if (a === 'general-reminder-done') {
+      const r = get('reminders', act.dataset.id);
+      if (r) put('reminders', r.id, { ...r, dismissedAt: now() });
+      toast('Lembrete escondido.');
       rerender();
     } else if (a === 'deload-dismiss') {
       local.dismissDeload = weekStart(today);

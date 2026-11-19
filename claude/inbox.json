@@ -870,6 +870,19 @@
    "source": "Análise do Claude ao vídeo das explosive pull-ups de 17/11 (Histórico → Estádio 1 de 17/11 → Vídeos)",
    "createdAt": 1795097348424,
    "updatedAt": 1795100010821
+  },
+  "respirar-nariz-2026-11-19": {
+   "id": "respirar-nariz-2026-11-19",
+   "ex": [],
+   "from": "2026-11-19",
+   "title": "Respira pelo nariz",
+   "short": "Ao longo do dia todo: a trabalhar, a andar, a comer e nos descansos do treino.",
+   "items": [
+    "Nas séries pesadas ou explosivas é normal precisares da boca; volta ao nariz logo no descanso."
+   ],
+   "source": "Pedido do Pedro (19/11)",
+   "createdAt": 1795104503652,
+   "updatedAt": 1795104503652
   }
  },
  "settingsPatch": {

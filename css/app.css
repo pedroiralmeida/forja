@@ -835,3 +835,8 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .cell-input.assist { font-size: 14px; }
 .cell-input.assist.has-band { background: color-mix(in srgb, var(--yellow) 22%, var(--surface-2)); font-weight: 700; }
 .bands-panel .chips { margin: 8px 0 10px; }
+
+/* Lembretes gerais no ecrã Hoje */
+.daily-reminder { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--yellow) 14%, var(--surface)); }
+.daily-reminder p { margin: 0; font-size: 15px; }
+.daily-reminder .btn { flex: none; }
