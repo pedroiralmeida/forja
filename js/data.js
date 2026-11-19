@@ -46,7 +46,7 @@ export const EX = {
   pullup_slow: {
     name: 'Slow eccentric pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['archer_pull', 'pullup'],
     note: 'só o peso do corpo; 3 segundos a descer',
-    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Esforço: RPE 8, contado pela subida. A descida lenta é fácil, por isso não te guies por ela: para quando a subida já estiver lenta e só conseguirias mais 1 ou 2 pull-ups. Se assim só saírem 3 ou 4 reps, está certo.', 'Nunca subas até já não conseguires mais nenhuma: cansa demasiado para o resto do treino e carrega os cotovelos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
+    cues: ['Mesma forma das pull-ups: braços esticados em baixo, ombros puxados para baixo antes de subir, corpo firme sem balanço. Cotovelos a descer junto ao corpo até ao lado das costelas, não abertos como asas.', 'Sobe normal, queixo acima da barra.', 'Desce devagar, a contar "mil e um, mil e dois, mil e três", até os braços ficarem totalmente esticados.', 'Esforço: RPE 8, contado pela subida. A descida lenta é fácil, por isso não te guies por ela: para quando a subida já estiver lenta e só conseguirias mais 1 ou 2 pull-ups. Se assim só saírem 3 ou 4 reps, está certo.', 'Nunca subas até já não conseguires mais nenhuma: cansa demasiado para o resto do treino e carrega os cotovelos.', 'Quando fizeres 8 reps em todas as séries, passa para archer pull-ups (troca o exercício).', 'Pernas sempre juntas.', 'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.'],
   },
   archer_pull: {
     name: 'Archer pull-ups', kind: 'bodyweight', tier: 'secondary', group: 'costas', alts: ['pullup_slow', 'pullup'],
@@ -59,6 +59,7 @@ export const EX = {
       'Pegada por cima (palmas para a frente), um pouco mais aberta que os ombros, polegar à volta da barra.',
       'Começa pendurado com os braços totalmente esticados. Antes de puxar, puxa os ombros para baixo e para trás, sem dobrar os braços.',
       'Puxa os cotovelos para baixo, em direção às costelas, até o queixo passar a barra. Peito para a frente, olhar para a barra.',
+      'Cotovelos: nas pull-ups normais não precisam de apontar para trás. Descem junto ao corpo, a apontar para o chão e um pouco para fora, e acabam ao lado das costelas. O que não pode acontecer é ficarem abertos para os lados à altura dos ombros, como asas. Cotovelos para trás é nas explosive pull-ups, nas chest-to-bar e no muscle-up (no fim da subida) e nos dips (no fundo).',
       'Pernas juntas e corpo firme, ligeiramente "côncavo" (abdominais apertados): nada de pontapés nem balanço.',
       'Desce controlado até aos braços totalmente esticados. Só conta a rep se o queixo passar a barra e voltares a esticar os braços.',
       'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.',
@@ -115,7 +116,7 @@ export const EX = {
       'A transição é a parte mais importante, porque é aí que o muscle-up costuma falhar: o peito passa de cima para baixo da barra com os cotovelos dobrados e junto ao corpo e o peito colado à barra. Se não a consegues travar e o corpo cai, usa as pontas dos pés no chão (numa barra baixa) para ajudar. Tira a ajuda aos poucos.',
       'Na transição é normal sentir que se vai cair: é o ponto mais fraco do movimento, porque os músculos do dip (peito e tríceps) deixam de conseguir segurar e os da pull-up (costas e bíceps) ainda não estão em posição de travar. Mantém a barra colada ao corpo e roda o tronco para trás à volta da barra, em vez de cair a direito: quanto mais longe da barra, mais pesado fica.',
       'Cotovelos junto ao corpo: no fundo do dip apontam para trás, não para os lados, e os braços roçam nas costelas, como se segurasses uma folha de papel debaixo de cada braço. Na transição continuam a roçar no corpo enquanto rodam de trás para a frente. Mãos à largura dos ombros: com a pegada mais aberta os cotovelos fogem para os lados.',
-      'Para aprender a travar: negativas com 2 pausas, 2 s com o peito na barra por cima (fundo do dip) e 2 s com o peito na barra por baixo (topo da pull-up). A transição é o caminho entre as duas, feito devagar e com a ajuda dos pés se for preciso.',
+      'Para aprender a travar: negativas com 2 pausas, 2 s com o peito na barra por cima (fundo do dip) e 2 s com o peito na barra por baixo (topo da pull-up). Na primeira pausa, confirma que os cotovelos apontam para trás antes de passares para baixo. A transição é o caminho entre as duas, feito devagar e com a ajuda dos pés se for preciso.',
       'A pegada falsa torna a transição mais fácil de controlar, porque o pulso já está por cima da barra e não tem de rodar. Usa-a quando o pulso deixar.',
 'No fim, trava até aos braços esticados. Não caias: o esticão faz mal aos cotovelos e aos ombros.', 'Sente onde os pulsos rodam por cima da barra.', 'Faz só as reps marcadas, mesmo que a descida esteja fácil: aqui o limite são os cotovelos e os pulsos, não a força. Se doerem, para.', 'RPE: escreve 10 se não conseguiste travar a descida e o corpo caiu na transição. Só as séries com RPE 9 ou menos contam como controladas para o marco.'],
   },
@@ -354,7 +355,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.25.9';
+export const APP_VERSION = '1.26.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

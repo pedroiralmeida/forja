@@ -611,7 +611,13 @@
    ],
    "source": "Análise do Claude",
    "createdAt": 1795116038802,
-   "updatedAt": 1795116557457
+   "updatedAt": 1795116670046,
+   "stills": [
+    {
+     "file": "videos/2026-11-17/muscle-up-negatives-cotovelos.jpg",
+     "caption": "Fundo do dip e transição nas 3 negativas (uma rep por linha): os cotovelos saem para os lados do tronco, como asas. Deviam apontar para trás e roçar nas costelas."
+    }
+   ]
   }
  },
  "purchases": {
@@ -929,16 +935,18 @@
     "Em cima, 1 segundo para estabilizar e começa logo a descer. No vídeo ficavas 3 a 4 s inclinado lá em cima.",
     "Na transição é normal sentires que vais cair: é o ponto mais fraco do movimento. Para a controlar, mantém a barra colada ao corpo e os cotovelos junto ao corpo, e roda o tronco para trás à volta da barra em vez de cair a direito. Quanto mais longe da barra, mais pesado fica.",
     "Cotovelos junto ao corpo: no fundo do dip os cotovelos apontam para trás, não para os lados, e os braços roçam nas costelas, como se segurasses uma folha de papel debaixo de cada braço. Ao passar para baixo da barra, os cotovelos continuam a roçar no corpo enquanto rodam de trás para a frente. No vídeo abriam para os lados, como asas. Mãos à largura dos ombros, não mais abertas.",
-    "Para aprender a travar, faz as negativas com 2 pausas: 2 s com o peito na barra por cima (fundo do dip) e 2 s com o peito na barra por baixo (topo da pull-up). A transição é o caminho entre as duas pausas, feito devagar e, se for preciso, com as pontas dos pés no chão a ajudar.",
+    "Ensaio no aquecimento: 5 flexões com as mãos debaixo dos ombros e os braços a roçar nas costelas. No fundo, os cotovelos apontam para trás: é essa a posição no fundo do dip. Compara com uma flexão de mãos abertas, com os cotovelos para os lados: foi isso que aconteceu no vídeo.",
+    "Para aprender a travar, faz as negativas com 2 pausas: 2 s com o peito na barra por cima (fundo do dip) e 2 s com o peito na barra por baixo (topo da pull-up). Na primeira pausa, confirma que os cotovelos apontam para trás e que a \"folha\" não caiu; só depois passas para baixo. A transição é o caminho entre as duas pausas, feito devagar e, se for preciso, com as pontas dos pés no chão a ajudar.",
     "Se a transição cair na mesma, toca com as pontas dos pés no chão para travar (a barra é baixa, dá para isso). É melhor uma negativa lenta com ajuda dos pés do que uma rápida sem ajuda. Vai tirando a ajuda à medida que ficares mais forte.",
     "No fim, trava até aos braços esticados. Não caias: o esticão faz mal aos cotovelos.",
     "Mantém o que já está bem: subida com salto, braços esticados e ombros à frente da barra em cima, pernas juntas.",
     "RPE: escreve 10 se não conseguiste travar a transição. O marco \"3 negatives controladas\" só conta com RPE 9 ou menos.",
-    "Quando voltares a filmar: de lado, telemóvel parado à altura da barra, para se ver a transição."
+    "Quando voltares a filmar: de lado, telemóvel parado à altura da barra, para se ver a transição.",
+    "Tens as imagens dos cotovelos no vídeo em Histórico → Estádio 1 de 17/11 → Vídeos → Ver imagem."
    ],
    "source": "Análise do Claude ao vídeo das negativas de 17/11 (Histórico → Estádio 1 de 17/11 → Vídeos)",
    "createdAt": 1795116038802,
-   "updatedAt": 1795116557457
+   "updatedAt": 1795116670046
   }
  },
  "settingsPatch": {

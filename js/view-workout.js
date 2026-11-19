@@ -91,6 +91,7 @@ const WARMUPS = {
   estadio: [
     { id: 'pulsos', text: 'Pulsos: roda-os 10 vezes para cada lado. Depois apoia as mãos no chão (dedos para a frente e depois para trás) e balança devagar 10 vezes.' },
     { id: 'ombros', text: 'Ombros: 2 × 15 band pull-aparts (banda à frente do peito, braços esticados, abre para os lados) e 10 rotações de braços.' },
+    { id: 'flexoes', text: '5 flexões com as mãos debaixo dos ombros e os braços a roçar nas costelas: no fundo, os cotovelos apontam para trás. É a posição dos cotovelos no fundo do dip e na transição do muscle-up.' },
     { id: 'hang', text: 'Dead hang de 20 a 30 s.' },
     { id: 'scap', text: '5 scapular pulls: pendurado, puxa os ombros para baixo sem dobrar os braços.' },
     { id: 'pullups', text: '3 a 4 pull-ups fáceis e a ritmo normal, longe do limite, para acertar a forma: ombros para baixo, cotovelos até às costelas, corpo um pouco inclinado para trás. As reps rápidas e explosivas só vêm depois.' },
@@ -614,6 +615,7 @@ function videosPanel(s) {
       ${m.summary ? `<p>${esc(m.summary)}</p>` : ''}
       ${m.findings && m.findings.length ? `<details><summary>Análise</summary><ul>${m.findings.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></details>` : ''}
       <div class="video-box"></div>
+      ${m.stills && m.stills.length ? `<div class="stills-box"></div><button class="btn ghost small" data-act="show-stills" data-id="${esc(m.id)}">Ver ${m.stills.length === 1 ? 'imagem' : 'imagens'}</button>` : ''}
       <button class="btn secondary small" data-act="play-video" data-id="${esc(m.id)}">Ver vídeo</button>
       ${m.sizeKB ? `<span class="muted small"> ${fmtNum(Math.round(m.sizeKB / 100) / 10)} MB</span>` : ''}
     </div>`).join('')}
@@ -658,6 +660,27 @@ export function renderSession(root, { id, fresh }) {
   root.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
+    if (b.dataset.act === 'show-stills') {
+      const m = get('media', b.dataset.id);
+      const box = b.closest('.video-item').querySelector('.stills-box');
+      b.disabled = true;
+      b.textContent = 'A carregar…';
+      try {
+        const figs = [];
+        for (const st of m.stills) {
+          const blob = await fetchRepoBlob(st.file);
+          const url = URL.createObjectURL(blob.type && blob.type.startsWith('image/') ? blob : new Blob([blob], { type: 'image/jpeg' }));
+          figs.push(`<figure><img src="${url}" alt="${esc(st.caption || '')}">${st.caption ? `<figcaption class="muted small">${esc(st.caption)}</figcaption>` : ''}</figure>`);
+        }
+        box.innerHTML = figs.join('');
+        b.remove();
+      } catch (err) {
+        b.disabled = false;
+        b.textContent = 'Ver imagens';
+        toast(err.message || 'Não consegui carregar a imagem.');
+      }
+      return;
+    }
     if (b.dataset.act === 'play-video') {
       const m = get('media', b.dataset.id);
       const box = b.closest('.video-item').querySelector('.video-box');

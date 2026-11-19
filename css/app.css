@@ -840,3 +840,8 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .daily-reminder { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--yellow) 14%, var(--surface)); }
 .daily-reminder p { margin: 0; font-size: 15px; }
 .daily-reminder .btn { flex: none; }
+
+/* Imagens tiradas dos vídeos */
+.stills-box figure { margin: 8px 0; }
+.stills-box img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.stills-box figcaption { margin-top: 4px; }
