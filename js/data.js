@@ -127,15 +127,16 @@ export const EX = {
   },
   australian_pull: {
     name: 'Australian pull-ups explosivas', kind: 'bodyweight', tier: 'secondary', group: 'costas',
-    note: 'barra baixa, corpo por baixo dela, calcanhares no chão',
+    note: 'barra baixa, corpo por baixo dela, calcanhares no chão, pegada falsa se o pulso deixar',
     cues: [
       'Numa barra baixa (à altura da cintura ou do peito), põe-te por baixo dela e agarra com as mãos à largura dos ombros. Calcanhares no chão e corpo direito como uma prancha, das orelhas aos calcanhares.',
+      'Pegada falsa (pulso por cima da barra), se o pulso não doeu no false grip hang do início do treino. Com os pés no chão a barra só leva parte do peso, por isso é a forma mais fácil de treinar a pegada falsa a mexer. Se o pulso doer, usa a meia pegada falsa (mão rodada por cima da barra, sem dobrar o pulso todo) ou a pegada normal.',
       'Cada série começa com 2 reps normais e controladas, para acertar a forma (corpo direito, cotovelos até às costelas, peito à barra). Logo a seguir, sem parar, 5 reps explosivas.',
       'Nas explosivas, sobe o mais depressa que conseguires: cotovelos para baixo e para trás até às costelas, e o peito (a parte de baixo) toca na barra.',
       'Puxa sem parar até o peito tocar. É o mesmo gesto que falta nas explosive pull-ups, mas com menos peso, para o aprenderes rápido.',
       'Desce controlado, em cerca de 1 s, até aos braços esticados.',
       'A anca não desce nem sobe: corpo sempre direito e pernas juntas.',
-      'Se uma rep explosiva sair lenta ou o peito não tocar, a série acabou. Se as 5 explosivas saírem fáceis, põe os pés mais à frente (corpo mais deitado).',
+      'Se uma rep explosiva sair lenta, se o peito não tocar ou se a pegada falsa escorregar para os dedos, a série acabou. Se as 5 explosivas saírem fáceis, põe os pés mais à frente (corpo mais deitado).',
     ],
   },
   mu_low_bar: {
@@ -276,7 +277,7 @@ export const DAYS = {
     blurb: 'Muscle-up primeiro, depois slow eccentric pull-ups, straight bar dips e hanging leg raises. Sem pesos: vais a pé.',
     slots: [
       { id: 'E1_fg', ex: 'false_grip_hang', mode: 'hold', sets: 2, seconds: 10, progress: { max: 30, step: 5 }, note: 'Faz isto depois de aquecer, antes do muscle-up. Usa a mesma pegada no resto do bloco de muscle-up.' },
-      { id: 'E1_aus', ex: 'australian_pull', mode: 'reps', sets: 2, min: 7, max: 7, note: 'Antes das explosive pull-ups, para treinar a explosão com menos peso. Cada série: 2 reps normais para acertar a forma e logo a seguir 5 explosivas, peito à barra (escreve 7). Descansa 1 minuto entre as séries.' },
+      { id: 'E1_aus', ex: 'australian_pull', mode: 'reps', sets: 2, min: 7, max: 7, note: 'Antes das explosive pull-ups, para treinar a explosão com menos peso. Cada série: 2 reps normais para acertar a forma e logo a seguir 5 explosivas, peito à barra (escreve 7). Com pegada falsa, se o pulso deixar. Descansa 1 minuto entre as séries.' },
       { id: 'E1_skill', mode: 'skill', focus: 'main' },
       { id: 'E1_pull', ex: 'pullup_slow', mode: 'reps', sets: 3, min: 5, max: 8 },
       { id: 'E1_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
@@ -289,7 +290,7 @@ export const DAYS = {
     blurb: 'Muscle-up primeiro, depois chest-to-bar pull-ups, straight bar dips e toes-to-bar.',
     slots: [
       { id: 'E2_fg', ex: 'false_grip_hang', mode: 'hold', sets: 2, seconds: 10, progress: { max: 30, step: 5 }, note: 'Faz isto depois de aquecer, antes do muscle-up. Usa a mesma pegada no resto do bloco de muscle-up.' },
-      { id: 'E2_aus', ex: 'australian_pull', mode: 'reps', sets: 2, min: 7, max: 7, note: 'Antes das explosive pull-ups, para treinar a explosão com menos peso. Cada série: 2 reps normais para acertar a forma e logo a seguir 5 explosivas, peito à barra (escreve 7). Descansa 1 minuto entre as séries.' },
+      { id: 'E2_aus', ex: 'australian_pull', mode: 'reps', sets: 2, min: 7, max: 7, note: 'Antes das explosive pull-ups, para treinar a explosão com menos peso. Cada série: 2 reps normais para acertar a forma e logo a seguir 5 explosivas, peito à barra (escreve 7). Com pegada falsa, se o pulso deixar. Descansa 1 minuto entre as séries.' },
       { id: 'E2_skill', mode: 'skill', focus: 'main' },
       { id: 'E2_c2b', ex: 'c2b', mode: 'reps', sets: 3, min: 3, max: 6 },
       { id: 'E2_sbd', ex: 'sbd', mode: 'reps', sets: 3, min: 6, max: 12 },
@@ -355,7 +356,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.0';
+export const APP_VERSION = '1.26.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -526,7 +527,7 @@ export const GUIDE = [
     body: `
 <p>Com cerca de 10 pull-ups seguidos já tens a força de base. O que falta é altura (puxar a barra até à barriga) e a transição (rodar os pulsos e passar os cotovelos por cima da barra).</p>
 <p><strong>Pegada falsa (false grip):</strong> em vez de agarrares a barra com os dedos, pões a base da palma (a parte junto ao pulso) em cima da barra, com o pulso dobrado. Assim o pulso já começa por cima da barra e a transição fica muito mais curta: não precisas de rodar a mão a meio do movimento. Custa um pouco de força a puxar (fazes menos pull-ups assim) e cansa os antebraços e os pulsos, por isso treina-se aos poucos.</p>
-<p><strong>Como treinar:</strong> no início de cada treino no Estádio, depois de aquecer, 2 séries de false grip hang (começas com 10 s e a app sobe 5 s quando aguentares tudo, até 30 s). Depois usa a mesma pegada nas negatives, nas transições na barra baixa e nos band-assisted muscle-ups. Nas explosive pull-ups podes usar a pegada normal, para puxares mais alto. Na barra, muita gente usa uma meia pegada falsa (a mão rodada por cima da barra, sem o pulso todo dobrado): experimenta as duas.</p>
+<p><strong>Como treinar:</strong> no início de cada treino no Estádio, depois de aquecer, 2 séries de false grip hang (começas com 10 s e a app sobe 5 s quando aguentares tudo, até 30 s). Depois usa a mesma pegada nas australian pull-ups (com os pés no chão a barra só leva parte do peso, por isso é a forma mais fácil de treinar a pegada falsa a mexer), nas negatives, nas transições na barra baixa e nos band-assisted muscle-ups. Nas explosive pull-ups podes usar a pegada normal, para puxares mais alto. Na barra, muita gente usa uma meia pegada falsa (a mão rodada por cima da barra, sem o pulso todo dobrado): experimenta as duas.</p>
 <p><strong>Pulsos:</strong> aquece-os antes (rodar os pulsos e apoiar o peso nas palmas, no chão). Se doer, faz séries mais curtas ou para por hoje. Magnésio líquido ajuda a pegada a não escorregar.</p>
 <p><strong>A pegada falsa ajuda, mas não chega sozinha.</strong> O que mais decide o muscle-up na barra é a altura do puxão (a barra tem de chegar ao peito ou à barriga). Por isso as explosive pull-ups continuam a ser o centro do plano.</p>
 <p><strong>Balanço:</strong> um balanço curto e controlado (kip) é legítimo para aprender. Corpo arqueado atrás, corpo "côncavo" à frente e puxa nesse momento.</p>
