@@ -360,23 +360,21 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.8';
+export const APP_VERSION = '1.27.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 // Fases do muscle-up. Cada fase define os exercícios do bloco de skill.
 // Exercícios em pausa (até à data indicada, inclusive): a app não os receita nos blocos de muscle-up.
 export const PAUSED_EX = {
-  mu_negative: { until: '2026-12-06', reason: 'dor nos cotovelos depois das negativas de 19/11' },
 };
 
 export const MU_STAGES = [
   {
     n: 1, name: 'Fundação',
-    goal: '5 chest-to-bar seguidos, 8 straight bar dips e 3 muscle-up negatives controladas.',
+    goal: '5 chest-to-bar seguidos e 8 straight bar dips. As muscle-up negatives ficam para a fase 2, quando já puxares acima do peito.',
     main: [
       { ex: 'explosive_pull', sets: 5, min: 3, max: 3 },
-      { ex: 'mu_negative', sets: 3, min: 2, max: 3 },
     ],
     secondary: [{ ex: 'explosive_pull', sets: 4, min: 3, max: 3 }],
     light: [{ ex: 'mu_low_bar', sets: 3, min: 5, max: 5 }],

@@ -518,7 +518,8 @@ export function muStage() {
   const m = milestoneMap();
   if (m.mu1.achieved) return 4;
   if (m.waist3.achieved && m.band3.achieved) return 3;
-  if (m.c2b5.achieved && m.sbd8.achieved && m.neg3.achieved) return 2;
+  // As negatives só entram na fase 2: para passar da fase 1 chega puxar acima do peito (5 chest-to-bar) e 8 dips
+  if (m.c2b5.achieved && m.sbd8.achieved) return 2;
   return 1;
 }
 
