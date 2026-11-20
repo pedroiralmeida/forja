@@ -757,9 +757,8 @@ function lastBand() {
 
 function buildSkill(slot, deload) {
   const stage = MU_STAGES[muStage() - 1];
-  const today = todayISO();
   const all = stage[slot.focus] || stage.main;
-  const paused = all.filter((d) => PAUSED_EX[d.ex] && today <= PAUSED_EX[d.ex].until);
+  const paused = all.filter((d) => pausedInfo(d.ex));
   const drills = all.filter((d) => !paused.includes(d));
   const pausedNote = paused.map((d) => ` ${EX[d.ex].name} em pausa até ${fmtDate(PAUSED_EX[d.ex].until)} (${PAUSED_EX[d.ex].reason}).`).join('');
   return drills.map((d, i) => {
@@ -828,9 +827,18 @@ export function buildEntry(slot, deload) {
   return [{ key: slot.id, slotId: slot.id, ex: exId, mode: slot.mode, target: r.target, note: r.note, sets: r.sets, prescribed: prescribedOf(r.sets) }];
 }
 
+// Exercício em pausa hoje? (PAUSED_EX, entre from e until, inclusive)
+export function pausedInfo(ex, iso = todayISO()) {
+  const p = ex && PAUSED_EX[ex];
+  if (!p) return null;
+  if (p.from && iso < p.from) return null;
+  if (p.until && iso > p.until) return null;
+  return p;
+}
+
 export function buildSession(day, { deload = false } = {}) {
   const tpl = DAYS[day];
-  const exercises = tpl.slots.flatMap((slot) => buildEntry(slot, deload));
+  const exercises = tpl.slots.filter((slot) => !pausedInfo(slot.ex)).flatMap((slot) => buildEntry(slot, deload));
   return { id: uid(), day, date: todayISO(), startedAt: now(), deload, notes: '', exercises };
 }
 

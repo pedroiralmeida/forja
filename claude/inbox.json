@@ -1053,16 +1053,17 @@
    "id": "cotovelos-2026-11-19",
    "ex": [],
    "from": "2026-11-20",
-   "until": "2026-11-23",
+   "until": "2026-11-29",
    "title": "Cotovelos",
-   "short": "Dor nos dois cotovelos depois das negativas de 19/11. Nada de barra nem dips até ao treino de segunda.",
+   "short": "Semana de cuidado: sem dips nem slow eccentric pull-ups até 29/11, e sem muscle-up negatives até à fase 2.",
    "items": [
-    "Repara como estão no dia a dia (pegar num saco, rodar uma maçaneta) e diz ao Claude no fim de semana, para ajustar os treinos de segunda e terça.",
-    "Se ainda doer parado no fim de semana, ou piorar, marca um fisioterapeuta antes de voltares à barra."
+    "Regra da dor: até 2 em 10, que não aumenta durante a série e que passa até à manhã seguinte, podes continuar. Dor aguda, acima de 3 em 10, ou que vai aumentando: para esse exercício nesse dia.",
+    "Explosive pull-ups, Australian, chest-to-bar e supino continuam, mas com 2 reps na reserva em todas as séries.",
+    "Se a dor voltar parado, ou durar mais de 2 ou 3 dias, marca um fisioterapeuta antes de voltares à barra."
    ],
    "source": "Treino de 19/11",
    "createdAt": 1795128831097,
-   "updatedAt": 1795128831097
+   "updatedAt": 1795166791457
   }
  },
  "settingsPatch": {

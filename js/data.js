@@ -360,13 +360,17 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.27.0';
+export const APP_VERSION = '1.27.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 // Fases do muscle-up. Cada fase define os exercícios do bloco de skill.
-// Exercícios em pausa (até à data indicada, inclusive): a app não os receita nos blocos de muscle-up.
+// Exercícios em pausa (entre from e until, inclusive): a app não os receita.
 export const PAUSED_EX = {
+  // Semana de cuidado com os cotovelos (depois da dor de 19/11): sem dips nem slow eccentric pull-ups
+  sbd: { from: '2026-11-23', until: '2026-11-29', reason: 'semana de cuidado com os cotovelos' },
+  dips: { from: '2026-11-23', until: '2026-11-29', reason: 'semana de cuidado com os cotovelos' },
+  pullup_slow: { from: '2026-11-23', until: '2026-11-29', reason: 'semana de cuidado com os cotovelos' },
 };
 
 export const MU_STAGES = [
