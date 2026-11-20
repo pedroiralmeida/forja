@@ -267,7 +267,7 @@ export const DAYS = {
     label: 'Supera C', title: 'Força e técnica', place: 'supera',
     blurb: 'Treino extra: paused bench press para ganhar força a sair do peito.',
     slots: [
-      { id: 'C_pause', ex: 'bench_paused', mode: 'double', sets: 4, min: 3, max: 5, startPct: 0.73 },
+      { id: 'C_pause', ex: 'bench_paused', mode: 'double', sets: 4, min: 3, max: 5, startPct: 0.78 },
       { id: 'C_incl', ex: 'incline_db', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'C_pulldown', ex: 'pulldown', mode: 'double', sets: 3, min: 8, max: 12 },
       { id: 'C_lat', ex: 'lateral_raise', mode: 'double', sets: 3, min: 12, max: 20 },
@@ -360,7 +360,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.26.7';
+export const APP_VERSION = '1.26.8';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

@@ -650,7 +650,10 @@ function buildDouble(slot, exId, deload) {
   let reps = Array(slot.sets).fill(slot.min);
   let note = '';
   if (!hist.length) {
-    if (slot.startPct) w = roundW(exId, currentBenchE1RM() * slot.startPct);
+    if (slot.startPct) {
+      w = roundW(exId, currentBenchE1RM() * slot.startPct);
+      reps = Array(slot.sets).fill(Math.round((slot.min + slot.max) / 2));
+    }
     else if (slot.startAdded !== undefined) w = slot.startAdded;
     else {
       const any = lastForExercise(exId);
@@ -659,7 +662,9 @@ function buildDouble(slot, exId, deload) {
     if (w === null) reps = Array(slot.sets).fill(null);
     note = w === null
       ? `Primeira vez: escolhe um peso com que consigas entre ${slot.min} e ${slot.max} reps e ainda te sobrem 2. Escreve o peso e as reps que fizeste. Nos próximos treinos a app pede +1 rep de cada vez; quando fizeres ${slot.max} em todas as séries, sobe o peso.`
-      : `Primeira vez: ${slot.min} a ${slot.max} reps por série, deixando 2 na reserva. Quando fizeres ${slot.max} em todas as séries, a app sobe o peso.`;
+      : slot.startPct
+        ? `Primeira vez${exId === 'bench_paused' ? ' com pausa no peito' : ''}: ${slot.min} a ${slot.max} reps por série, deixando 2 na reserva. Afina na 1.ª série: se fizeres ${slot.max} com RPE 7 ou menos, sobe ${fmtNum(inc)} kg nas seguintes; se não conseguires ${slot.min} com 2 na reserva, desce ${fmtNum(inc)} kg. Quando fizeres ${slot.max} em todas as séries, a app sobe o peso.`
+        : `Primeira vez: ${slot.min} a ${slot.max} reps por série, deixando 2 na reserva. Quando fizeres ${slot.max} em todas as séries, a app sobe o peso.`;
   } else {
     let ws = workSets(hist[0].entry);
     let lw = modeWeight(ws);
