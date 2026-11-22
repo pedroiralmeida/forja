@@ -19,6 +19,23 @@ const C = {
   ink: '#EEF0F2', ink2: '#B1B8C1', muted: '#838C96', yellow: '#F2B90C', green: '#3DB46D',
 };
 const EMOJI = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"';
+// Emojis desenhados a partir de ficheiros da app (Twemoji), para a imagem ficar igual no PC e no telemóvel
+// (o emoji do sistema muda de aspeto entre Windows, Android e iPhone)
+const emojiUrl = (n) => new URL(`../icons/emoji/${n}.svg`, import.meta.url).href;
+const TITLE_EMOJI = [emojiUrl('saluting-face')];
+const TROPHY = emojiUrl('trophy');
+const imgCache = new Map();
+function loadImg(src) {
+  if (!imgCache.has(src)) {
+    imgCache.set(src, new Promise((resolve) => {
+      const im = new Image();
+      im.onload = () => resolve(im);
+      im.onerror = () => resolve(null);
+      im.src = src;
+    }));
+  }
+  return imgCache.get(src);
+}
 const F = (weight, px, cond = false) => `${weight} ${px}px ${cond ? '"Barlow Condensed", ' : ''}"Barlow", ${EMOJI}, sans-serif`;
 
 // ---------- Dados do dia ----------
@@ -191,12 +208,22 @@ function wrap(ctx, s, maxW, font, maxLines) {
 
 // Cada bloco devolve a altura; com draw=false só mede
 function headerBlock(ctx, d, y, draw) {
-  const title = 'Balanço do dia 🫡';
-  const px = fitPx(ctx, title, CW, 700, 124, 80, true);
+  const title = 'Balanço do dia';
+  const imgs = d.emoji || [];
+  const widthAt = (px) => tw(ctx, title, F(700, px, true)) + (imgs.length ? px * 0.16 + imgs.length * px * 0.92 + (imgs.length - 1) * px * 0.1 : 0);
+  let px = 124;
+  while (px > 80 && widthAt(px) > CW) px -= 2;
   const date = new Date(isoToMs(d.iso)).toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' });
   if (draw) {
     fillRR(ctx, X, y, 96, 10, 5, C.yellow);
-    text(ctx, title, X - 4, y + 40 + px * 0.8, F(700, px, true), C.ink);
+    const by = y + 40 + px * 0.8;
+    text(ctx, title, X - 4, by, F(700, px, true), C.ink);
+    let ex = X - 4 + tw(ctx, title, F(700, px, true)) + px * 0.16;
+    const size = px * 0.92;
+    for (const im of imgs) {
+      ctx.drawImage(im, ex, by - px * 0.35 - size / 2, size, size);
+      ex += size + px * 0.1;
+    }
     text(ctx, date[0].toUpperCase() + date.slice(1), X, y + 40 + px + 50, F(500, 46), C.ink2);
   }
   return 40 + px + 64;
@@ -321,7 +348,8 @@ function workoutBlock(ctx, d, y, draw) {
       text(ctx, d.prs.length > 1 ? 'Recordes' : 'Recorde', IX, prY + 22 + 32, F(600, 32), C.yellow);
       let py = prY + 22 + 40;
       prLines.forEach((lines) => {
-        text(ctx, '🏆', IX, py + 34, F(500, 30), C.ink);
+        if (d.trophy) ctx.drawImage(d.trophy, IX, py + 6, 32, 32);
+        else text(ctx, '🏆', IX, py + 34, F(500, 30), C.ink);
         lines.forEach((l) => {
           text(ctx, l, IX + 44, py + 34, F(500, 32), C.ink);
           py += 42;
@@ -366,9 +394,11 @@ async function loadFonts() {
   await Promise.all(specs.map((s) => document.fonts.load(s).catch(() => null)));
 }
 
-export async function dayImageCanvas(iso) {
+export async function dayImageCanvas(iso, { emoji = TITLE_EMOJI } = {}) {
   await loadFonts();
   const d = dayStats(iso);
+  d.emoji = (await Promise.all(emoji.map(loadImg))).filter(Boolean);
+  d.trophy = d.prs.length ? await loadImg(TROPHY) : null;
   const cv = document.createElement('canvas');
   cv.width = W;
   cv.height = H;
@@ -418,8 +448,8 @@ export async function dayImageCanvas(iso) {
   return cv;
 }
 
-export async function dayImageBlob(iso) {
-  const cv = await dayImageCanvas(iso);
+export async function dayImageBlob(iso, opts) {
+  const cv = await dayImageCanvas(iso, opts);
   return new Promise((resolve, reject) => cv.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob'))), 'image/png'));
 }
 

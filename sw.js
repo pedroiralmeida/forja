@@ -1,6 +1,6 @@
 // Service worker da Forja: guarda a app em cache para funcionar sem internet.
 // Quando mudares algum ficheiro, sobe a VERSION para os dispositivos receberem a versão nova.
-const VERSION = 'forja-v1.33.0';
+const VERSION = 'forja-v1.33.1';
 const ASSETS = [
   "./",
   "./index.html",
@@ -14,6 +14,8 @@ const ASSETS = [
   "./fonts/barlow-latin-600-normal.woff2",
   "./fonts/barlow-latin-700-normal.woff2",
   "./icons/apple-touch-icon.png",
+  "./icons/emoji/saluting-face.svg",
+  "./icons/emoji/trophy.svg",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",

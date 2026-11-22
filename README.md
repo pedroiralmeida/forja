@@ -71,3 +71,7 @@ Como o repositório é público, este ficheiro também é. Não tem moradas, nú
 - Treinos falhados ficam registados com o motivo. A rotação retoma onde ficou.
 - A app guarda o máximo de histórico: contexto de cada treino (o que foi sugerido, reposição ou extra, peso corporal, 1RM estimado), o que foi receitado, as séries por fazer, o esforço, a energia, as dores, as condições no parque, todas as pesagens do dia, as versões do plano e as versões anteriores de treinos editados ou apagados. Tudo vai no backup JSON e na sincronização.
 
+
+## Créditos
+
+Os emojis da imagem do dia (pasta `icons/emoji/`) são do [Twemoji](https://github.com/jdecked/twemoji), © Twitter, Inc. e contribuidores, com a licença [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
