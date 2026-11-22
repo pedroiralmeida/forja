@@ -278,6 +278,15 @@ export const DAYS = {
       { id: 'C_hang', ex: 'dead_hang', mode: 'hold', sets: 1, seconds: 60 },
     ],
   },
+  T: {
+    label: 'Teste de supino', title: 'Séries de 3 até RPE 9', place: 'supera', manual: true,
+    blurb: 'Para veres onde estás no supino: séries de 3 a subir de peso, decididas pelo RPE, sem passar do RPE 9. Precisas de alguém a ajudar (spotter).',
+    slots: [
+      { id: 'T_bench', ex: 'bench', mode: 'rm_test', reps: 3 },
+      { id: 'T_lat', ex: 'lateral_machine', mode: 'double', sets: 3, min: 12, max: 20 },
+      { id: 'T_rear', ex: 'rear_delt', mode: 'double', sets: 3, min: 12, max: 20 },
+    ],
+  },
   E1: {
     label: 'Estádio 1', title: 'Muscle-up e força', place: 'estadio',
     blurb: 'Muscle-up primeiro, depois slow eccentric pull-ups, straight bar dips e hanging leg raises. Sem pesos: vais a pé.',
@@ -306,11 +315,11 @@ export const DAYS = {
   },
 };
 
-export const PLACE_DAYS = { supera: ['A', 'B', 'C'], estadio: ['E1', 'E2'] };
+export const PLACE_DAYS = { supera: ['A', 'B', 'C', 'T'], estadio: ['E1', 'E2'] };
 // Treinos base de cada sítio (alternam semana a semana). O C só entra como treino extra,
 // quando o A e o B dessa semana já estão feitos.
 export const CORE_DAYS = { supera: ['A', 'B'], estadio: ['E1', 'E2'] };
-export const EXTRA_DAYS = ['C'];
+export const EXTRA_DAYS = ['C', 'T']; // o T (teste de supino) só se escolhe à mão
 
 // Motivos para um treino falhado (ficam guardados no histórico)
 export const MISS_REASONS = [
@@ -362,7 +371,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.30.0';
+export const APP_VERSION = '1.31.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

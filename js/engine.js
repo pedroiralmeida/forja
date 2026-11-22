@@ -190,7 +190,7 @@ export function nextDay(place = 'supera', iso = todayISO()) {
   const core = CORE_DAYS[place] || dayOrder(place);
   const ws = weekStart(iso);
   const week = sessions().filter((s) => s.date >= ws && s.date <= addDays(ws, 6));
-  const extra = dayOrder(place).filter((d) => EXTRA_DAYS.includes(d));
+  const extra = dayOrder(place).filter((d) => EXTRA_DAYS.includes(d) && !DAYS[d].manual);
   if (extra.length && core.every((d) => week.some((s) => s.day === d))) {
     const doneExtra = extra.filter((d) => week.some((s) => s.day === d));
     const left = extra.filter((d) => !doneExtra.includes(d));
@@ -615,6 +615,11 @@ function buildTopBackoff(slot, exId, deload) {
   let top = roundW(exId, E * pct(slot.topReps, slot.topRPE));
   let note = `Série principal de ${slot.topReps} reps a RPE ${slot.topRPE}. As séries seguintes ajustam-se ao que fizeres nela.`;
   const hist = lastEntries(slot.id, exId);
+  if (!deload && heavyBenchYesterday()) {
+    const w = roundW(exId, backoffWeight(slot, exId, null) * 0.9);
+    const sets = Array.from({ length: slot.backSets }, () => setObj('back', w, slot.backReps, { tReps: `${slot.backReps}`, tRPE: 7 }));
+    return { sets: [...warmups(exId, w, false), ...sets], note: `Ontem fizeste supino pesado: hoje sem série principal, só ${slot.backSets} séries de ${slot.backReps} a ${fmtNum(w)} kg, leves (RPE 7). A série principal volta no próximo Supera A.`, target: `${slot.backSets}×${slot.backReps} leve` };
+  }
   if (!deload && benchTargetDue(slot)) return buildBenchTarget(slot, exId);
   const bt = BENCH_TARGET && slot.id === BENCH_TARGET.slot ? BENCH_TARGET : null;
   if (bt) note += ` Objetivo: ${fmtNum(bt.w)} kg × ${bt.reps}. Quando fizeres ${fmtNum(bt.triggerW)} kg × ${slot.topReps} com RPE ${fmtNum(bt.triggerRpe)} ou menos, o Supera A seguinte é o dia dos ${fmtNum(bt.w)} × ${bt.reps}.`;
@@ -655,8 +660,8 @@ export function benchTargetDue(slot) {
   const bt = BENCH_TARGET;
   if (!bt || slot.id !== bt.slot) return false;
   const hist = lastEntries(slot.id, slot.ex);
-  // Objetivo já cumprido: não volta a marcar o dia
-  if (hist.some((h) => (h.entry.sets || []).some((s) => s.target && s.done && (s.reps || 0) >= bt.reps && (s.w || 0) >= bt.w - 0.01))) return false;
+  // Objetivo já cumprido (em qualquer treino de supino): não volta a marcar o dia
+  if (benchTargetDone()) return false;
   for (const h of hist) {
     if ((h.entry.sets || []).some((s) => s.target && s.done)) return false; // já houve tentativa depois do último gatilho
     const top = workSets(h.entry).find((s) => s.kind === 'top');
@@ -664,6 +669,33 @@ export function benchTargetDue(slot) {
     return (top.w || 0) >= bt.triggerW - 0.01 && (top.reps || 0) >= slot.topReps && top.rpe !== null && top.rpe !== undefined && top.rpe <= bt.triggerRpe;
   }
   return false;
+}
+
+export function benchTargetDone() {
+  const bt = BENCH_TARGET;
+  return !!bt && sessions().some((x) => x.exercises.some((e) => e.ex === 'bench' && workSets(e).some((s) => (s.w || 0) >= bt.w - 0.01 && (s.reps || 0) >= bt.reps)));
+}
+
+// Supino pesado ontem (por exemplo, um teste ao domingo): o Supera A de hoje fica leve
+function heavyBenchYesterday() {
+  const y = addDays(todayISO(), -1);
+  return sessions().some((x) => x.date === y && x.exercises.some((e) => e.ex === 'bench' && workSets(e).some((s) => (s.rpe || 0) >= 8)));
+}
+
+// Teste de supino: séries de 3 a subir de peso, decididas pelo RPE, até RPE 9
+function buildRmTest(slot, exId) {
+  const E1 = currentBenchE1RM();
+  const r = slot.reps || 3;
+  const ws = [0.8, 0.865].map((p) => roundW(exId, E1 * p));
+  const top = ws[1];
+  const more = [top + 2.5, top + 5, top + 7.5].map((w) => roundW(exId, w));
+  const sets = [
+    ...warmups(exId, ws[0], true),
+    ...[...ws, ...more].map((w, i) => setObj('work', w, r, { tReps: `${r}`, tRPE: 9, test: true, opt: i >= 2 })),
+  ];
+  const bt = BENCH_TARGET;
+  const note = `Teste: séries de ${r}, a subir de peso conforme o RPE, com 3 a 4 minutos de descanso. Precisas de alguém a ajudar (spotter), porque não há barras de segurança. Depois de cada série marca o RPE e decide a seguinte: RPE 7 ou menos, sobe 5 kg; 7,5 ou 8, sobe 2,5 kg; 8,5 ou mais, o teste acabou aí.${bt ? ` A única exceção: se fizeres ${fmtNum(bt.w - 2.5)} kg × ${r} com RPE 8,5, ainda tentas os ${fmtNum(bt.w)} × ${r}.` : ''} As séries 3 a 5 já têm pesos sugeridos (+2,5 kg de cada vez): muda o peso se o RPE mandar subir 5, e as que não fizeres ficam por marcar. Se algum cotovelo doer acima de 2 em 10, para.`;
+  return { sets, note, target: `séries de ${r} até RPE 9` };
 }
 
 function buildBenchTarget(slot, exId) {
@@ -859,6 +891,7 @@ export function buildEntry(slot, deload) {
   if (slot.mode === 'top_backoff') r = buildTopBackoff(slot, exId, deload);
   else if (slot.mode === 'reps') r = buildReps(slot, exId, deload);
   else if (slot.mode === 'hold') r = buildHold(slot);
+  else if (slot.mode === 'rm_test') r = buildRmTest(slot, exId);
   else r = buildDouble(slot, exId, deload);
   return [{ key: slot.id, slotId: slot.id, ex: exId, mode: slot.mode, target: r.target, note: r.note, sets: r.sets, prescribed: prescribedOf(r.sets) }];
 }
