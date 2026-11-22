@@ -1,5 +1,5 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import { HEAVY_SINGLE, PAUSED_EX,
+import { BENCH_TARGET, PAUSED_EX,
   EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, CORE_DAYS, EXTRA_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES, MISS_REASONS, APP_VERSION,
 } from './data.js';
 import { state, list, get } from './store.js';
@@ -615,17 +615,22 @@ function buildTopBackoff(slot, exId, deload) {
   let top = roundW(exId, E * pct(slot.topReps, slot.topRPE));
   let note = `Série principal de ${slot.topReps} reps a RPE ${slot.topRPE}. As séries seguintes ajustam-se ao que fizeres nela.`;
   const hist = lastEntries(slot.id, exId);
-  const single = !deload && heavySingleDue(slot);
-  if (single) return buildHeavySingle(slot, exId);
+  if (!deload && benchTargetDue(slot)) return buildBenchTarget(slot, exId);
+  const bt = BENCH_TARGET && slot.id === BENCH_TARGET.slot ? BENCH_TARGET : null;
+  if (bt) note += ` Objetivo: ${fmtNum(bt.w)} kg × ${bt.reps}. Quando fizeres ${fmtNum(bt.triggerW)} kg × ${slot.topReps} com RPE ${fmtNum(bt.triggerRpe)} ou menos, o Supera A seguinte é o dia dos ${fmtNum(bt.w)} × ${bt.reps}.`;
   if (hist.length) {
-    // A série principal mais recente de 3 reps (um single pesado não conta para a progressão)
-    const t = hist.map((h) => workSets(h.entry).find((s) => s.kind === 'top' && !(s.single && (s.reps || 0) <= 1))).find(Boolean);
+    const t = workSets(hist[0].entry).find((s) => s.kind === 'top');
     if (t) {
       const r = t.rpe ?? 9;
       let cap = t.w + (r <= 7 ? 2 * inc : inc);
       if (t.reps < slot.topReps || r >= 9.5) cap = t.w;
       if (top > cap) top = cap;
-      if (t.reps < slot.topReps && r >= 9.5) note = `Da última vez a série principal custou muito: repete ${fmtNum(top)} kg com boa técnica.`;
+      if (t.target && bt) {
+        if (top > bt.triggerW) top = roundW(exId, bt.triggerW);
+        note = t.reps >= bt.reps
+          ? `Da última vez fizeste os ${fmtNum(bt.w)} kg × ${t.reps}. Série principal de ${slot.topReps} reps a RPE ${slot.topRPE}; as séries seguintes ajustam-se ao que fizeres nela.`
+          : `Da última vez tentaste os ${fmtNum(bt.w)} kg × ${bt.reps} e saíram ${t.reps}. Série principal de ${slot.topReps} reps a RPE ${slot.topRPE}: quando fizeres ${fmtNum(bt.triggerW)} × ${slot.topReps} com RPE ${fmtNum(bt.triggerRpe)} ou menos, tentas outra vez.`;
+      } else if (t.reps < slot.topReps && r >= 9.5) note = `Da última vez a série principal custou muito: repete ${fmtNum(top)} kg com boa técnica.`;
     }
   }
   const back = backoffWeight(slot, exId, null);
@@ -645,31 +650,32 @@ function buildTopBackoff(slot, exId, deload) {
   return { sets: [...warmups(exId, firstW, !deload), ...sets], note, target: deload ? `${sets.length}×${slot.backReps}` : `1×${slot.topReps} @ RPE ${slot.topRPE} + ${slot.backSets}×${slot.backReps}` };
 }
 
-// Dia do single pesado (HEAVY_SINGLE): ainda por fazer se nenhum treino dentro das datas teve o single feito
-export function heavySingleDue(slot, iso = todayISO()) {
-  const hs = HEAVY_SINGLE;
-  if (!hs || slot.id !== hs.slot || iso < hs.from || iso > hs.until) return false;
-  return !sessions().some((x) => x.date >= hs.from && x.date <= hs.until && x.exercises.some((e) => e.slotId === slot.id && e.sets.some((st) => st.single && st.done && (st.w || 0) >= hs.w - 0.01)));
+// Dia dos 80 × 3 (BENCH_TARGET): a série principal do último Supera A chegou ao gatilho e ainda não houve tentativa depois disso
+export function benchTargetDue(slot) {
+  const bt = BENCH_TARGET;
+  if (!bt || slot.id !== bt.slot) return false;
+  const hist = lastEntries(slot.id, slot.ex);
+  // Objetivo já cumprido: não volta a marcar o dia
+  if (hist.some((h) => (h.entry.sets || []).some((s) => s.target && s.done && (s.reps || 0) >= bt.reps && (s.w || 0) >= bt.w - 0.01))) return false;
+  for (const h of hist) {
+    if ((h.entry.sets || []).some((s) => s.target && s.done)) return false; // já houve tentativa depois do último gatilho
+    const top = workSets(h.entry).find((s) => s.kind === 'top');
+    if (!top) continue;
+    return (top.w || 0) >= bt.triggerW - 0.01 && (top.reps || 0) >= slot.topReps && top.rpe !== null && top.rpe !== undefined && top.rpe <= bt.triggerRpe;
+  }
+  return false;
 }
 
-function buildHeavySingle(slot, exId) {
-  const W = HEAVY_SINGLE.w;
-  const bar = S().bar;
-  const ramp = [[bar, 10], [W * 0.5, 5], [W * 0.65, 3], [W * 0.78, 1], [W * 0.88, 1], [W * 0.94, 1]];
-  const warm = [];
-  for (const [w, r] of ramp) {
-    const x = Math.max(bar, roundW(exId, w));
-    if (x < W && (!warm.length || x > warm[warm.length - 1].w)) warm.push(setObj('warm', x, r));
-  }
+function buildBenchTarget(slot, exId) {
+  const bt = BENCH_TARGET;
   const back = backoffWeight(slot, exId, null);
   const sets = [
-    ...warm,
-    setObj('top', W, 1, { tReps: '1', tRPE: 9, single: true }),
+    ...warmups(exId, bt.w, true),
+    setObj('top', bt.w, bt.reps, { tReps: `${bt.reps}`, tRPE: bt.rpe, target: true }),
     ...Array.from({ length: slot.backSets }, () => setObj('back', back, slot.backReps, { tReps: `${slot.backReps}`, tRPE: slot.backRPE, auto: true })),
   ];
-  const last = warm[warm.length - 1];
-  const note = `Hoje é o dia dos ${fmtNum(W)} kg: uma só rep, em vez da série de 3. Precisas de alguém a ajudar (spotter), porque não há barras de segurança: pede antes de começares. Aquece com singles até ${fmtNum(last.w)} kg. Se os ${fmtNum(last.w)} saírem com RPE 9 ou mais, ou se algum cotovelo doer, não tentes os ${fmtNum(W)}: faz antes ${fmtNum(roundW(exId, currentBenchE1RM() * pct(slot.topReps, slot.topRPE)))} kg × ${slot.topReps}, como num Supera A normal, e o single fica para o Supera A seguinte. Os ${fmtNum(W)} tentam-se uma vez só; se a rep falhar, não repetes. Marca o RPE e depois faz as ${slot.backSets} séries de ${slot.backReps}.`;
-  return { sets, note, target: `1×1 a ${fmtNum(W)} kg + ${slot.backSets}×${slot.backReps}` };
+  const note = `Hoje é o dia dos ${fmtNum(bt.w)} kg × ${bt.reps}: fizeste ${fmtNum(bt.triggerW)} × ${slot.topReps} com RPE ${fmtNum(bt.triggerRpe)} ou menos, por isso estás pronto. Precisas de alguém a ajudar (spotter), porque não há barras de segurança: pede antes de começares. Se algum cotovelo doer no aquecimento, faz antes ${fmtNum(bt.triggerW)} × ${slot.topReps} e os ${fmtNum(bt.w)} ficam para o Supera A seguinte. Tentas uma vez: escreve as reps que saíram e o RPE, e depois faz as ${slot.backSets} séries de ${slot.backReps}.`;
+  return { sets, note, target: `1×${bt.reps} a ${fmtNum(bt.w)} kg + ${slot.backSets}×${slot.backReps}` };
 }
 
 function buildDouble(slot, exId, deload) {

@@ -362,7 +362,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.29.2';
+export const APP_VERSION = '1.30.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -375,9 +375,9 @@ export const PAUSED_EX = {
   pullup_slow: { from: '2026-11-23', until: '2026-11-29', reason: 'semana de cuidado com os cotovelos' },
 };
 
-// Dia de single pesado no supino: no próximo Supera A dentro destas datas, a série principal é 1 rep a este peso
-// (em vez das 3 reps a RPE 8). Depois de feito (ou tentado), o Supera A volta ao normal.
-export const HEAVY_SINGLE = { slot: 'A_bench', w: 80, from: '2026-11-23', until: '2026-12-06' };
+// Objetivo intermédio do supino: 80 kg × 3. Quando a série principal do Supera A chegar a triggerW × 3 com RPE
+// triggerRpe ou menos, o Supera A seguinte tem como série principal 80 × 3 (RPE 9, com spotter).
+export const BENCH_TARGET = { slot: 'A_bench', w: 80, reps: 3, rpe: 9, triggerW: 77.5, triggerRpe: 8 };
 
 export const MU_STAGES = [
   {
