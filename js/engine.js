@@ -1,5 +1,5 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import { PAUSED_EX,
+import { HEAVY_SINGLE, PAUSED_EX,
   EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, CORE_DAYS, EXTRA_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES, MISS_REASONS, APP_VERSION,
 } from './data.js';
 import { state, list, get } from './store.js';
@@ -615,8 +615,11 @@ function buildTopBackoff(slot, exId, deload) {
   let top = roundW(exId, E * pct(slot.topReps, slot.topRPE));
   let note = `Série principal de ${slot.topReps} reps a RPE ${slot.topRPE}. As séries seguintes ajustam-se ao que fizeres nela.`;
   const hist = lastEntries(slot.id, exId);
+  const single = !deload && heavySingleDue(slot);
+  if (single) return buildHeavySingle(slot, exId);
   if (hist.length) {
-    const t = workSets(hist[0].entry).find((s) => s.kind === 'top');
+    // A série principal mais recente de 3 reps (um single pesado não conta para a progressão)
+    const t = hist.map((h) => workSets(h.entry).find((s) => s.kind === 'top' && !(s.single && (s.reps || 0) <= 1))).find(Boolean);
     if (t) {
       const r = t.rpe ?? 9;
       let cap = t.w + (r <= 7 ? 2 * inc : inc);
@@ -640,6 +643,33 @@ function buildTopBackoff(slot, exId, deload) {
   }
   const firstW = sets[0].w;
   return { sets: [...warmups(exId, firstW, !deload), ...sets], note, target: deload ? `${sets.length}×${slot.backReps}` : `1×${slot.topReps} @ RPE ${slot.topRPE} + ${slot.backSets}×${slot.backReps}` };
+}
+
+// Dia do single pesado (HEAVY_SINGLE): ainda por fazer se nenhum treino dentro das datas teve o single feito
+export function heavySingleDue(slot, iso = todayISO()) {
+  const hs = HEAVY_SINGLE;
+  if (!hs || slot.id !== hs.slot || iso < hs.from || iso > hs.until) return false;
+  return !sessions().some((x) => x.date >= hs.from && x.date <= hs.until && x.exercises.some((e) => e.slotId === slot.id && e.sets.some((st) => st.single && st.done && (st.w || 0) >= hs.w - 0.01)));
+}
+
+function buildHeavySingle(slot, exId) {
+  const W = HEAVY_SINGLE.w;
+  const bar = S().bar;
+  const ramp = [[bar, 10], [W * 0.5, 5], [W * 0.65, 3], [W * 0.78, 1], [W * 0.88, 1], [W * 0.94, 1]];
+  const warm = [];
+  for (const [w, r] of ramp) {
+    const x = Math.max(bar, roundW(exId, w));
+    if (x < W && (!warm.length || x > warm[warm.length - 1].w)) warm.push(setObj('warm', x, r));
+  }
+  const back = backoffWeight(slot, exId, null);
+  const sets = [
+    ...warm,
+    setObj('top', W, 1, { tReps: '1', tRPE: 9, single: true }),
+    ...Array.from({ length: slot.backSets }, () => setObj('back', back, slot.backReps, { tReps: `${slot.backReps}`, tRPE: slot.backRPE, auto: true })),
+  ];
+  const last = warm[warm.length - 1];
+  const note = `Hoje é o dia dos ${fmtNum(W)} kg: uma só rep, em vez da série de 3. Precisas de alguém a ajudar (spotter), porque não há barras de segurança: pede antes de começares. Aquece com singles até ${fmtNum(last.w)} kg. Se os ${fmtNum(last.w)} saírem com RPE 9 ou mais, ou se algum cotovelo doer, não tentes os ${fmtNum(W)}: faz antes ${fmtNum(roundW(exId, currentBenchE1RM() * pct(slot.topReps, slot.topRPE)))} kg × ${slot.topReps}, como num Supera A normal, e o single fica para o Supera A seguinte. Os ${fmtNum(W)} tentam-se uma vez só; se a rep falhar, não repetes. Marca o RPE e depois faz as ${slot.backSets} séries de ${slot.backReps}.`;
+  return { sets, note, target: `1×1 a ${fmtNum(W)} kg + ${slot.backSets}×${slot.backReps}` };
 }
 
 function buildDouble(slot, exId, deload) {
