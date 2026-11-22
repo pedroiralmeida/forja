@@ -1,7 +1,7 @@
 // Ecrã "Hoje" e configuração inicial
 import { DAYS, PLACES, MU_STAGES, MISS_REASONS, WEEKDAYS } from './data.js';
 import * as E from './engine.js';
-import { local, put, get, setSettings, persistLocal, remove } from './store.js';
+import { local, put, get, setSettings, persistLocal, remove, syncNow } from './store.js';
 import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, modal, confirmDialog, stopRest, releaseWakeLock, applyPendingUpdate } from './ui.js';
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
@@ -239,6 +239,12 @@ export function renderToday(root) {
   const trainingDay = plan === 'supera' || plan === 'estadio';
 
   let html = header('Hoje', { sub: fmtDateLong(today) });
+  // Sincronização com erro: no telemóvel o indicador da barra lateral não aparece, por isso avisa aqui
+  if (local.sync.token && local.sync.status === 'error') {
+    const last = local.sync.lastSync ? new Date(local.sync.lastSync) : null;
+    const when = last ? ` desde ${fmtDate(todayISO(last))} às ${String(last.getHours()).padStart(2, '0')}:${String(last.getMinutes()).padStart(2, '0')}` : '';
+    html += `<section class="banner warn sync-banner"><p><strong>Os dados deste dispositivo não estão a ser guardados no GitHub${when}.</strong> ${esc(local.sync.lastError || '')}</p><div class="row-actions"><button class="btn small primary" data-act="sync-retry">Tentar outra vez</button><a class="btn small ghost" href="#/mais/sync">Ver sincronização</a></div></section>`;
+  }
   html += E.generalReminders(today).map((r) => `<section class="daily-reminder"><p><strong>${esc(r.title || 'Lembrete')}:</strong> ${esc(r.short || '')}${(r.items || []).map((i) => ` <span class="muted">${esc(i)}</span>`).join('')}</p><button class="btn ghost small" data-act="general-reminder-done" data-id="${esc(r.id)}">Já não preciso</button></section>`).join('');
 
   if (staleActive) {
@@ -479,6 +485,10 @@ export function renderToday(root) {
       const wk = weekStart(today);
       put('deloadWeeks', wk, { week: wk, on: false });
       rerender();
+    } else if (a === 'sync-retry') {
+      act.disabled = true;
+      act.textContent = 'A sincronizar…';
+      syncNow().then((r) => { toast(r.ok ? 'Sincronizado' : `Ainda não deu: ${r.reason}`, { timeout: 6000 }); rerender(); });
     } else if (a === 'general-reminder-done') {
       const r = get('reminders', act.dataset.id);
       if (r) put('reminders', r.id, { ...r, dismissedAt: now() });

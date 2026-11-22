@@ -146,12 +146,19 @@ function isTyping() {
   return a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.tagName === 'SELECT');
 }
 
+let lastSyncErr = local.sync.status === 'error';
 onChange((kind) => {
   if (kind === 'remote') {
     applyTheme();
     if (!isTyping()) render();
   } else if (kind === 'sync-status') {
     updateSyncIndicator();
+    // O aviso de erro de sincronização vive no ecrã Hoje: redesenha quando o erro aparece ou desaparece
+    const isErr = local.sync.status === 'error';
+    if (isErr !== lastSyncErr) {
+      lastSyncErr = isErr;
+      if ((location.hash || '#/hoje').startsWith('#/hoje') && !isTyping()) render();
+    }
   } else if (kind === 'save-error') {
     toast('Não foi possível guardar neste dispositivo (espaço cheio?). Exporta um backup.', { timeout: 8000 });
   }
