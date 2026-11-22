@@ -12,6 +12,7 @@ import { MEAL_SLOTS } from './data.js';
 const P = ['pa'], L = ['lanche'], PL = ['pa', 'lanche'], AJ = ['almoco', 'jantar'], ALL = ['pa', 'almoco', 'lanche', 'jantar'];
 export const FOODS = [
   { id: 'pao_fiambre', name: 'Pão com fiambre de peru', portion: '1 carcaça com 2 fatias', g: 10, meals: PL },
+  { id: 'pao_fiambre_normal', name: 'Pão com fiambre', portion: '1 carcaça com 2 fatias', g: 10, meals: PL },
   { id: 'pao_queijo', name: 'Pão com queijo', portion: '1 carcaça com 2 fatias', g: 15, meals: PL },
   { id: 'whey', name: 'Whey', portion: '1 dose', g: null, meals: PL },
   { id: 'yopro', name: 'YoPro', portion: '1 unidade', g: 25, meals: L },
@@ -22,6 +23,7 @@ export const FOODS = [
   { id: 'ovo', name: 'Ovo', portion: '1 ovo', g: 6, meals: ['pa', 'almoco', 'jantar'] },
   { id: 'atum', name: 'Atum', portion: '1 lata escorrida', g: 20, meals: L },
   { id: 'cavala', name: 'Cavala', portion: '1 lata', g: 16, meals: L },
+  { id: 'fiambre', name: 'Fiambre', portion: '2 fatias', g: 5, meals: PL },
   { id: 'fiambre_peru', name: 'Fiambre de peru', portion: '4 fatias', g: 10, meals: PL },
   { id: 'queijo', name: 'Queijo', portion: '1 fatia', g: 5, meals: PL },
   { id: 'requeijao', name: 'Requeijão', portion: '100 g', g: 10, meals: PL },
