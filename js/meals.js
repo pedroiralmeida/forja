@@ -2,7 +2,7 @@
 // com o que há em casa, ajustada ao tipo de dia. "Comi a sugestão" regista-a de uma vez.
 import * as E from './engine.js';
 import { put, get, list } from './store.js';
-import { rerender } from './ui.js';
+import { rerender, toast } from './ui.js';
 import { WEEKDAYS, MEAL_SLOTS } from './data.js';
 import { FOODS, foodG, addFoods, foodPicker, entryChip, mealTotals, normMeal } from './protein.js';
 import { esc, fmtNum, fmtDate, todayISO, addDays, isoToMs } from './util.js';
@@ -40,7 +40,8 @@ const OPTIONS = {
 
 const COUNTED = [['yopro', /yopro/i, 'YoPro'], ['atum', /atum/i, 'latas de atum'], ['cavala', /cavala/i, 'latas de cavala']];
 
-let offset = null; // 0 = hoje, 1 = amanhã (por omissão, amanhã a partir das 23h)
+let pickedIso = null; // dia escolhido para os registos e as sugestões (null = hoje, ou amanhã a partir das 23h)
+let pickedOn = null; // dia em que a escolha foi feita (se a app ficar aberta e mudar o dia, volta ao normal)
 let openAdd = null; // refeição com "Adicionar alimento" aberto
 
 // Unidades em casa: compradas (registos de compras) menos as registadas como comidas desde a 1.ª compra
@@ -125,7 +126,38 @@ function nextOption(iso, mealId) {
   put('mealPlans', iso, { ...cur, date: iso, choices: { ...(cur.choices || {}), [mealId]: next.id } });
 }
 
-const defaultOffset = () => (new Date().getHours() >= 23 ? 1 : 0);
+const defaultIso = () => addDays(todayISO(), new Date().getHours() >= 23 ? 1 : 0);
+// Dia mostrado no painel das refeições (pode ser ontem, outro dia passado, hoje ou amanhã)
+export const shownDay = () => (pickedIso && pickedOn === todayISO() ? pickedIso : defaultIso());
+// Dia dos registos (peso, sono, creatina, proteína): o dia escolhido, se já passou ou é hoje; senão, hoje
+export function logDay() {
+  const t = todayISO();
+  const d = shownDay();
+  return d <= t ? d : t;
+}
+export function setLogDay(iso) {
+  pickedIso = iso || null;
+  pickedOn = todayISO();
+}
+// "hoje", "ontem" ou "sábado, 21/11"
+export function dayWord(iso, cap = false) {
+  const t = todayISO();
+  const w = iso === t ? 'hoje' : iso === addDays(t, -1) ? 'ontem' : iso === addDays(t, 1) ? 'amanhã' : `${WEEKDAYS[new Date(isoToMs(iso)).getDay()]}, ${fmtDate(iso)}`;
+  return cap ? w[0].toUpperCase() + w.slice(1) : w;
+}
+// Botões Ontem / Hoje / (Amanhã) e um campo para outro dia passado
+export function daySwitch({ tomorrow = false } = {}) {
+  const t = todayISO();
+  const cur = shownDay();
+  const opts = [[addDays(t, -1), 'Ontem'], [t, 'Hoje'], ...(tomorrow ? [[addDays(t, 1), 'Amanhã']] : [])];
+  const other = !opts.some(([iso]) => iso === cur);
+  return `<div class="day-switch">
+    <div class="seg meals-seg" role="tablist" aria-label="Dia">
+      ${opts.map(([iso, l]) => `<button role="tab" class="seg-btn ${iso === cur ? 'on' : ''}" data-log-day="${iso}" aria-selected="${iso === cur}">${l}</button>`).join('')}
+    </div>
+    <label class="day-other ${other ? 'on' : ''}"><span class="muted small">Outro dia</span><input type="date" class="input small" data-log-pick max="${t}" min="${addDays(t, -60)}" value="${other ? cur : ''}" aria-label="Escolher outro dia"></label>
+  </div>`;
+}
 
 function suggestionBlock(m, { canEat, eatenThis }) {
   if (!m.opt) return '';
@@ -141,40 +173,38 @@ function suggestionBlock(m, { canEat, eatenThis }) {
 
 export function mealsPanel() {
   const today = todayISO();
-  const off = offset ?? defaultOffset();
-  const iso = addDays(today, off);
+  const iso = shownDay();
+  const canLog = iso <= today; // hoje ou um dia que já passou
   const info = dayInfo(iso);
   const p = planFor(iso);
-  const h = E.habitsFor(today);
-  const foods = off === 0 ? h.foods || [] : [];
+  const h = E.habitsFor(iso);
+  const foods = canLog ? h.foods || [] : [];
   const tot = mealTotals({ foods });
   const pc = p.ctx.pantry;
   const pantryLine = COUNTED.filter(([f]) => pc[f] !== null && pc[f] !== undefined).map(([f, , label]) => `${pc[f]} ${label}`).join(', ');
   const planTotal = p.meals.reduce((a, m) => a + optionG(m.opt), 0);
   const rows = p.meals;
   const noMeal = foods.filter((f) => !f.meal);
-  return `<section class="panel meals-panel" id="meals">
+  return `<section class="panel meals-panel" id="meals" ${canLog ? `data-log-date="${iso}"` : ''}>
     <div class="meals-head">
       <h2 class="panel-title">Refeições</h2>
-      <div class="seg meals-seg" role="tablist" aria-label="Dia">
-        ${['Hoje', 'Amanhã'].map((l, i) => `<button role="tab" class="seg-btn ${i === off ? 'on' : ''}" data-meals-day="${i}" aria-selected="${i === off}">${l}</button>`).join('')}
-      </div>
+      ${daySwitch({ tomorrow: true })}
     </div>
     <p class="muted meals-day">${esc(info.label)}</p>
     <ol class="meal-list">${rows.map((m) => {
       const its = foods.filter((f) => normMeal(f.meal) === m.id);
       const eatenThis = m.opt && its.some((f) => f.option === m.opt.id);
       return `<li class="meal ${its.length ? 'has-food' : ''}">
-        <div class="meal-top"><span class="meal-name">${esc(m.name)}</span>${off === 0 && its.length ? `<span class="meal-g num">${fmtNum(tot[m.id] || 0)} g</span>` : ''}</div>
+        <div class="meal-top"><span class="meal-name">${esc(m.name)}</span>${canLog && its.length ? `<span class="meal-g num">${fmtNum(tot[m.id] || 0)} g</span>` : ''}</div>
         <p class="meal-when muted small">${esc(info.times[m.id] || '')}</p>
-        ${off === 0 && its.length ? `<div class="chips meal-eaten">${its.map(entryChip).join('')}</div>` : ''}
-        ${suggestionBlock(m, { canEat: off === 0, eatenThis })}
+        ${canLog && its.length ? `<div class="chips meal-eaten">${its.map(entryChip).join('')}</div>` : ''}
+        ${suggestionBlock(m, { canEat: canLog, eatenThis })}
         ${m.id === 'pa' && hasKind('creatine', iso) ? '<p class="meal-tip muted small">Toma a creatina aqui, para não te esqueceres.</p>' : ''}
-        ${off === 0 ? `<details class="meal-add" data-meal-add="${m.id}" ${openAdd === m.id ? 'open' : ''}><summary>${its.length ? 'Juntar mais alimentos' : 'Registar o que comi'}</summary>${foodPicker(m.id)}</details>` : ''}
+        ${canLog ? `<details class="meal-add" data-meal-add="${m.id}" ${openAdd === m.id ? 'open' : ''}><summary>${its.length ? 'Juntar mais alimentos' : 'Registar o que comi'}</summary>${foodPicker(m.id)}</details>` : ''}
       </li>`;
     }).join('')}</ol>
     ${noMeal.length ? `<div class="meal-none"><p class="muted small">Registado sem refeição (antes de a app separar por refeições):</p><div class="chips">${noMeal.map(entryChip).join('')}</div></div>` : ''}
-    <p class="meal-total">${off === 0 ? `Registado hoje: <strong class="num">${fmtNum(h.protein || 0)} g</strong> de ${p.target} g. ` : ''}Seguindo as sugestões: cerca de ${planTotal} g.${planTotal < p.target ? ' Fica abaixo da meta: reforça o lanche ou o jantar, por exemplo com leite e whey.' : ''}</p>
+    <p class="meal-total">${canLog ? `Registado ${esc(dayWord(iso))}: <strong class="num">${fmtNum(h.protein || 0)} g</strong> de ${p.target} g. ` : ''}Seguindo as sugestões: cerca de ${planTotal} g.${planTotal < p.target ? ' Fica abaixo da meta: reforça o lanche ou o jantar, por exemplo com leite e whey.' : ''}</p>
     <p class="muted small">Os valores são aproximados.${pantryLine ? ` Em casa, pelas contas da app: ${esc(pantryLine)}.` : ''}</p>
   </section>`;
 }
@@ -184,27 +214,34 @@ export function bindMeals(root) {
     const go = e.target.closest('[data-goto-meals]');
     if (go) {
       e.preventDefault();
-      if (offset === 1) { offset = 0; rerender(); }
+      if (shownDay() > todayISO()) { setLogDay(todayISO()); rerender(); }
       document.getElementById('meals')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    const d = e.target.closest('[data-meals-day]');
-    if (d) { offset = Number(d.dataset.mealsDay); rerender(); return; }
+    const d = e.target.closest('[data-log-day]');
+    if (d) { setLogDay(d.dataset.logDay); openAdd = null; rerender(); return; }
     const sum = e.target.closest('.meal-add > summary');
     if (sum) {
       const det = sum.parentElement;
       openAdd = det.open ? null : det.dataset.mealAdd; // o clique acontece antes de abrir/fechar
       return;
     }
-    const today = todayISO();
-    const off = offset ?? defaultOffset();
-    const iso = addDays(today, off);
+    const iso = shownDay();
     const nx = e.target.closest('[data-meal-next]');
     if (nx) { nextOption(iso, nx.dataset.mealNext); rerender(); return; }
     const eat = e.target.closest('[data-meal-eat]');
-    if (eat && off === 0) {
-      const m = planFor(today).meals.find((x) => x.id === eat.dataset.mealEat);
-      if (m && m.opt) addFoods(today, m.opt.items, { meal: m.id, option: m.opt.id }, `${m.name} (sugestão)`);
+    if (eat && iso <= todayISO()) {
+      const m = planFor(iso).meals.find((x) => x.id === eat.dataset.mealEat);
+      if (m && m.opt) addFoods(iso, m.opt.items, { meal: m.id, option: m.opt.id }, `${m.name} (sugestão)`);
     }
+  });
+  root.addEventListener('change', (e) => {
+    const pick = e.target.closest('[data-log-pick]');
+    if (!pick || !pick.value) return;
+    const t = todayISO();
+    if (pick.value > t) { toast('Só dá para registar dias que já passaram.'); return; }
+    setLogDay(pick.value);
+    openAdd = null;
+    rerender();
   });
 }

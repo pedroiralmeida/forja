@@ -6,7 +6,7 @@ import { icons, navigate, rerender, toast, header, segmented, requestWakeLock, m
 import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
 import { setLine, sessionMeta } from './view-workout.js';
-import { mealsPanel, bindMeals } from './meals.js';
+import { mealsPanel, bindMeals, logDay, daySwitch, dayWord } from './meals.js';
 import { esc, fmtNum, fmt1, fmtDateLong, fmtDate, todayISO, parseNum, weekStart, fmtDuration, plural, isoToMs, addDays, now } from './util.js';
 
 const PLACE_NAME = { supera: 'Supera', estadio: 'Estádio' };
@@ -75,14 +75,21 @@ export function goalMeters(goals, compact = false) {
     .join('')}</div>`;
 }
 
-function habitsCard(today, trainingDay) {
+function habitsCard(realToday, trainingDayToday) {
+  // Dia dos registos: hoje, ou ontem / outro dia passado escolhido nos botões
+  const today = logDay();
+  const isToday = today === realToday;
+  const trainingDay = isToday && trainingDayToday;
   const h = E.habitsFor(today);
   const target = E.proteinTarget();
   const bwToday = E.bodyweightEntries().find((b) => b.date === today);
-  const pct = Math.min(100, (h.protein / target) * 100);
   return `
-  <section class="panel">
-    <h2 class="panel-title">O teu dia</h2>
+  <section class="panel ${isToday ? '' : 'log-past'}" data-log-date="${today}">
+    <div class="meals-head">
+      <h2 class="panel-title">${isToday ? 'O teu dia' : esc(dayWord(today, true))}</h2>
+      ${daySwitch()}
+    </div>
+    ${isToday ? '' : `<p class="muted small log-past-note">Estás a registar ${esc(dayWord(today))}. Volta a "Hoje" quando acabares.</p>`}
     <div class="daily">
       ${trainingDay ? `<div class="daily-row"><div class="daily-label">Antes do treino</div><div class="daily-value"><span>Lanche por volta das 17h, antes de saíres do trabalho: sandes e iogurte, ou banana e skyr.</span></div></div>` : ''}
       ${(() => {
@@ -91,10 +98,10 @@ function habitsCard(today, trainingDay) {
         const bits = [];
         if (ws && ws.daysSince >= 7) bits.push(`cintura há ${ws.daysSince} dias`);
         if (ws && (!ss || ss.daysSince >= 28)) bits.push(ss ? `ombros há ${ss.daysSince} dias` : 'ombros ainda por medir');
-        return bits.length ? `<div class="daily-row"><div class="daily-label">Medidas</div><div class="daily-value"><span>Última medição: ${bits.join(', ')}.</span> <a class="link" href="#/corpo">Medir</a></div></div>` : '';
+        return bits.length && isToday ? `<div class="daily-row"><div class="daily-label">Medidas</div><div class="daily-value"><span>Última medição: ${bits.join(', ')}.</span> <a class="link" href="#/corpo">Medir</a></div></div>` : '';
       })()}
       <div class="daily-row">
-        <div class="daily-label">Peso de hoje</div>
+        <div class="daily-label">Peso ${isToday ? 'de hoje' : `de ${esc(dayWord(today))}`}</div>
         ${bwToday
           ? `<div class="daily-value"><span class="num big2">${fmt1(bwToday.kg)} kg</span> <button class="link" data-act="bw-edit">Alterar</button></div>`
           : `<form class="inline-form" data-form="bw"><input name="kg" inputmode="decimal" placeholder="${fmt1(E.latestBodyweight())}" aria-label="Peso em kg" class="input num"><span class="unit">kg</span><button class="btn secondary small">Guardar</button></form>`}
@@ -113,7 +120,7 @@ function habitsCard(today, trainingDay) {
       ${(() => {
         const band = E.sleepBand(h);
         return `<div class="daily-row">
-        <div class="daily-label">Sono <span class="muted">esta noite</span></div>
+        <div class="daily-label">Sono <span class="muted">${isToday ? 'esta noite' : 'na noite antes'}</span></div>
         <div class="daily-value sleep-pick">
           ${E.SLEEP_BANDS.map((x) => `<button class="toggle sleep-${x.value} ${band === x.value ? 'on' : ''}" data-act="sleep-band" data-v="${x.value}" aria-pressed="${band === x.value}">${x.label}</button>`).join('')}
           ${h.sleep ? `<span class="muted small">${fmtNum(h.sleep)} h registadas em Corpo</span>` : ''}
@@ -448,18 +455,20 @@ export function renderToday(root) {
       put('days', d, { date: d, plan: E.planFor(d), reason: 'sem-motivo', note: '', missed: true, skip: false, decidedAt: now() });
       rerender();
     } else if (a === 'sleep-band') {
-      const h = E.habitsFor(today);
+      const d = act.closest('[data-log-date]')?.dataset.logDate || today;
+      const h = E.habitsFor(d);
       const v = act.dataset.v;
       const off = E.sleepBand(h) === v;
       const keepHours = !off && h.sleep !== null && h.sleep !== undefined && E.bandForHours(h.sleep) === v;
-      put('habits', today, { ...h, sleepBand: off ? null : v, sleepOk: off ? null : v !== 'lt7', sleep: keepHours ? h.sleep : null, sleepAt: off ? null : now() });
+      put('habits', d, { ...h, sleepBand: off ? null : v, sleepOk: off ? null : v !== 'lt7', sleep: keepHours ? h.sleep : null, sleepAt: off ? null : now() });
       rerender();
     } else if (a === 'creatine') {
-      const h = E.habitsFor(today);
-      put('habits', today, { ...h, creatine: !h.creatine });
+      const d = act.closest('[data-log-date]')?.dataset.logDate || today;
+      const h = E.habitsFor(d);
+      put('habits', d, { ...h, creatine: !h.creatine });
       rerender();
     } else if (a === 'bw-edit') {
-      remove('bodyweight', today);
+      remove('bodyweight', act.closest('[data-log-date]')?.dataset.logDate || today);
       rerender();
     } else if (a === 'deload-on') {
       const wk = weekStart(today);
@@ -491,8 +500,9 @@ export function renderToday(root) {
       toast('Escreve o peso em kg, por exemplo 64,2');
       return;
     }
-    put('bodyweight', today, E.bodyweightRecord(today, kg, 'hoje'));
-    toast('Peso guardado');
+    const d = f.closest('[data-log-date]')?.dataset.logDate || today;
+    put('bodyweight', d, E.bodyweightRecord(d, kg, d === today ? 'hoje' : 'registo atrasado'));
+    toast(d === today ? 'Peso guardado' : `Peso de ${dayWord(d)} guardado`);
     rerender();
   });
 }

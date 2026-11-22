@@ -845,3 +845,11 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .stills-box figure { margin: 8px 0; }
 .stills-box img { display: block; width: 100%; height: auto; border-radius: 10px; }
 .stills-box figcaption { margin-top: 4px; }
+
+/* Escolher o dia dos registos (ontem, hoje, outro dia) */
+.day-switch { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.day-other { display: inline-flex; align-items: center; gap: 6px; }
+.day-other input { min-height: 34px; padding: 2px 8px; font-size: 15px; width: auto; }
+.day-other.on input { border-color: var(--yellow); box-shadow: 0 0 0 2px var(--yellow); }
+.log-past { box-shadow: inset 4px 0 0 var(--yellow); }
+.log-past-note { margin: 4px 0 8px; }

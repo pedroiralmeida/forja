@@ -230,7 +230,7 @@ function addFood(iso, f, qty, gOverride, meal) {
   const entry = { id: uid(), food: f.id, name: f.name, portion: f.portion || null, qty, g, at: Date.now(), meal: meal || mealAt() };
   const total = r1(Math.max(0, (h.protein || 0) + g));
   save(iso, { protein: total, foods: [...(h.foods || []), entry] },
-    `${mealName(entry.meal)}: ${qty !== 1 ? `${multLabel(qty)} × ` : ''}${f.name}, +${fmtNum(g)} g. Hoje: ${fmtNum(total)} g`,
+    `${mealName(entry.meal)}: ${qty !== 1 ? `${multLabel(qty)} × ` : ''}${f.name}, +${fmtNum(g)} g. ${dayTxt(iso)}: ${fmtNum(total)} g`,
     (cur) => ({ protein: r1(Math.max(0, (cur.protein || 0) - g)), foods: (cur.foods || []).filter((x) => x.id !== entry.id) }));
 }
 
@@ -246,7 +246,7 @@ export function addFoods(iso, items, meta = {}, label = 'Refeição') {
   const add = r1(entries.reduce((a, e) => a + e.g, 0));
   const total = r1((h.protein || 0) + add);
   const ids = new Set(entries.map((e) => e.id));
-  save(iso, { protein: total, foods: [...(h.foods || []), ...entries] }, `${label}: +${fmtNum(add)} g. Hoje: ${fmtNum(total)} g`,
+  save(iso, { protein: total, foods: [...(h.foods || []), ...entries] }, `${label}: +${fmtNum(add)} g. ${dayTxt(iso)}: ${fmtNum(total)} g`,
     (cur) => ({ protein: r1(Math.max(0, (cur.protein || 0) - add)), foods: (cur.foods || []).filter((x) => !ids.has(x.id)) }));
 }
 
@@ -304,8 +304,13 @@ function setRow(root, attr, value) {
   });
 }
 
-export function bindProtein(root, iso) {
+// Dia do registo: o do painel onde se carregou (data-log-date), senão o dia indicado
+const dayOfEl = (el, iso) => (el && el.closest('[data-log-date]') ? el.closest('[data-log-date]').dataset.logDate : iso);
+const dayTxt = (iso) => (iso === todayISO() ? 'Hoje' : iso === addDays(todayISO(), -1) ? 'Ontem' : iso.slice(8, 10) + '/' + iso.slice(5, 7));
+
+export function bindProtein(root, isoDefault) {
   root.addEventListener('click', (e) => {
+    const iso = dayOfEl(e.target, isoDefault);
     const m = e.target.closest('[data-mult]');
     if (m) {
       e.preventDefault();
@@ -339,7 +344,7 @@ export function bindProtein(root, iso) {
       const it = (h.foods || []).find((x) => x.id === del.dataset.foodDel);
       if (!it) return;
       const total = r1(Math.max(0, (h.protein || 0) - (it.g || 0)));
-      save(iso, { protein: total, foods: (h.foods || []).filter((x) => x !== it) }, `Tirado: ${it.name}. Hoje: ${fmtNum(total)} g`,
+      save(iso, { protein: total, foods: (h.foods || []).filter((x) => x !== it) }, `Tirado: ${it.name}. ${dayTxt(iso)}: ${fmtNum(total)} g`,
         (cur) => ({ protein: r1((cur.protein || 0) + (it.g || 0)), foods: [...(cur.foods || []), it].sort((a, b) => (a.at || 0) - (b.at || 0)) }));
       return;
     }
@@ -348,10 +353,11 @@ export function bindProtein(root, iso) {
       e.preventDefault();
       const h = E.habitsFor(iso);
       const total = r1((h.protein || 0) + Number(b.dataset.prot));
-      save(iso, { protein: total }, `Proteína de hoje: ${fmtNum(total)} g`);
+      save(iso, { protein: total }, `Proteína (${dayTxt(iso).toLowerCase()}): ${fmtNum(total)} g`);
     }
   });
   root.addEventListener('submit', (e) => {
+    const iso = dayOfEl(e.target, isoDefault);
     const fa = e.target.closest('[data-form="food-add"]');
     if (fa) {
       e.preventDefault();
@@ -377,6 +383,6 @@ export function bindProtein(root, iso) {
     const op = (e.submitter && e.submitter.value) || 'add';
     const cur = E.habitsFor(iso).protein || 0;
     const total = r1(Math.max(0, op === 'set' ? g : op === 'sub' ? cur - g : cur + g));
-    save(iso, { protein: total }, `Proteína de hoje: ${fmtNum(total)} g`);
+    save(iso, { protein: total }, `Proteína (${dayTxt(iso).toLowerCase()}): ${fmtNum(total)} g`);
   });
 }
