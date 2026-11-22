@@ -7,6 +7,7 @@ export const EX = {
     name: 'Bench press', kind: 'barbell', tier: 'main', group: 'peito',
     cues: [
       'Omoplatas juntas e para baixo antes de tirar a barra.',
+      'Ombros para baixo, longe das orelhas, do primeiro ao último rep. Ao tirar a barra do suporte, não deixes os ombros subir: tira-a com os braços, mantendo as omoplatas presas no banco.',
       'Pés firmes, com os calcanhares sempre no chão: leva-os para trás só até onde os calcanhares ainda assentam (mais ou menos debaixo dos joelhos).',
       'Leg drive: empurra o chão para trás, como se quisesses deslizar no banco em direção à cabeça. O rabo fica no banco.',
       'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
@@ -360,7 +361,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.29.0';
+export const APP_VERSION = '1.29.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

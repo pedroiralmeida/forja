@@ -1064,6 +1064,24 @@
    "source": "Treino de 19/11",
    "createdAt": 1795128831097,
    "updatedAt": 1795166791457
+  },
+  "bench-ombros-2026-11-22": {
+   "id": "bench-ombros-2026-11-22",
+   "ex": [
+    "bench",
+    "bench_paused"
+   ],
+   "from": "2026-11-22",
+   "title": "Ombros para baixo",
+   "short": "Ombros para baixo, longe das orelhas, antes de tirares a barra e durante toda a série.",
+   "items": [
+    "Deitado no banco, junta as omoplatas e puxa-as para baixo, em direção ao rabo. Só depois tiras a barra.",
+    "Ao tirar a barra do suporte, os ombros não sobem: tira-a com os braços, com as omoplatas presas no banco.",
+    "Confirma em cada série, incluindo nos aquecimentos e no single dos 80 kg."
+   ],
+   "source": "Pedido do Pedro (22/11)",
+   "createdAt": 1795309497467,
+   "updatedAt": 1795309497467
   }
  },
  "settingsPatch": {
