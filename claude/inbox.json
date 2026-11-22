@@ -694,25 +694,26 @@
    "original": "VID_20261122_131002.mp4 (1080×1920, 30 fps, 30 s, 56 MB): recomprimido para 720p (2,9 MB)",
    "recordedBy": "alguém a filmar de lado, do lado esquerdo, à altura do banco",
    "set": "última série do paused bench de 22/11",
-   "summary": "4 reps com pausa a sério no peito, lockout por cima dos ombros, pés e rabo no sítio. O que falta: a barra toca alto, perto das clavículas, e os cotovelos abrem à altura dos ombros.",
+   "summary": "4 reps com pausa a sério no peito, lockout por cima dos ombros, pés e rabo no sítio. O que falta: os cotovelos parecem abrir perto da altura dos ombros no fundo.",
    "findings": [
     "Pausa: cerca de 1 a 1,5 s parada no peito em todas as reps, sem ressalto. Bem.",
     "Descida: cerca de 1 s nas 2 primeiras reps; nas 2 últimas desce mais depressa (cerca de 0,5 s). Mesmo cansado, controla a descida.",
-    "Toque: a barra toca alto, na parte de cima do peito, perto das clavículas. Devia tocar mais abaixo, na linha dos mamilos.",
-    "Cotovelos: em baixo, o cotovelo fica à altura do ombro (braço quase a 90° do tronco). Com os cotovelos a 45°, a barra toca mais abaixo e os ombros ficam mais protegidos.",
+    "Toque: deste ângulo (de baixo e do lado dos pés, com o disco à frente) não dá para ver com certeza onde a barra toca. Parece perto da linha dos mamilos, como sentiste.",
+    "Cotovelos: em baixo, o cotovelo do lado da câmara fica mais ou menos por baixo do ombro, o que aponta para os cotovelos abertos perto dos 90°, em vez dos 45°. É uma leitura aproximada, porque o ângulo não é perpendicular.",
     "Lockout: braços esticados com a barra por cima dos ombros. Bem.",
     "Pés: calcanhares assentes no chão, mais ou menos debaixo dos joelhos. Rabo e cabeça no banco em todas as reps. Bem.",
-    "A última rep sobe mais devagar (cerca de 1 s): estava perto do limite."
+    "A última rep sobe mais devagar (cerca de 1 s): estava perto do limite.",
+    "Próximo vídeo: de lado, perpendicular ao banco, com o telemóvel à altura do peito e a uns 2 a 3 m. Assim vê-se o toque e o ângulo dos cotovelos sem a perspetiva a enganar."
    ],
    "stills": [
     {
      "file": "videos/2026-11-22/paused-bench-fundo-e-topo.jpg",
-     "caption": "À esquerda, o fundo da 2.ª rep: a barra toca na parte de cima do peito e o cotovelo está à altura do ombro. À direita, o lockout, com a barra por cima dos ombros."
+     "caption": "À esquerda, o fundo da 2.ª rep: o cotovelo do lado da câmara está mais ou menos por baixo do ombro. À direita, o lockout, com a barra por cima dos ombros."
     }
    ],
    "source": "Análise do Claude",
    "createdAt": 1795356288110,
-   "updatedAt": 1795356288110
+   "updatedAt": 1795356532307
   }
  },
  "purchases": {
@@ -842,14 +843,14 @@
     "Antes de tirar a barra: omoplatas juntas e para baixo, peito para cima (um pequeno arco).",
     "Pés: calcanhares sempre assentes no chão. Leva os pés para trás só até ao ponto em que os calcanhares ainda ficam no chão (para ti, mais ou menos debaixo dos joelhos) e empurra o chão para trás, como se quisesses deslizar no banco em direção à cabeça. O rabo fica no banco.",
     "Leg drive: monta a posição completa também nos aquecimentos a partir dos 40 a 50 kg, para sair sozinho com o peso a sério.",
-    "Toque: a 22/11, no paused bench, a barra tocou alto, perto das clavículas, com os cotovelos abertos à altura dos ombros. Cotovelos a cerca de 45° do tronco e a barra desce até à linha dos mamilos: com os cotovelos para dentro, a barra vai lá parar sozinha.",
+    "Toque: na linha dos mamilos, com os cotovelos a cerca de 45° do tronco (no vídeo de 22/11 pareciam abertos perto dos 90°).",
     "Sem barras de segurança: para sempre com 1 a 2 reps de reserva.",
     "Se puderes, filma de lado com o telemóvel parado (encostado a um disco ou num banco)."
    ],
    "short": "Fitas nas séries pesadas, calcanhares no chão a empurrar para trás, barra na linha dos mamilos e leg drive desde os aquecimentos.",
    "source": "Análise do Claude ao vídeo da série de topo de 16/11 (72,5 kg × 3)",
    "title": "dos vídeos de 16/11 e 18/11",
-   "updatedAt": 1795356288110
+   "updatedAt": 1795356532307
   },
   "estadio-cotovelos-2026-11-17": {
    "createdAt": 1794955962863,
