@@ -679,6 +679,40 @@
    "source": "Análise do Claude",
    "createdAt": 1795118828520,
    "updatedAt": 1795118828520
+  },
+  "video-2026-11-22-paused-bench": {
+   "id": "video-2026-11-22-paused-bench",
+   "kind": "video",
+   "order": 1,
+   "title": "Paused bench, última série (4 reps)",
+   "date": "2026-11-22",
+   "day": null,
+   "ex": "bench_paused",
+   "file": "videos/2026-11-22/paused-bench-ultima-serie-4reps.mp4",
+   "durationS": 30,
+   "sizeKB": 2932,
+   "original": "VID_20261122_131002.mp4 (1080×1920, 30 fps, 30 s, 56 MB): recomprimido para 720p (2,9 MB)",
+   "recordedBy": "alguém a filmar de lado, do lado esquerdo, à altura do banco",
+   "set": "última série do paused bench de 22/11",
+   "summary": "4 reps com pausa a sério no peito, lockout por cima dos ombros, pés e rabo no sítio. O que falta: a barra toca alto, perto das clavículas, e os cotovelos abrem à altura dos ombros.",
+   "findings": [
+    "Pausa: cerca de 1 a 1,5 s parada no peito em todas as reps, sem ressalto. Bem.",
+    "Descida: cerca de 1 s nas 2 primeiras reps; nas 2 últimas desce mais depressa (cerca de 0,5 s). Mesmo cansado, controla a descida.",
+    "Toque: a barra toca alto, na parte de cima do peito, perto das clavículas. Devia tocar mais abaixo, na linha dos mamilos.",
+    "Cotovelos: em baixo, o cotovelo fica à altura do ombro (braço quase a 90° do tronco). Com os cotovelos a 45°, a barra toca mais abaixo e os ombros ficam mais protegidos.",
+    "Lockout: braços esticados com a barra por cima dos ombros. Bem.",
+    "Pés: calcanhares assentes no chão, mais ou menos debaixo dos joelhos. Rabo e cabeça no banco em todas as reps. Bem.",
+    "A última rep sobe mais devagar (cerca de 1 s): estava perto do limite."
+   ],
+   "stills": [
+    {
+     "file": "videos/2026-11-22/paused-bench-fundo-e-topo.jpg",
+     "caption": "À esquerda, o fundo da 2.ª rep: a barra toca na parte de cima do peito e o cotovelo está à altura do ombro. À direita, o lockout, com a barra por cima dos ombros."
+    }
+   ],
+   "source": "Análise do Claude",
+   "createdAt": 1795356288110,
+   "updatedAt": 1795356288110
   }
  },
  "purchases": {
@@ -808,14 +842,14 @@
     "Antes de tirar a barra: omoplatas juntas e para baixo, peito para cima (um pequeno arco).",
     "Pés: calcanhares sempre assentes no chão. Leva os pés para trás só até ao ponto em que os calcanhares ainda ficam no chão (para ti, mais ou menos debaixo dos joelhos) e empurra o chão para trás, como se quisesses deslizar no banco em direção à cabeça. O rabo fica no banco.",
     "Leg drive: monta a posição completa também nos aquecimentos a partir dos 40 a 50 kg, para sair sozinho com o peso a sério.",
-    "Toque: a 18/11 já foi ao meio do peito. Desce mais um pouco, até à linha dos mamilos, com os cotovelos ligeiramente junto ao corpo.",
+    "Toque: a 22/11, no paused bench, a barra tocou alto, perto das clavículas, com os cotovelos abertos à altura dos ombros. Cotovelos a cerca de 45° do tronco e a barra desce até à linha dos mamilos: com os cotovelos para dentro, a barra vai lá parar sozinha.",
     "Sem barras de segurança: para sempre com 1 a 2 reps de reserva.",
     "Se puderes, filma de lado com o telemóvel parado (encostado a um disco ou num banco)."
    ],
    "short": "Fitas nas séries pesadas, calcanhares no chão a empurrar para trás, barra na linha dos mamilos e leg drive desde os aquecimentos.",
    "source": "Análise do Claude ao vídeo da série de topo de 16/11 (72,5 kg × 3)",
    "title": "dos vídeos de 16/11 e 18/11",
-   "updatedAt": 1795025066257
+   "updatedAt": 1795356288110
   },
   "estadio-cotovelos-2026-11-17": {
    "createdAt": 1794955962863,

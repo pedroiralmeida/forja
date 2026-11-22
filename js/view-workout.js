@@ -490,7 +490,9 @@ function cleanSession(session) {
 // Perguntas rápidas no fim do treino (todas opcionais)
 function feedbackForm(session) {
   const place = DAYS[session.day] && DAYS[session.day].place;
-  const chips = (name, opts, multi) => `<div class="chips" data-group="${name}" data-multi="${multi ? 1 : 0}">${opts.map((o) => `<button type="button" class="chip" data-v="${o.value}">${esc(o.label)}</button>`).join('')}</div>`;
+  const f = session.feedback || {};
+  const isOn = (name, v) => (Array.isArray(f[name]) ? f[name].map(String).includes(String(v)) : f[name] !== null && f[name] !== undefined && String(f[name]) === String(v));
+  const chips = (name, opts, multi) => `<div class="chips" data-group="${name}" data-multi="${multi ? 1 : 0}">${opts.map((o) => `<button type="button" class="chip ${isOn(name, o.value) ? 'on' : ''}" data-v="${o.value}">${esc(o.label)}</button>`).join('')}</div>`;
   return `<div class="fb">
     <div class="field"><span>Esforço do treino (1 = muito fácil, 10 = máximo)</span>${chips('srpe', [4, 5, 6, 7, 8, 9, 10].map((n) => ({ value: n, label: String(n) })))}</div>
     <div class="field"><span>Energia hoje</span>${chips('energy', [{ value: 1, label: 'Muito baixa' }, { value: 2, label: 'Baixa' }, { value: 3, label: 'Normal' }, { value: 4, label: 'Boa' }, { value: 5, label: 'Ótima' }])}</div>
@@ -653,6 +655,7 @@ export function renderSession(root, { id, fresh }) {
     ${videosPanel(s)}
     <div class="row-actions">
       ${fresh ? '<a class="btn primary" href="#/hoje">Feito</a>' : ''}
+      <button class="btn secondary" data-act="edit-feedback">Editar avaliação</button>
       <button class="btn secondary" data-act="edit">${icons.edit} Editar</button>
       <button class="btn ghost danger-text" data-act="delete">${icons.trash} Apagar</button>
     </div>`;
@@ -660,6 +663,28 @@ export function renderSession(root, { id, fresh }) {
   root.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-act]');
     if (!b) return;
+    if (b.dataset.act === 'edit-feedback') {
+      const cur = get('sessions', s.id);
+      const fb = { ...(cur.feedback || {}) };
+      const ok = await modal({
+        title: 'Editar avaliação',
+        body: `<p class="muted">Esforço, energia, dor e notas deste treino.</p>${feedbackForm(cur)}`,
+        actions: [{ label: 'Cancelar', value: false }, { label: 'Guardar', value: true, kind: 'primary' }],
+        onMount: (wrap) => bindFeedback(wrap, fb),
+        autofocus: false,
+      });
+      if (!ok) return;
+      const { notes, ...rest } = fb;
+      const next = { ...cur, feedback: { srpe: null, energy: null, pain: [], cond: [], ...rest, at: (cur.feedback && cur.feedback.at) || now(), editedAt: now() } };
+      if (notes !== undefined) next.notes = notes.trim();
+      const dur = cur.duration || (cur.finishedAt - cur.startedAt);
+      next.load = next.feedback.srpe && dur ? Math.round(next.feedback.srpe * (dur / 60000)) : cur.load ?? null;
+      put('revisions', `${cur.id}@${now()}`, { coll: 'sessions', key: cur.id, at: now(), data: cur });
+      put('sessions', cur.id, next);
+      toast('Avaliação guardada');
+      rerender();
+      return;
+    }
     if (b.dataset.act === 'show-stills') {
       const m = get('media', b.dataset.id);
       const box = b.closest('.video-item').querySelector('.stills-box');
