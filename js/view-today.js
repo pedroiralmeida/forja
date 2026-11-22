@@ -7,6 +7,7 @@ import { barbellSVG, platesFor, plateText } from './plates.js';
 import { proteinBlock, bindProtein } from './protein.js';
 import { setLine, sessionMeta } from './view-workout.js';
 import { mealsPanel, bindMeals, logDay, daySwitch, dayWord } from './meals.js';
+import { openDayImage } from './story.js';
 import { esc, fmtNum, fmt1, fmtDateLong, fmtDate, todayISO, parseNum, weekStart, fmtDuration, plural, isoToMs, addDays, now } from './util.js';
 
 const PLACE_NAME = { supera: 'Supera', estadio: 'Estádio' };
@@ -127,6 +128,9 @@ function habitsCard(realToday, trainingDayToday) {
         </div>
       </div>`;
       })()}
+    </div>
+    <div class="day-image">
+      <button class="btn secondary" data-act="day-image">${icons.image} Imagem ${isToday ? 'do dia' : `de ${esc(dayWord(today))}`} para a história</button>
     </div>
   </section>`;
 }
@@ -460,6 +464,11 @@ export function renderToday(root) {
       const d = act.dataset.date;
       put('days', d, { date: d, plan: E.planFor(d), reason: 'sem-motivo', note: '', missed: true, skip: false, decidedAt: now() });
       rerender();
+    } else if (a === 'day-image') {
+      const d = act.closest('[data-log-date]')?.dataset.logDate || today;
+      act.disabled = true;
+      await openDayImage(d, d === today ? 'do dia' : `de ${dayWord(d)}`);
+      act.disabled = false;
     } else if (a === 'sleep-band') {
       const d = act.closest('[data-log-date]')?.dataset.logDate || today;
       const h = E.habitsFor(d);

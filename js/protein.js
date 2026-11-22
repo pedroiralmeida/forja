@@ -70,7 +70,7 @@ let mult = 1;
 let pickMeal = null; // refeição escolhida no bloco da proteína; null = pela hora do dia
 
 const r1 = (x) => Math.round(x * 10) / 10;
-const multLabel = (m) => (MULTS.find(([v]) => v === m) || [m, fmtNum(m)])[1];
+export const multLabel = (m) => (MULTS.find(([v]) => v === m) || [m, fmtNum(m)])[1];
 export const mealName = (id) => (MEAL_SLOTS.find((m) => m.id === id) || { name: 'Sem refeição' }).name;
 
 // Refeição pela hora: até às 11h pequeno-almoço, até 15h30 almoço, até 19h30 lanche, depois jantar.
