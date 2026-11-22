@@ -319,16 +319,17 @@ export function weekStatus(iso = todayISO()) {
   return { week: ws, plan, planned, target, done, byPlace, deficit, owed, missed, days, remainingPlanned, extra: Math.max(0, done - target) };
 }
 
-// Sábado (dia de reposição): obrigatório se a semana ainda não chegou aos treinos obrigatórios,
-// opcional se já chegou. Sugere o sítio que ficou a faltar; se não faltar nenhum, até ao primeiro
-// muscle-up o Estádio tem prioridade, depois o Supera.
+// Dias de reposição (sábado e domingo): obrigatório se a semana ainda não chegou aos treinos obrigatórios,
+// opcional se já chegou. Sugere o sítio que ficou a faltar (se faltarem os dois, até ao primeiro muscle-up
+// o Estádio tem prioridade). Se não faltar nenhum, o treino é extra e sugere o Supera: o Supera C (ou o teste
+// de supino) não junta mais trabalho de barra aos dois treinos do Estádio, o que poupa os cotovelos.
 export function suggestPlace(iso = todayISO()) {
   const w = weekStatus(iso);
   const muDone = milestoneMap().mu1.achieved;
   const order = muDone ? ['supera', 'estadio'] : ['estadio', 'supera'];
   const mandatory = w.done < w.target;
   const short = w.target - w.done;
-  const place = order.find((p) => w.deficit[p] > 0) || order[0];
+  const place = order.find((p) => w.deficit[p] > 0) || 'supera';
   return { place, mandatory, short, planned: w.planned, done: w.byPlace, week: w };
 }
 
