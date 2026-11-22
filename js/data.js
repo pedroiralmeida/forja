@@ -10,6 +10,7 @@ export const EX = {
       'Ombros para baixo, longe das orelhas, do primeiro ao último rep. Ao tirar a barra do suporte, não deixes os ombros subir: tira-a com os braços, mantendo as omoplatas presas no banco.',
       'Pés firmes, com os calcanhares sempre no chão: leva-os para trás só até onde os calcanhares ainda assentam (mais ou menos debaixo dos joelhos).',
       'Leg drive: empurra o chão para trás, como se quisesses deslizar no banco em direção à cabeça. O rabo fica no banco.',
+      'Cotovelos para dentro: na descida ficam a cerca de 45° do tronco e apontam um pouco para os pés, nem colados ao corpo nem abertos em T à altura dos ombros. Ajuda tentar "partir a barra ao meio", torcendo as mãos para fora sem as mexer.',
       'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
       'Pulso direito, com a barra na base da palma e não nos dedos. Nas séries pesadas usa as fitas de pulso.',
       'Desce controlado, sobe com intenção. Sem barras de segurança no Supera: nunca até à falha, deixa sempre 1 a 2 reps de reserva.',
@@ -361,7 +362,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.29.1';
+export const APP_VERSION = '1.29.2';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
