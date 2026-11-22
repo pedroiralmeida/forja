@@ -191,7 +191,7 @@ function upcomingList(up, today, shown) {
   if (!up.length) return '<p class="muted">Sem treinos no plano para os próximos dias.</p>';
   return `<ul class="up-list">${up.map((u) => {
     const what = u.place
-      ? `<span class="up-what">${esc(E.dayTitle(u.day))}</span>`
+      ? `<span class="up-what">${esc(E.dayTitle(u.day))}${u.swapped ? ' <span class="tag">trocado</span>' : ''}${u.rain && u.rain.p >= 40 ? ` <span class="muted small">chuva ${u.rain.p}%</span>` : ''}</span>`
       : `<span class="up-what muted">${u.plan === 'repor' ? 'Reposição opcional, se ainda faltar algum treino' : 'Reposição, só se faltares a algum treino'}</span>`;
     const inner = `<span class="up-day">${esc(dayLabel(u.date, today))} <span class="muted">${esc(fmtDate(u.date))}</span></span>${what}`;
     return `<li>${u.place
@@ -287,7 +287,8 @@ export function renderToday(root) {
     // Dias de reposição que ainda sobram depois de hoje, nesta semana
     const laterFlex = w.days.filter((d) => E.isFlex(d.plan) && d.date > today).length;
     const ph = E.placeHours(sug.place, today);
-    const hoursNote = ph && !ph.always ? (ph.open ? ` O ${PLACE_NAME[sug.place]} hoje abre das ${ph.from} às ${ph.to}.` : ` O ${PLACE_NAME[sug.place]} hoje está fechado: repõe no Estádio.`) : '';
+    const rainToday = sug.place === 'estadio' && E.rainLikely(today) ? ` Há previsão de chuva no Estádio (${E.rainOn(today).p}%): se chover, repõe no Supera.` : '';
+    const hoursNote = (ph && !ph.always ? (ph.open ? ` O ${PLACE_NAME[sug.place]} hoje abre das ${ph.from} às ${ph.to}.` : ` O ${PLACE_NAME[sug.place]} hoje está fechado: repõe no Estádio.`) : '') + rainToday;
     if (sug.mandatory && plan === 'repor') {
       html += `<section class="banner must-banner"><div><strong>Hoje dá para repor</strong><p>Esta semana fizeste ${w.done} de ${w.target} treinos. Se puderes, repõe hoje no ${PLACE_NAME[sug.place]}.${hoursNote} É opcional; se não der, descansa.${sug.short > 1 ? ' Faz só um treino: não faças dois no mesmo dia para compensar.' : ''}</p></div></section>`;
     } else if (sug.mandatory) {
@@ -305,6 +306,21 @@ export function renderToday(root) {
     const tomorrow = addDays(today, 1);
     const satMust = E.planFor(tomorrow) === 'livre' && st.done < st.target && tomorrow <= addDays(st.week, 6);
     html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano.${satMust ? ` Amanhã é obrigatório: falta${st.target - st.done > 1 ? 'm' : ''} ${st.target - st.done} treino${st.target - st.done > 1 ? 's' : ''} esta semana.` : ''} Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
+  }
+
+  // Dia trocado (Supera ↔ Estádio) e chuva no Estádio
+  const change = !active && !isDone && !skippedToday ? E.planChange(today) : null;
+  if (change) {
+    const why = change.reasons.map((r) => (r.kind === 'seguido' ? `ontem treinaste no ${PLACE_NAME[r.place]}`
+      : r.kind === 'chuva' ? `há ${r.p}% de probabilidade de chuva no Estádio entre as 17h e as 21h`
+        : `o ${PLACE_NAME[r.place]} está fechado`));
+    const moved = change.movedTo ? ` O ${PLACE_NAME[change.base]} passa para ${weekdayName(change.movedTo)}.` : '';
+    html += `<section class="banner swap-banner"><div><strong>Hoje é dia de ${PLACE_NAME[change.plan]}, não de ${PLACE_NAME[change.base]}</strong>
+      <p>A app trocou os dias${why.length ? ` porque ${why.join(' e ')}` : ' para não treinares no mesmo sítio dois dias seguidos'}.${moved} Se preferires o plano normal, escolhe o sítio abaixo.</p></div></section>`;
+  }
+  if (!active && !isDone && !skippedToday && plan === 'estadio' && E.rainLikely(today)) {
+    const r = E.rainOn(today);
+    html += `<section class="banner warn"><p><strong>Previsão de chuva no Estádio entre as 17h e as 21h</strong> (${r.p}%${r.mm ? `, ${fmt1(r.mm)} mm` : ''}). Se chover, treina hoje no Supera: escolhe abaixo.</p></section>`;
   }
 
   const stockSug = E.stockSuggestions(today).filter((s) => s.level !== 'info' || s.purchase).slice(0, 2);

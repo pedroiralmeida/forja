@@ -2,7 +2,7 @@
 import { BENCH_TARGET, PAUSED_EX,
   EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, CORE_DAYS, EXTRA_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES, MISS_REASONS, APP_VERSION,
 } from './data.js';
-import { state, list, get } from './store.js';
+import { state, list, get, local, persistLocal } from './store.js';
 import {
   uid, now, todayISO, addDays, daysBetween, weekStart, isoToMs, roundTo, clamp, mean, linreg, fmtNum, fmt1, fmtSigned, fmtDate, DAY_MS,
 } from './util.js';
@@ -219,7 +219,7 @@ export function upcomingPlan(iso = todayISO(), n = 7) {
     const plan = planFor(d);
     if (plan === 'supera' || plan === 'estadio') {
       const core = CORE_DAYS[plan];
-      out.push({ date: d, plan, place: plan, day: core[ptr[plan] % core.length] });
+      out.push({ date: d, plan, place: plan, day: core[ptr[plan] % core.length], swapped: plan !== basePlanFor(d), rain: plan === 'estadio' ? rainOn(d) : null });
       ptr[plan] = (ptr[plan] + 1) % core.length;
     } else if (isFlex(plan)) {
       out.push({ date: d, plan, place: null, day: null });
@@ -242,10 +242,154 @@ export function weekPlanOn(iso = todayISO()) {
   return (before.length ? before[before.length - 1] : snaps[0]).settings.weekPlan;
 }
 
-export function planFor(iso = todayISO()) {
+// O que o plano semanal diz para esse dia, sem trocas
+export function basePlanFor(iso = todayISO()) {
   const dow = new Date(isoToMs(iso)).getDay();
   const plan = weekPlanOn(iso);
   return plan[dow] || plan[String(dow)] || 'descanso';
+}
+
+// Onde treinar nesse dia: o plano semanal, com as trocas entre Supera e Estádio (ver weekSchedule).
+// Nos dias que já passaram, um dia de treino conta como o sítio onde treinaste de facto.
+export function planFor(iso = todayISO()) {
+  const base = basePlanFor(iso);
+  if (base !== 'supera' && base !== 'estadio') return base;
+  if (iso < todayISO()) return placeTrainedOn(iso) || base;
+  const sch = weekSchedule(weekStart(iso));
+  return sch[iso] || base;
+}
+
+// ---------- Tempo no Estádio ----------
+// Previsão por hora da Open-Meteo (gratuita, sem chave), guardada só neste dispositivo.
+// Conta a chuva entre as 17h e as 21h, a hora habitual dos treinos.
+const RAIN_HOURS = [17, 21];
+const ESTADIO_GEO = { lat: 38.753, lon: -9.163 };
+
+export function rainOn(iso) {
+  const w = local.weather;
+  if (!w || !w.days || Date.now() - (w.at || 0) > 36 * 3600e3) return null;
+  return w.days[iso] || null;
+}
+
+// Chuva provável à hora do treino: probabilidade de 60% ou mais, ou pelo menos 1 mm previsto
+export function rainLikely(iso) {
+  const r = rainOn(iso);
+  return !!r && (r.p >= 60 || r.mm >= 1);
+}
+
+export async function refreshWeather({ force = false } = {}) {
+  if (!force && local.weather && Date.now() - (local.weather.at || 0) < 3 * 3600e3) return false;
+  if (typeof fetch !== 'function' || (typeof navigator !== 'undefined' && navigator.onLine === false)) return false;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${ESTADIO_GEO.lat}&longitude=${ESTADIO_GEO.lon}`
+    + '&hourly=precipitation_probability,precipitation&timezone=Europe%2FLisbon&forecast_days=8';
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return false;
+    const j = await r.json();
+    const h = j.hourly || {};
+    const days = {};
+    (h.time || []).forEach((t, i) => {
+      const hour = Number(t.slice(11, 13));
+      if (hour < RAIN_HOURS[0] || hour > RAIN_HOURS[1]) return;
+      const iso = t.slice(0, 10);
+      const d = days[iso] || (days[iso] = { p: 0, mm: 0 });
+      d.p = Math.max(d.p, (h.precipitation_probability || [])[i] || 0);
+      d.mm = Math.round((d.mm + ((h.precipitation || [])[i] || 0)) * 10) / 10;
+    });
+    if (!Object.keys(days).length) return false;
+    local.weather = { at: Date.now(), days };
+    persistLocal();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// ---------- Trocas entre dias do Supera e do Estádio ----------
+const placeOfSession = (s) => (DAYS[s.day] && DAYS[s.day].place) || null;
+
+// Sítio do último treino desse dia (Supera ou Estádio), ou null
+export function placeTrainedOn(iso) {
+  const s = sessions().find((x) => x.date === iso);
+  return s ? placeOfSession(s) : null;
+}
+
+// Dias de treino desta semana a partir de hoje (ainda por fazer), com o sítio de cada um.
+// A app pode trocar dias do Supera com dias do Estádio, mantendo quantos faltam em cada sítio, para:
+//  - não treinar no mesmo sítio dois dias seguidos (por exemplo, Supera no domingo e outra vez na segunda);
+//  - fugir à chuva no Estádio à hora do treino;
+//  - não marcar o Supera num dia em que está fechado.
+// Escolhe a combinação com menos problemas; com empate, fica o plano normal.
+export function weekSchedule(ws) {
+  const today = todayISO();
+  const days = Array.from({ length: 7 }, (_, i) => addDays(ws, i));
+  const train = (p) => p === 'supera' || p === 'estadio';
+  const all = sessions();
+  const planned = { supera: 0, estadio: 0 };
+  const done = { supera: 0, estadio: 0 };
+  const slots = [];
+  for (const d of days) {
+    const b = basePlanFor(d);
+    if (train(b)) planned[b]++;
+    const daySessions = all.filter((s) => s.date === d);
+    for (const s of daySessions) {
+      const pl = placeOfSession(s);
+      if (pl) done[pl]++;
+    }
+    const note = dayNote(d);
+    if (!daySessions.length && note && note.reason === 'nao-registado' && train(b)) done[b]++;
+    if (train(b) && d >= today && !daySessions.length && !note) slots.push({ date: d, base: b });
+  }
+  const out = {};
+  if (!slots.length) return out;
+  const need = { supera: Math.max(0, planned.supera - done.supera), estadio: Math.max(0, planned.estadio - done.estadio) };
+  const other = (p) => (p === 'supera' ? 'estadio' : 'supera');
+  const n = slots.length;
+  let best = null;
+  for (let mask = 0; mask < 1 << n; mask++) {
+    const a = slots.map((sl, i) => (mask & (1 << i) ? other(sl.base) : sl.base));
+    const cnt = { supera: 0, estadio: 0 };
+    a.forEach((p) => cnt[p]++);
+    let score = 100 * (Math.max(0, need.supera - cnt.supera) + Math.max(0, need.estadio - cnt.estadio));
+    a.forEach((p, i) => {
+      const d = slots[i].date;
+      const prevDay = addDays(d, -1);
+      const prevSlot = i > 0 && slots[i - 1].date === prevDay ? a[i - 1] : null;
+      const prev = prevSlot || placeTrainedOn(prevDay);
+      if (prev === p) score += 10;
+      if (p === 'estadio') {
+        const r = rainOn(d);
+        if (r && (r.p >= 60 || r.mm >= 1)) score += 15;
+        else if (r && r.p >= 40) score += 4;
+      }
+      const h = placeHours(p, d);
+      if (h && !h.open) score += 50;
+      if (p !== slots[i].base) score += 1;
+    });
+    if (!best || score < best.score) best = { score, a };
+  }
+  slots.forEach((sl, i) => { out[sl.date] = best.a[i]; });
+  return out;
+}
+
+// Porque é que o dia mudou de sítio (para o ecrã Hoje): null se não mudou
+export function planChange(iso = todayISO()) {
+  const base = basePlanFor(iso);
+  const plan = planFor(iso);
+  if (plan === base || (base !== 'supera' && base !== 'estadio')) return null;
+  const reasons = [];
+  const prev = placeTrainedOn(addDays(iso, -1)) || (addDays(iso, -1) >= todayISO() ? planFor(addDays(iso, -1)) : null);
+  if (prev === base) reasons.push({ kind: 'seguido', place: base });
+  const r = rainOn(iso);
+  if (base === 'estadio' && r && r.p >= 40) reasons.push({ kind: 'chuva', p: r.p, mm: r.mm });
+  const h = placeHours(base, iso);
+  if (h && !h.open) reasons.push({ kind: 'fechado', place: base });
+  const ws = weekStart(iso);
+  let movedTo = null;
+  for (let d = addDays(iso, 1); d <= addDays(ws, 6); d = addDays(d, 1)) {
+    if (basePlanFor(d) !== base && planFor(d) === base) { movedTo = d; break; }
+  }
+  return { base, plan, reasons, movedTo };
 }
 
 function planCounts(plan) {
@@ -326,7 +470,8 @@ export function weekStatus(iso = todayISO()) {
 export function suggestPlace(iso = todayISO()) {
   const w = weekStatus(iso);
   const muDone = milestoneMap().mu1.achieved;
-  const order = muDone ? ['supera', 'estadio'] : ['estadio', 'supera'];
+  // Com chuva prevista à hora do treino, o Supera passa à frente (se também faltar)
+  const order = rainLikely(iso) || muDone ? ['supera', 'estadio'] : ['estadio', 'supera'];
   const mandatory = w.done < w.target;
   const short = w.target - w.done;
   const place = order.find((p) => w.deficit[p] > 0) || 'supera';

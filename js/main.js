@@ -167,15 +167,24 @@ onChange((kind) => {
 // Desbloqueia o som no primeiro toque (os browsers exigem um gesto)
 window.addEventListener('pointerdown', unlockAudio, { once: true });
 
+// Previsão da chuva no Estádio (decide trocas entre Supera e Estádio): no máximo de 3 em 3 horas
+function refreshWeather() {
+  E.refreshWeather().then((changed) => {
+    if (changed && (location.hash || '#/hoje').startsWith('#/hoje') && !isTyping() && !local.active) render();
+  });
+}
+refreshWeather();
+
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
+    refreshWeather();
     if (local.active) requestWakeLock();
     buildRest();
     if (syncConfigured() && Date.now() - (local.sync.lastSync || 0) > 120000) syncNow();
     loadInbox();
   }
 });
-window.addEventListener('online', () => syncConfigured() && syncNow());
+window.addEventListener('online', () => { if (syncConfigured()) syncNow(); refreshWeather(); });
 
 // Service worker: funciona offline e avisa quando há versão nova
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

@@ -68,6 +68,7 @@ Como o repositório é público, este ficheiro também é. Não tem moradas, nú
 ## Plano e histórico
 
 - Semana base com 4 treinos obrigatórios (Supera à segunda e quarta, Estádio à terça e quinta). O sábado é obrigatório se faltou algum, senão é opcional. Muda-se em Mais → Definições.
+- Trocas automáticas entre dias do Supera e do Estádio, mantendo quantos treinos há em cada sítio: para não treinar no mesmo sítio dois dias seguidos (por exemplo, Supera no domingo e na segunda), para fugir à chuva no Estádio entre as 17h e as 21h (previsão da Open-Meteo, vista no máximo de 3 em 3 horas) e para não marcar o Supera num dia em que está fechado. O ecrã Hoje explica a troca e deixa escolher o sítio à mão.
 - Treinos falhados ficam registados com o motivo. A rotação retoma onde ficou.
 - A app guarda o máximo de histórico: contexto de cada treino (o que foi sugerido, reposição ou extra, peso corporal, 1RM estimado), o que foi receitado, as séries por fazer, o esforço, a energia, as dores, as condições no parque, todas as pesagens do dia, as versões do plano e as versões anteriores de treinos editados ou apagados. Tudo vai no backup JSON e na sincronização.
 
