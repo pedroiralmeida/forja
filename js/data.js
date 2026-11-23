@@ -14,7 +14,7 @@ export const EX = {
       'Cotovelos para dentro: na descida ficam a cerca de 45° do tronco e apontam um pouco para os pés, nem colados ao corpo nem abertos em T à altura dos ombros. Ajuda tentar "partir a barra ao meio", torcendo as mãos para fora sem as mexer.',
       'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
       'Pulso direito, com a barra na base da palma e não nos dedos. Nas séries pesadas usa as fitas de pulso.',
-      'Desce controlado, sobe com intenção. Sem barras de segurança no Supera: nunca até à falha, deixa sempre 1 a 2 reps de reserva.',
+      'Desce controlado, sobe com intenção. Nas séries pesadas pede a alguém que te ajude (spotter): a tirar a barra e a ficar atrás de ti durante a série.',
     ],
   },
   bench_paused: {
@@ -373,7 +373,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.35.0';
+export const APP_VERSION = '1.35.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -537,7 +537,7 @@ export const GUIDE = [
 <p>A técnica dá quilos sem precisares de ganhar força. Antes de tirar a barra: omoplatas juntas e puxadas para baixo, arco moderado na zona das costas (o rabo fica no banco) e pés bem firmes.</p>
 <p>A pegada deve deixar os antebraços na vertical quando a barra está no peito. A barra desce em direção à parte de baixo do peito e sobe ligeiramente para trás, até ficar por cima dos ombros.</p>
 <p>O <strong>leg drive</strong> é empurrar o chão com os pés durante a subida, sem levantar o rabo. Transmite força das pernas para o tronco. Calcanhares sempre no chão: os pés vão para trás só até onde os calcanhares ainda assentam, e empurras o chão para trás (em direção à cabeça), não para cima.</p>
-<p>Filma-te de lado de vez em quando. O banco do Supera não tem barras de segurança: nunca vás até à falha e deixa sempre 1 a 2 reps de reserva, ou pede a alguém que te ajude nas séries pesadas.</p>`,
+<p>Filma-te de lado de vez em quando. Nas séries pesadas pede a alguém que te ajude (spotter).</p>`,
   },
   {
     id: 'ombros',

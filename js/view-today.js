@@ -329,7 +329,7 @@ export function renderToday(root) {
   }
 
   if (firstEver && place === 'supera') {
-    html += `<section class="banner"><div><strong>Primeiro treino no Supera</strong><p>Vê se há discos de 1,25 kg (se não houver, tira-os em Mais → Definições), cinto de lastro e barras de segurança para o bench press.</p></div></section>`;
+    html += `<section class="banner"><div><strong>Primeiro treino no Supera</strong><p>Vê se há discos de 1,25 kg (se não houver, tira-os em Mais → Definições), e cinto de lastro.</p></div></section>`;
   }
 
   if (deloadOn) {

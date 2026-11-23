@@ -840,7 +840,7 @@ function buildRmTest(slot, exId) {
     ...[...ws, ...more].map((w, i) => setObj('work', w, r, { tReps: `${r}`, tRPE: 9, test: true, opt: i >= 2 })),
   ];
   const bt = BENCH_TARGET;
-  const note = `Teste: séries de ${r}, a subir de peso conforme o RPE, com 3 a 4 minutos de descanso. Precisas de alguém a ajudar (spotter), porque não há barras de segurança. Depois de cada série marca o RPE e decide a seguinte: RPE 7 ou menos, sobe 5 kg; 7,5 ou 8, sobe 2,5 kg; 8,5 ou mais, o teste acabou aí.${bt ? ` A única exceção: se fizeres ${fmtNum(bt.w - 2.5)} kg × ${r} com RPE 8,5, ainda tentas os ${fmtNum(bt.w)} × ${r}.` : ''} As séries 3 a 5 já têm pesos sugeridos (+2,5 kg de cada vez): muda o peso se o RPE mandar subir 5, e as que não fizeres ficam por marcar. Se algum cotovelo doer acima de 2 em 10, para.`;
+  const note = `Teste: séries de ${r}, a subir de peso conforme o RPE, com 3 a 4 minutos de descanso. Pede a alguém que te ajude (spotter). Depois de cada série marca o RPE e decide a seguinte: RPE 7 ou menos, sobe 5 kg; 7,5 ou 8, sobe 2,5 kg; 8,5 ou mais, o teste acabou aí.${bt ? ` A única exceção: se fizeres ${fmtNum(bt.w - 2.5)} kg × ${r} com RPE 8,5, ainda tentas os ${fmtNum(bt.w)} × ${r}.` : ''} As séries 3 a 5 já têm pesos sugeridos (+2,5 kg de cada vez): muda o peso se o RPE mandar subir 5, e as que não fizeres ficam por marcar. Se algum cotovelo doer acima de 2 em 10, para.`;
   return { sets, note, target: `séries de ${r} até RPE 9` };
 }
 
@@ -852,7 +852,7 @@ function buildBenchTarget(slot, exId) {
     setObj('top', bt.w, bt.reps, { tReps: `${bt.reps}`, tRPE: bt.rpe, target: true }),
     ...Array.from({ length: slot.backSets }, () => setObj('back', back, slot.backReps, { tReps: `${slot.backReps}`, tRPE: slot.backRPE, auto: true })),
   ];
-  const note = `Hoje é o dia dos ${fmtNum(bt.w)} kg × ${bt.reps}: fizeste ${fmtNum(bt.triggerW)} × ${slot.topReps} com RPE ${fmtNum(bt.triggerRpe)} ou menos, por isso estás pronto. Precisas de alguém a ajudar (spotter), porque não há barras de segurança: pede antes de começares. Se algum cotovelo doer no aquecimento, faz antes ${fmtNum(bt.triggerW)} × ${slot.topReps} e os ${fmtNum(bt.w)} ficam para o Supera A seguinte. Tentas uma vez: escreve as reps que saíram e o RPE, e depois faz as ${slot.backSets} séries de ${slot.backReps}.`;
+  const note = `Hoje é o dia dos ${fmtNum(bt.w)} kg × ${bt.reps}: fizeste ${fmtNum(bt.triggerW)} × ${slot.topReps} com RPE ${fmtNum(bt.triggerRpe)} ou menos, por isso estás pronto. Pede a alguém que te ajude (spotter) antes de começares. Se algum cotovelo doer no aquecimento, faz antes ${fmtNum(bt.triggerW)} × ${slot.topReps} e os ${fmtNum(bt.w)} ficam para o Supera A seguinte. Tentas uma vez: escreve as reps que saíram e o RPE, e depois faz as ${slot.backSets} séries de ${slot.backReps}.`;
   return { sets, note, target: `1×${bt.reps} a ${fmtNum(bt.w)} kg + ${slot.backSets}×${slot.backReps}` };
 }
 
