@@ -864,3 +864,12 @@ body.has-rest .theme-fab { bottom: calc(var(--nav-h) + 84px + env(safe-area-inse
 .story-hint { margin-top: 12px; text-align: center; }
 .story-actions { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
 .story-actions .btn { flex: 1; max-width: 220px; justify-content: center; }
+
+/* Porções: − valor + */
+.qty-ctl { display: inline-flex; align-items: center; gap: 4px; }
+.qty-step { min-width: 36px; font-size: 18px; }
+.qty-input { width: 64px; min-height: 32px; padding: 4px 6px; text-align: center; font: 600 15px/1 var(--f-num); }
+.qty-edit { margin: 12px 0 6px; }
+.qty-result { font-size: 18px; font-weight: 600; margin: 4px 0 0; }
+.eaten-edit { border: 0; background: transparent; color: inherit; font: inherit; display: inline-flex; align-items: center; gap: 4px; padding: 0; cursor: pointer; }
+.eaten-edit:hover { text-decoration: underline; text-decoration-color: var(--ink-2); }

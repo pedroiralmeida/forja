@@ -1,5 +1,5 @@
-// Registo da proteína do dia, por refeição: alimentos com porção (½, 1, 1½, 2), alimentos escritos à mão,
-// acerto do total (somar, tirar, definir) e desfazer.
+// Registo da proteína do dia, por refeição: alimentos com porções (− e + de meia em meia, ou escritas à mão),
+// alimentos escritos à mão, mudar as porções de um alimento já registado, acerto do total e desfazer.
 // Cada alimento fica guardado em habits[dia].foods com a refeição (meal), para o histórico ficar completo.
 import * as E from './engine.js';
 import { put, list, setSettings } from './store.js';
@@ -30,6 +30,7 @@ export const FOODS = [
   { id: 'skyr', name: 'Skyr', portion: '1 copo', g: 16, meals: PL },
   { id: 'leite', name: 'Leite', portion: '1 copo (250 ml)', g: 8, meals: PL },
   { id: 'amendoas', name: 'Amêndoas', portion: 'um punhado (30 g)', g: 6, meals: L },
+  { id: 'cajus', name: 'Cajus', portion: 'um punhado (30 g)', g: 5, meals: PL },
   { id: 'aveia', name: 'Aveia instantânea', portion: '45 g', g: 6, meals: PL },
   { id: 'manteiga_amendoim', name: 'Manteiga de amendoim', portion: '1 colher (15 g)', g: 4, meals: PL },
   { id: 'pao', name: 'Pão', portion: '1 carcaça', g: 5, meals: ALL },
@@ -63,14 +64,37 @@ export const FOODS = [
 // Compatibilidade com quem importava a lista antiga
 export const PROTEIN_REF = FOODS.filter((f) => f.g !== null).map((f) => [`${f.name} (${f.portion})`, f.g]);
 
-const MULTS = [[0.5, '½'], [1, '1'], [1.5, '1½'], [2, '2']];
+// Porções: − e + andam de meia em meia (mínimo ¼); também dá para escrever, por exemplo 0,75 ou 3
+const QTY_MIN = 0.25;
+const QTY_MAX = 20;
+const FRAC = { 0.25: '¼', 0.5: '½', 0.75: '¾' };
 const TOP = 10;
 const TOP_MEAL = 20;
 let mult = 1;
 let pickMeal = null; // refeição escolhida no bloco da proteína; null = pela hora do dia
 
 const r1 = (x) => Math.round(x * 10) / 10;
-export const multLabel = (m) => (MULTS.find(([v]) => v === m) || [m, fmtNum(m)])[1];
+// 0,5 → ½, 1,5 → 1½, 2,25 → 2¼; o resto com vírgula (1,3)
+export function multLabel(m) {
+  const q = Number(m) || 0;
+  const whole = Math.floor(q + 1e-9);
+  const frac = Math.round((q - whole) * 100) / 100;
+  if (!frac) return String(whole);
+  return FRAC[frac] ? `${whole || ''}${FRAC[frac]}` : fmtNum(q);
+}
+const stepQty = (q, dir) => (dir > 0
+  ? (q < 0.5 ? 0.5 : Math.min(QTY_MAX, Math.floor(q * 2 + 1e-9) / 2 + 0.5))
+  : (q <= 0.5 ? QTY_MIN : Math.ceil(q * 2 - 1e-9) / 2 - 0.5));
+const validQty = (v) => v !== null && v >= QTY_MIN - 1e-9 && v <= QTY_MAX;
+
+// Controlo das porções: − [valor que se pode escrever] +
+function qtyControl(q, scope) {
+  return `<span class="qty-ctl" data-qty-ctl="${scope}">
+    <button type="button" class="chip mult qty-step" data-qty-step="-1" aria-label="Menos meia porção">−</button>
+    <input class="input num qty-input" data-qty-input inputmode="decimal" autocomplete="off" value="${fmtNum(q)}" aria-label="Porções">
+    <button type="button" class="chip mult qty-step" data-qty-step="1" aria-label="Mais meia porção">+</button>
+  </span>`;
+}
 export const mealName = (id) => (MEAL_SLOTS.find((m) => m.id === id) || { name: 'Sem refeição' }).name;
 
 // Refeição pela hora: até às 11h pequeno-almoço, até 15h30 almoço, até 19h30 lanche, depois jantar.
@@ -123,8 +147,9 @@ function foodChip(f) {
   return `<button type="button" class="chip food-chip" data-food="${esc(f.id)}" title="${esc(f.portion)}">${esc(f.name)} <span class="fg">${fmtNum(foodG(f))} g</span></button>`;
 }
 
+// Alimento registado: carregar no nome muda as porções; o × tira-o
 export function entryChip(it) {
-  return `<span class="eaten-item">${it.qty && it.qty !== 1 ? `${esc(multLabel(it.qty))} × ` : ''}${esc(it.name)} <span class="fg">${fmtNum(it.g)} g</span><button type="button" class="eaten-del" data-food-del="${esc(it.id)}" aria-label="Tirar ${esc(it.name)}">×</button></span>`;
+  return `<span class="eaten-item"><button type="button" class="eaten-edit" data-food-edit="${esc(it.id)}" title="Mudar as porções" aria-label="Mudar as porções de ${esc(it.name)}">${it.qty && it.qty !== 1 ? `${esc(multLabel(it.qty))} × ` : ''}${esc(it.name)} <span class="fg">${fmtNum(it.g)} g</span></button><button type="button" class="eaten-del" data-food-del="${esc(it.id)}" aria-label="Tirar ${esc(it.name)}">×</button></span>`;
 }
 
 export function mealTotals(h) {
@@ -150,9 +175,10 @@ export function foodPicker(meal = null) {
       <span class="muted small">Refeição</span>
       ${MEAL_SLOTS.map((m) => `<button type="button" class="chip mult meal-pick ${m.id === cur ? 'on' : ''}" data-pick-meal="${m.id}" aria-pressed="${m.id === cur}">${esc(m.short)}</button>`).join('')}
     </div>`}
-    <div class="mult-row" role="group" aria-label="Quantidade">
-      <span class="muted small">Quantidade</span>
-      ${MULTS.map(([v, l]) => `<button type="button" class="chip mult ${v === mult ? 'on' : ''}" data-mult="${v}" aria-pressed="${v === mult}">${l}</button>`).join('')}
+    <div class="mult-row" role="group" aria-label="Porções">
+      <span class="muted small">Porções</span>
+      ${qtyControl(mult, 'pick')}
+      <span class="muted small">depois carrega no alimento</span>
     </div>
     <div class="chips">${top.map(foodChip).join('')}</div>
     ${rest.length ? `<details class="prot-ref"><summary>Mais alimentos</summary><div class="chips">${rest.map(foodChip).join('')}</div></details>` : ''}
@@ -298,11 +324,83 @@ async function manageFoods() {
   toast(nd ? `${nd} ${nd === 1 ? 'alimento apagado' : 'alimentos apagados'} das opções` : hidden.size ? `${hidden.size} ${hidden.size === 1 ? 'alimento escondido' : 'alimentos escondidos'}` : 'Todos os alimentos visíveis');
 }
 
+function deleteEntry(iso, id) {
+  const h = E.habitsFor(iso);
+  const it = (h.foods || []).find((x) => x.id === id);
+  if (!it) return;
+  const total = r1(Math.max(0, (h.protein || 0) - (it.g || 0)));
+  save(iso, { protein: total, foods: (h.foods || []).filter((x) => x !== it) }, `Tirado: ${it.name}. ${dayTxt(iso)}: ${fmtNum(total)} g`,
+    (cur) => ({ protein: r1((cur.protein || 0) + (it.g || 0)), foods: [...(cur.foods || []), it].sort((a, b) => (a.at || 0) - (b.at || 0)) }));
+}
+
+// Mudar as porções de um alimento já registado; a proteína acompanha (mesma proteína por porção)
+async function editEntry(iso, id) {
+  const h = E.habitsFor(iso);
+  const it = (h.foods || []).find((x) => x.id === id);
+  if (!it) return;
+  const q0 = it.qty || 1;
+  const per = (it.g || 0) / q0;
+  let q = q0;
+  const gTxt = (qq) => `${fmtNum(r1(per * qq))} g de proteína`;
+  const res = await modal({
+    title: it.name,
+    body: `<p class="muted small">${esc(mealName(normMeal(it.meal)))}. ${it.portion ? `1 porção: ${esc(it.portion)}, ` : ''}${fmtNum(r1(per))} g de proteína por porção.</p>
+      <div class="mult-row qty-edit"><span class="muted small">Porções</span>${qtyControl(q, 'edit')}</div>
+      <p class="qty-result num" data-qty-result>${gTxt(q)}</p>`,
+    actions: [
+      { label: 'Tirar', value: 'del', kind: 'ghost' },
+      { label: 'Cancelar', value: null, kind: 'ghost' },
+      { label: 'Guardar', value: 'save', kind: 'primary', fn: (wrap) => {
+        const v = parseNum(wrap.querySelector('[data-qty-input]').value);
+        if (!validQty(v)) { toast('Escreve as porções, por exemplo 1,5 (de 0,25 a 20).'); return false; }
+        q = v;
+        return true;
+      } },
+    ],
+    autofocus: false,
+    onMount: (wrap) => {
+      const inp = wrap.querySelector('[data-qty-input]');
+      const out = wrap.querySelector('[data-qty-result]');
+      wrap.addEventListener('click', (e) => {
+        const st = e.target.closest('[data-qty-step]');
+        if (!st) return;
+        e.preventDefault();
+        q = stepQty(q, Number(st.dataset.qtyStep));
+        inp.value = fmtNum(q);
+        out.textContent = gTxt(q);
+      });
+      inp.addEventListener('input', () => {
+        const v = parseNum(inp.value);
+        if (validQty(v)) { q = v; out.textContent = gTxt(q); }
+      });
+    },
+  });
+  if (res === 'del') { deleteEntry(iso, id); return; }
+  if (res !== 'save' || q === q0) return;
+  const cur = E.habitsFor(iso);
+  const entry = (cur.foods || []).find((x) => x.id === id);
+  if (!entry) return;
+  const g = r1(per * q);
+  const diff = r1(g - (entry.g || 0));
+  const total = r1(Math.max(0, (cur.protein || 0) + diff));
+  const updated = { ...entry, qty: q, g };
+  save(iso, { protein: total, foods: cur.foods.map((x) => (x.id === id ? updated : x)) },
+    `${entry.name}: ${multLabel(q)} ${q === 1 ? 'porção' : 'porções'}, ${fmtNum(g)} g. ${dayTxt(iso)}: ${fmtNum(total)} g`,
+    (c) => ({ protein: r1(Math.max(0, (c.protein || 0) - diff)), foods: (c.foods || []).map((x) => (x.id === id ? entry : x)) }));
+}
+
 function setRow(root, attr, value) {
   root.querySelectorAll(`[${attr}]`).forEach((b) => {
     const on = b.getAttribute(attr) === String(value);
     b.classList.toggle('on', on);
     b.setAttribute('aria-pressed', String(on));
+  });
+}
+
+// Mostra as porções escolhidas em todos os seletores (há um por refeição)
+function syncQty(root) {
+  root.querySelectorAll('[data-qty-ctl="pick"] [data-qty-input]').forEach((i) => {
+    if (i !== document.activeElement || parseNum(i.value) !== mult) i.value = fmtNum(mult);
   });
 }
 
@@ -313,11 +411,17 @@ const dayTxt = (iso) => (iso === todayISO() ? 'Hoje' : iso === addDays(todayISO(
 export function bindProtein(root, isoDefault) {
   root.addEventListener('click', (e) => {
     const iso = dayOfEl(e.target, isoDefault);
-    const m = e.target.closest('[data-mult]');
-    if (m) {
+    const st = e.target.closest('[data-qty-ctl="pick"] [data-qty-step]');
+    if (st) {
       e.preventDefault();
-      mult = Number(m.dataset.mult);
-      setRow(root, 'data-mult', m.dataset.mult);
+      mult = stepQty(mult, Number(st.dataset.qtyStep));
+      syncQty(root);
+      return;
+    }
+    const ed = e.target.closest('[data-food-edit]');
+    if (ed) {
+      e.preventDefault();
+      editEntry(iso, ed.dataset.foodEdit);
       return;
     }
     if (e.target.closest('[data-food-manage]')) { e.preventDefault(); manageFoods(); return; }
@@ -342,12 +446,7 @@ export function bindProtein(root, isoDefault) {
     const del = e.target.closest('[data-food-del]');
     if (del) {
       e.preventDefault();
-      const h = E.habitsFor(iso);
-      const it = (h.foods || []).find((x) => x.id === del.dataset.foodDel);
-      if (!it) return;
-      const total = r1(Math.max(0, (h.protein || 0) - (it.g || 0)));
-      save(iso, { protein: total, foods: (h.foods || []).filter((x) => x !== it) }, `Tirado: ${it.name}. ${dayTxt(iso)}: ${fmtNum(total)} g`,
-        (cur) => ({ protein: r1((cur.protein || 0) + (it.g || 0)), foods: [...(cur.foods || []), it].sort((a, b) => (a.at || 0) - (b.at || 0)) }));
+      deleteEntry(iso, del.dataset.foodDel);
       return;
     }
     const b = e.target.closest('[data-prot]');
@@ -357,6 +456,16 @@ export function bindProtein(root, isoDefault) {
       const total = r1((h.protein || 0) + Number(b.dataset.prot));
       save(iso, { protein: total }, `Proteína (${dayTxt(iso).toLowerCase()}): ${fmtNum(total)} g`);
     }
+  });
+  // Porções escritas à mão no seletor
+  root.addEventListener('input', (e) => {
+    const inp = e.target.closest('[data-qty-ctl="pick"] [data-qty-input]');
+    if (!inp) return;
+    const v = parseNum(inp.value);
+    if (validQty(v)) mult = v;
+  });
+  root.addEventListener('change', (e) => {
+    if (e.target.closest('[data-qty-ctl="pick"] [data-qty-input]')) syncQty(root);
   });
   root.addEventListener('submit', (e) => {
     const iso = dayOfEl(e.target, isoDefault);

@@ -85,9 +85,13 @@ function optionG(opt) {
 
 function dayInfo(iso) {
   const plan = E.planFor(iso);
-  const train = plan === 'supera' || plan === 'estadio';
+  // "Hoje não dá" (ou treino falhado) sem treino registado: dia sem treino
+  const note = E.dayNote(iso);
+  const skipped = !!note && (note.skip || note.missed) && !E.sessions().some((s) => s.date === iso);
+  const train = !skipped && (plan === 'supera' || plan === 'estadio');
   const wd = WEEKDAYS[new Date(isoToMs(iso)).getDay()];
-  const what = plan === 'supera' ? 'dia de Supera, treino a partir das 19h'
+  const what = skipped ? 'dia sem treino'
+    : plan === 'supera' ? 'dia de Supera, treino a partir das 19h'
     : plan === 'estadio' ? 'dia de Estádio, treino a partir das 19h'
     : plan === 'livre' ? 'dia de reposição (treinas se faltaste a algum treino)'
     : plan === 'repor' ? 'dá para repor um treino em falta; se não faltou nenhum, descanso'
