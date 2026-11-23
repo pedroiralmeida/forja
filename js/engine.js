@@ -1,5 +1,5 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import { BENCH_TARGET, PAUSED_EX,
+import { BENCH_TARGET, BENCH_NEXT_TOP, PAUSED_EX,
   EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, CORE_DAYS, EXTRA_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES, MISS_REASONS, APP_VERSION,
 } from './data.js';
 import { state, list, get, local, persistLocal } from './store.js';
@@ -767,6 +767,7 @@ function buildTopBackoff(slot, exId, deload) {
     return { sets: [...warmups(exId, w, false), ...sets], note: `Ontem fizeste supino pesado: hoje sem série principal, só ${slot.backSets} séries de ${slot.backReps} a ${fmtNum(w)} kg, leves (RPE 7). A série principal volta no próximo Supera A.`, target: `${slot.backSets}×${slot.backReps} leve` };
   }
   if (!deload && benchTargetDue(slot)) return buildBenchTarget(slot, exId);
+  if (!deload && benchNextTopDue(slot)) return buildBenchNextTop(slot, exId, BENCH_NEXT_TOP);
   const bt = BENCH_TARGET && slot.id === BENCH_TARGET.slot ? BENCH_TARGET : null;
   if (bt) note += ` Objetivo: ${fmtNum(bt.w)} kg × ${bt.reps}. Quando fizeres ${fmtNum(bt.triggerW)} kg × ${slot.topReps} com RPE ${fmtNum(bt.triggerRpe)} ou menos, o Supera A seguinte é o dia dos ${fmtNum(bt.w)} × ${bt.reps}.`;
   if (hist.length) {
@@ -799,6 +800,34 @@ function buildTopBackoff(slot, exId, deload) {
   }
   const firstW = sets[0].w;
   return { sets: [...warmups(exId, firstW, !deload), ...sets], note, target: deload ? `${sets.length}×${slot.backReps}` : `1×${slot.topReps} @ RPE ${slot.topRPE} + ${slot.backSets}×${slot.backReps}` };
+}
+
+// Série principal combinada (BENCH_NEXT_TOP): primeiro Supera A entre from e until, enquanto não houver
+// esse treino registado
+export function benchNextTopDue(slot, iso = todayISO()) {
+  const o = BENCH_NEXT_TOP;
+  if (!o || slot.id !== o.slot || iso < o.from || iso > o.until) return false;
+  return !sessions().some((s) => s.date >= o.from && s.exercises.some((e) => e.slotId === o.slot && workSets(e).some((x) => x.kind === 'top')));
+}
+
+function buildBenchNextTop(slot, exId, o) {
+  const back = backoffWeight(slot, exId, null);
+  // Aquecimento até ao peso de controlo: é ele que decide se a série principal vai com o peso combinado
+  const warm = [];
+  for (const [w, r] of [[S().bar, 10], [40, 5], [55, 3], [65, 1], [o.check, 1]]) {
+    const x = roundW(exId, w);
+    if (x < o.w && (!warm.length || x > warm[warm.length - 1].w)) warm.push(setObj('warm', x, r));
+  }
+  const sets = [
+    setObj('top', o.w, o.reps, { tReps: `${o.reps}`, tRPE: o.rpe }),
+    ...Array.from({ length: slot.backSets }, () => setObj('back', back, slot.backReps, { tReps: `${slot.backReps}`, tRPE: slot.backRPE, auto: true })),
+  ];
+  const note = `Hoje a série principal é ${fmtNum(o.w)} kg × ${o.reps}, perto do máximo (RPE ${fmtNum(o.rpe)}). `
+    + `Aquece até ${fmtNum(o.check)} kg × 1: se subir rápido e o cotovelo não doer, faz os ${fmtNum(o.w)} kg com alguém a ajudar (spotter). `
+    + `Se a 2.ª rep sair muito lenta, para aí: ${fmtNum(o.w)} × 2 também conta. `
+    + `Se os ${fmtNum(o.check)} kg saírem pesados ou o cotovelo der sinal, muda o peso da série principal para ${fmtNum(o.fallback)} kg. `
+    + `Descansa 4 a 5 minutos antes das ${slot.backSets} séries de ${slot.backReps}, que se ajustam ao que fizeres na principal. Marca o RPE com honestidade: é ele que decide o peso do próximo Supera A.`;
+  return { sets: [...warm, ...sets], note, target: `1×${o.reps} a ${fmtNum(o.w)} kg + ${slot.backSets}×${slot.backReps}` };
 }
 
 // Dia dos 80 × 3 (BENCH_TARGET): a série principal do último Supera A chegou ao gatilho e ainda não houve tentativa depois disso

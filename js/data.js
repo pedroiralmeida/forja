@@ -373,7 +373,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.35.1';
+export const APP_VERSION = '1.36.0';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -389,6 +389,11 @@ export const PAUSED_EX = {
 // Objetivo intermédio do supino: 80 kg × 3. Quando a série principal do Supera A chegar a triggerW × 3 com RPE
 // triggerRpe ou menos, o Supera A seguinte tem como série principal 80 × 3 (RPE 9, com spotter).
 export const BENCH_TARGET = { slot: 'A_bench', w: 80, reps: 3, rpe: 9, triggerW: 77.5, triggerRpe: 8 };
+
+// Série principal combinada para um Supera A, só uma vez: vale para o primeiro Supera A a partir de `from`
+// (até `until`) e deixa de valer quando esse treino ficar registado. check: último aquecimento, que decide;
+// fallback: peso se o aquecimento sair pesado ou o cotovelo doer.
+export const BENCH_NEXT_TOP = { slot: 'A_bench', from: '2026-11-24', until: '2026-11-30', w: 75, reps: 3, rpe: 9, check: 70, fallback: 72.5 };
 
 export const MU_STAGES = [
   {
