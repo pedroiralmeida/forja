@@ -205,7 +205,7 @@ export const EX = {
     cues: ['Peito para fora, puxa os cotovelos para trás.', 'Pausa curta com as omoplatas juntas.'],
   },
   row_db: { name: 'One-arm dumbbell row', kind: 'dumbbell', tier: 'accessory', group: 'costas', alts: ['row', 'row_chest'], cues: ['Apoio num banco, costas direitas.', 'Puxa o cotovelo em direção à anca.'] },
-  row_chest: { name: 'Chest-supported row', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['row', 'row_db'], cues: ['Peito encostado ao apoio; não balances.'] },
+  row_chest: { name: 'Chest-supported row', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['row', 'row_db'], cues: ['No Supera é a máquina de remada com apoio para o peito, que fazes um braço de cada vez. As reps contam por braço.', 'Peito encostado ao apoio; não balances.'] },
   pulldown: { name: 'Lat pulldown', kind: 'machine', tier: 'accessory', group: 'costas', alts: ['pullup', 'row'], cues: ['Puxa a barra até ao peito, cotovelos para baixo.', 'Controla a subida.'] },
   face_pull: {
     name: 'Face pulls', kind: 'machine', tier: 'accessory', group: 'ombros', note: 'corda puxada à altura dos olhos', alts: ['rear_delt'],
@@ -373,7 +373,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.36.1';
+export const APP_VERSION = '1.36.2';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
