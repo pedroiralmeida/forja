@@ -10,6 +10,7 @@ export const EX = {
       'Ombros para baixo, longe das orelhas, do primeiro ao último rep. Ao tirar a barra do suporte, não deixes os ombros subir: tira-a com os braços, mantendo as omoplatas presas no banco.',
       'Pés firmes, com os calcanhares sempre no chão: leva-os para trás só até onde os calcanhares ainda assentam (mais ou menos debaixo dos joelhos).',
       'Leg drive: empurra o chão para trás, como se quisesses deslizar no banco em direção à cabeça. O rabo fica no banco.',
+      'Arco: podes arquear mais as costas para levantar mais peso, desde que o rabo continue sempre a tocar no banco. Leva o peito para cima, em direção à barra: o arco vem das costas de cima e do meio, e assim a barra percorre menos caminho. Se a lombar começar a apertar ou a doer, arqueia menos.',
       'Cotovelos para dentro: na descida ficam a cerca de 45° do tronco e apontam um pouco para os pés, nem colados ao corpo nem abertos em T à altura dos ombros. Ajuda tentar "partir a barra ao meio", torcendo as mãos para fora sem as mexer.',
       'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
       'Pulso direito, com a barra na base da palma e não nos dedos. Nas séries pesadas usa as fitas de pulso.',
@@ -22,6 +23,7 @@ export const EX = {
     cues: [
       'A barra fica completamente parada no peito durante 2 segundos.',
       'Mantém a tensão nas costas durante a pausa: não "afundes" no banco.',
+      'Mesmo arco do bench press: costas arqueadas e peito para cima, com o rabo sempre a tocar no banco, também durante a pausa.',
       'Constrói força a sair do peito, que é onde o 100 kg costuma falhar.',
     ],
   },
@@ -371,7 +373,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.34.0';
+export const APP_VERSION = '1.34.1';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
