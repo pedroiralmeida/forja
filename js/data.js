@@ -6,15 +6,13 @@ export const EX = {
   bench: {
     name: 'Bench press', kind: 'barbell', tier: 'main', group: 'peito',
     cues: [
-      'Omoplatas juntas e para baixo antes de tirar a barra.',
-      'Ombros para baixo, longe das orelhas, do primeiro ao último rep. Ao tirar a barra do suporte, não deixes os ombros subir: tira-a com os braços, mantendo as omoplatas presas no banco.',
-      'Pés firmes, com os calcanhares sempre no chão: leva-os para trás só até onde os calcanhares ainda assentam (mais ou menos debaixo dos joelhos).',
-      'Leg drive: empurra o chão para trás, como se quisesses deslizar no banco em direção à cabeça. O rabo fica no banco.',
-      'Arco: podes arquear mais as costas para levantar mais peso, desde que o rabo continue sempre a tocar no banco. Leva o peito para cima, em direção à barra: o arco vem das costas de cima e do meio, e assim a barra percorre menos caminho. Se a lombar começar a apertar ou a doer, arqueia menos.',
-      'Cotovelos para dentro: na descida ficam a cerca de 45° do tronco e apontam um pouco para os pés, nem colados ao corpo nem abertos em T à altura dos ombros. Ajuda tentar "partir a barra ao meio", torcendo as mãos para fora sem as mexer.',
-      'Antebraços na vertical em baixo; a barra toca na parte de baixo do peito.',
-      'Pulso direito, com a barra na base da palma e não nos dedos. Nas séries pesadas usa as fitas de pulso.',
-      'Desce controlado, sobe com intenção. Nas séries pesadas pede a alguém que te ajude (spotter): a tirar a barra e a ficar atrás de ti durante a série.',
+      'Arco, 1.º passo: junta as omoplatas e puxa-as para baixo, como se as metesses nos bolsos de trás. Encosta bem a parte de cima das costas ao banco e não as deixes subir ao tirar a barra.',
+      'Arco, 2.º passo: leva o peito na direção da barra, a pensar em subir o esterno (o osso no meio do peito).',
+      'Arco, 3.º passo: só no fim é que puxas os pés para trás e fazes força com as pernas, para segurar essa posição.',
+      'O arco tem de ser consequência do peito subir, e não de empurrares a barriga para cima.',
+      'Cotovelos a cerca de 45° do tronco na descida, nem colados ao corpo nem abertos em T. Ajuda tentar "partir a barra ao meio".',
+      'Desce controlado, cerca de 1 s em todas as reps (também nas últimas), e sobe com intenção.',
+      'Barra na base da palma, com o pulso direito.',
     ],
   },
   bench_paused: {
@@ -23,7 +21,7 @@ export const EX = {
     cues: [
       'A barra fica completamente parada no peito durante 2 segundos.',
       'Mantém a tensão nas costas durante a pausa: não "afundes" no banco.',
-      'Mesmo arco do bench press: costas arqueadas e peito para cima, com o rabo sempre a tocar no banco, também durante a pausa.',
+      'Mesmo arco do bench press (omoplatas, depois peito, depois pernas), e mantém-no durante a pausa.',
       'Constrói força a sair do peito, que é onde o 100 kg costuma falhar.',
     ],
   },
@@ -372,7 +370,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.36.3';
+export const APP_VERSION = '1.36.4';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -538,7 +536,7 @@ export const GUIDE = [
     id: 'supino',
     title: 'Técnica de supino',
     body: `
-<p>A técnica dá quilos sem precisares de ganhar força. Antes de tirar a barra: omoplatas juntas e puxadas para baixo, arco moderado na zona das costas (o rabo fica no banco) e pés bem firmes.</p>
+<p>A técnica dá quilos sem precisares de ganhar força. Antes de tirar a barra, monta o arco por esta ordem: omoplatas juntas e puxadas para baixo, depois o peito para cima, e só no fim os pés para trás e a força nas pernas. O arco vem do peito a subir, e não da barriga.</p>
 <p>A pegada deve deixar os antebraços na vertical quando a barra está no peito. A barra desce em direção à parte de baixo do peito e sobe ligeiramente para trás, até ficar por cima dos ombros.</p>
 <p>O <strong>leg drive</strong> é empurrar o chão com os pés durante a subida, sem levantar o rabo. Transmite força das pernas para o tronco. Calcanhares sempre no chão: os pés vão para trás só até onde os calcanhares ainda assentam, e empurras o chão para trás (em direção à cabeça), não para cima.</p>
 <p>Filma-te de lado de vez em quando. Nas séries pesadas pede a alguém que te ajude (spotter).</p>`,
