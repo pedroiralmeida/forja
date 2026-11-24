@@ -203,7 +203,7 @@ export function nextDay(place = 'supera', iso = todayISO()) {
 
 // Próximos dias com treino (a partir de amanhã): para cada dia do Supera ou do Estádio no plano,
 // o treino que calha seguindo a rotação; o sábado de reposição aparece com o estado da semana.
-// Dias de reposição: 'livre' (obrigatório se faltou algum treino) e 'repor' (opcional, só se faltou)
+// Dias de reposição (sábado e domingo): servem para repor o treino em falta, num ou noutro ('repor' é o nome antigo)
 export const isFlex = (plan) => plan === 'livre' || plan === 'repor';
 
 export function upcomingPlan(iso = todayISO(), n = 7) {
@@ -246,7 +246,10 @@ export function weekPlanOn(iso = todayISO()) {
 export function basePlanFor(iso = todayISO()) {
   const dow = new Date(isoToMs(iso)).getDay();
   const plan = weekPlanOn(iso);
-  return plan[dow] || plan[String(dow)] || 'descanso';
+  const p = plan[dow] || plan[String(dow)] || 'descanso';
+  // 'repor' (antiga reposição opcional) conta como dia de reposição normal: a semana tem 4 treinos
+  // e o que faltar repõe-se ao sábado ou ao domingo, conforme der jeito.
+  return p === 'repor' ? 'livre' : p;
 }
 
 // Onde treinar nesse dia: o plano semanal, com as trocas entre Supera e Estádio (ver weekSchedule).
@@ -254,7 +257,8 @@ export function basePlanFor(iso = todayISO()) {
 export function planFor(iso = todayISO()) {
   const base = basePlanFor(iso);
   if (base !== 'supera' && base !== 'estadio') return base;
-  if (iso < todayISO()) return placeTrainedOn(iso) || base;
+  // Dia falhado: o sítio que o plano tinha quando o marcaste (pode ter sido trocado)
+  if (iso < todayISO()) return placeTrainedOn(iso) || ((dayNote(iso) || {}).plan === 'supera' || (dayNote(iso) || {}).plan === 'estadio' ? dayNote(iso).plan : base);
   const sch = weekSchedule(weekStart(iso));
   return sch[iso] || base;
 }
@@ -453,18 +457,19 @@ export function weekStatus(iso = todayISO()) {
     days.push({ date: d, plan: p, status, sessions: daySessions.map((s) => s.id), note: note || null });
   }
   const done = ss.length + unlogged;
-  // Em dívida até agora: dias de treino que já passaram (ou marcados "hoje não dá") menos treinos feitos, por sítio
-  const owed = { supera: 0, estadio: 0 };
-  for (const d of days) if (owed[d.plan] !== undefined && (d.status === 'falhado' || d.status === 'feito')) owed[d.plan]++;
-  for (const k of Object.keys(owed)) owed[k] = Math.max(0, owed[k] - byPlace[k]);
   const deficit = { supera: Math.max(0, planned.supera - byPlace.supera), estadio: Math.max(0, planned.estadio - byPlace.estadio) };
+  // Em dívida: o que falta por sítio e já não cabe nos dias de treino que ainda sobram (com as trocas da semana),
+  // ou seja, o que fica para o fim de semana
+  const left = { supera: 0, estadio: 0 };
+  for (const d of days) if (d.status === 'por-fazer' && left[d.plan] !== undefined) left[d.plan]++;
+  const owed = { supera: Math.max(0, deficit.supera - left.supera), estadio: Math.max(0, deficit.estadio - left.estadio) };
   const missed = days.filter((d) => d.status === 'falhado');
   const remainingPlanned = days.filter((d) => d.status === 'por-fazer' && (d.plan === 'supera' || d.plan === 'estadio')).length;
   return { week: ws, plan, planned, target, done, byPlace, deficit, owed, missed, days, remainingPlanned, extra: Math.max(0, done - target) };
 }
 
-// Dias de reposição (sábado e domingo): obrigatório se a semana ainda não chegou aos treinos obrigatórios,
-// opcional se já chegou. Sugere o sítio que ficou a faltar (se faltarem os dois, até ao primeiro muscle-up
+// Dias de reposição (sábado e domingo): se a semana ainda não chegou aos treinos obrigatórios, repõe-se
+// num deles (o que der mais jeito); se já chegou, são opcionais. Sugere o sítio que ficou a faltar (se faltarem os dois, até ao primeiro muscle-up
 // o Estádio tem prioridade). Se não faltar nenhum, o treino é extra e sugere o Supera: o Supera C (ou o teste
 // de supino) não junta mais trabalho de barra aos dois treinos do Estádio, o que poupa os cotovelos.
 export function suggestPlace(iso = todayISO()) {

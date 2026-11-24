@@ -146,7 +146,7 @@ export function renderSettings(root) {
         <div class="field"><span>Plano semanal</span>
           <div class="week-plan">${[1, 2, 3, 4, 5, 6, 0].map((d) => `
             <label class="wp-row"><span>${WEEKDAYS[d]}</span>
-              <select name="plan_${d}" class="input">${PLAN_TYPES.map((t) => `<option value="${t.value}" ${(S.weekPlan || {})[d] === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}</select>
+              <select name="plan_${d}" class="input">${PLAN_TYPES.map((t) => `<option value="${t.value}" ${((S.weekPlan || {})[d] === 'repor' ? 'livre' : (S.weekPlan || {})[d]) === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}</select>
             </label>`).join('')}
           </div>
           <p class="muted small">Supera: bench press e máquinas (rotação A, B, C). Estádio: muscle-up, pull-ups e straight bar dips (rotação E1, E2).</p>

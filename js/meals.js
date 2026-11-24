@@ -93,8 +93,7 @@ function dayInfo(iso) {
   const what = skipped ? 'dia sem treino'
     : plan === 'supera' ? 'dia de Supera, treino a partir das 19h'
     : plan === 'estadio' ? 'dia de Estádio, treino a partir das 19h'
-    : plan === 'livre' ? 'dia de reposição (treinas se faltaste a algum treino)'
-    : plan === 'repor' ? 'dá para repor um treino em falta; se não faltou nenhum, descanso'
+    : plan === 'livre' || plan === 'repor' ? 'dia de reposição (se faltaste a algum treino, repões hoje ou no outro dia do fim de semana)'
     : plan === 'corrida' ? 'dia de corrida: come mais hidratos (arroz, massa, pão)'
     : 'dia de descanso';
   return {

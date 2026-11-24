@@ -367,13 +367,12 @@ export const PLACES = {
 export const PLAN_TYPES = [
   { value: 'supera', label: 'Supera' },
   { value: 'estadio', label: 'Estádio' },
-  { value: 'livre', label: 'Reposição (obrigatório só se faltaste)' },
-  { value: 'repor', label: 'Reposição opcional (só se faltaste; senão descanso)' },
+  { value: 'livre', label: 'Reposição (se faltaste a algum treino; senão opcional)' },
   { value: 'corrida', label: 'Corrida' },
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.36.2';
+export const APP_VERSION = '1.36.3';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -488,7 +487,7 @@ export const ALL_PLATES = [25, 20, 15, 10, 5, 2.5, 2, 1.25, 1, 0.5];
 export const DEFAULT_SETTINGS = {
   onboarded: false,
   daysPerWeek: 3,
-  weekPlan: { 0: 'repor', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'descanso', 6: 'livre' },
+  weekPlan: { 0: 'livre', 1: 'supera', 2: 'estadio', 3: 'supera', 4: 'estadio', 5: 'descanso', 6: 'livre' },
   bar: 20,
   plates: [25, 20, 15, 10, 5, 2.5, 1.25],
   dbStep: 2,
@@ -522,11 +521,11 @@ export const GUIDE = [
     title: 'Como funciona o plano',
     body: `
 <p>Há dois sítios. No <strong>Supera</strong> fazes o bench press e o resto com máquinas e halteres. No <strong>Estádio Universitário</strong> fazes tudo o que precisa de barra: muscle-up, pull-ups e straight bar dips reta. O plano semanal (que mudas em Mais → Definições) diz-te onde treinas em cada dia.</p>
-<p><strong>A semana tem 4 treinos obrigatórios:</strong> Supera à segunda e à quarta, Estádio à terça e à quinta. A sexta é de descanso (há o grupo de jovens). O domingo serve para repor um treino em falta, se ainda faltar algum; senão é descanso. Ao domingo e nos feriados o Supera só abre das 9h às 14h.</p>
-<p><strong>O sábado depende da semana.</strong> Se fizeste os 4 treinos, é opcional: treinas se te apetecer, ou descansas. Se faltaste a algum, é obrigatório e a app diz-te onde ir (o sítio que ficou a faltar). Ao sábado o Supera abre das 9h às 20h30.</p>
+<p><strong>A semana tem 4 treinos obrigatórios:</strong> Supera à segunda e à quarta, Estádio à terça e à quinta. A sexta é de descanso (há o grupo de jovens).</p>
+<p><strong>O fim de semana depende da semana.</strong> Se faltaste a algum treino, repões no sábado ou no domingo, no dia que der mais jeito, e a app diz-te onde ir (o sítio que ficou a faltar). Se fizeste os 4, é opcional: treinas se te apetecer, ou descansas. Ao sábado o Supera abre das 9h às 20h30; ao domingo e nos feriados só das 9h às 14h.</p>
 <p><strong>Se faltares a um treino</strong>, não o perdes: a app segue sempre a ordem e retoma onde ficaste. Regista o motivo quando a app perguntar; fica no histórico. Se faltares a dois na mesma semana, repões um no sábado e outro no domingo: nunca faças dois treinos no mesmo dia para compensar. Depois de uma pausa longa, a app baixa um pouco os pesos do supino.</p>
-<p><strong>Ordem dos treinos.</strong> No Supera alternas o A (pesado) e o B (volume). O C (paused bench press) é o treino extra: aparece quando já fizeste o A e o B nessa semana, por exemplo num sábado opcional. No Estádio alternas o 1 e o 2.</p>
-<p><strong>Sábado opcional: onde?</strong> Enquanto não tiveres o primeiro muscle-up, a app sugere o Estádio (aprender uma técnica pede repetição frequente). Depois, sugere o Supera.</p>
+<p><strong>Ordem dos treinos.</strong> No Supera alternas o A (pesado) e o B (volume). O C (paused bench press) é o treino extra: aparece quando já fizeste o A e o B nessa semana, por exemplo num fim de semana em que já não tens nada para repor. No Estádio alternas o 1 e o 2.</p>
+<p><strong>Fim de semana opcional: onde?</strong> Enquanto não tiveres o primeiro muscle-up, a app sugere o Estádio (aprender uma técnica pede repetição frequente). Depois, sugere o Supera.</p>
 <p><strong>Dias com pouco tempo:</strong> se só tiveres 20 minutos, vai ao Estádio fazer apenas o bloco de muscle-up. É melhor do que saltar o treino.</p>
 <p><strong>Supera A, pesado.</strong> Uma série principal de bench press de 3 reps a RPE 8 e depois 3 séries de 5, mais leves. As séries seguintes ajustam-se ao que fizeste na principal.</p>
 <p><strong>Supera B, volume.</strong> 4 séries de 6 a 8 reps. Quando fizeres 8 reps em todas, a app sobe 2,5 kg.</p>

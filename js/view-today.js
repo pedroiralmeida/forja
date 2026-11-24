@@ -142,7 +142,7 @@ function weekDots(st, today) {
     const t = d.plan === 'supera' || d.plan === 'estadio';
     const kind = d.status === 'feito' || d.status === 'extra' ? 'done' : d.status === 'falhado' ? 'miss' : t || E.isFlex(d.plan) ? 'todo' : 'rest';
     const letter = WEEKDAYS[new Date(isoToMs(d.date)).getDay()].slice(0, 3);
-    const what = d.plan === 'livre' ? 'reposição' : d.plan === 'repor' ? 'reposição opcional' : PLACE_NAME[d.plan] || d.plan;
+    const what = E.isFlex(d.plan) ? 'reposição' : PLACE_NAME[d.plan] || d.plan;
     return `<span class="wd ${kind} ${d.date === today ? 'today' : ''} ${E.isFlex(d.plan) ? 'flex' : ''}" title="${esc(`${fmtDate(d.date)}: ${what}, ${lbl[d.status] || ''}`)}"><i>${letter}</i></span>`;
   }).join('')}</div>`;
 }
@@ -192,7 +192,7 @@ function upcomingList(up, today, shown) {
   return `<ul class="up-list">${up.map((u) => {
     const what = u.place
       ? `<span class="up-what">${esc(E.dayTitle(u.day))}${u.swapped ? ' <span class="tag">trocado</span>' : ''}${u.rain && u.rain.p >= 40 ? ` <span class="muted small">chuva ${u.rain.p}%</span>` : ''}</span>`
-      : `<span class="up-what muted">${u.plan === 'repor' ? 'Reposição opcional, se ainda faltar algum treino' : 'Reposição, só se faltares a algum treino'}</span>`;
+      : `<span class="up-what muted">Reposição, se faltaste a algum treino (sábado ou domingo)</span>`;
     const inner = `<span class="up-day">${esc(dayLabel(u.date, today))} <span class="muted">${esc(fmtDate(u.date))}</span></span>${what}`;
     return `<li>${u.place
       ? `<button class="up-row ${shown && shown.date === u.date ? 'on' : ''}" data-preview="${u.place}:${u.day}:${u.date}">${inner}</button>`
@@ -289,23 +289,28 @@ export function renderToday(root) {
     const ph = E.placeHours(sug.place, today);
     const rainToday = sug.place === 'estadio' && E.rainLikely(today) ? ` Há previsão de chuva no Estádio (${E.rainOn(today).p}%): se chover, repõe no Supera.` : '';
     const hoursNote = (ph && !ph.always ? (ph.open ? ` O ${PLACE_NAME[sug.place]} hoje abre das ${ph.from} às ${ph.to}.` : ` O ${PLACE_NAME[sug.place]} hoje está fechado: repõe no Estádio.`) : '') + rainToday;
-    if (sug.mandatory && plan === 'repor') {
-      html += `<section class="banner must-banner"><div><strong>Hoje dá para repor</strong><p>Esta semana fizeste ${w.done} de ${w.target} treinos. Se puderes, repõe hoje no ${PLACE_NAME[sug.place]}.${hoursNote} É opcional; se não der, descansa.${sug.short > 1 ? ' Faz só um treino: não faças dois no mesmo dia para compensar.' : ''}</p></div></section>`;
+    if (sug.mandatory && sug.short <= laterFlex) {
+      // Ainda há outro dia de reposição esta semana: repõe hoje ou nesse dia, como der mais jeito
+      const nextFlex = w.days.find((d) => E.isFlex(d.plan) && d.date > today).date;
+      const when = nextFlex === addDays(today, 1) ? `amanhã (${weekdayName(nextFlex)})` : weekdayName(nextFlex);
+      const ph2 = E.placeHours(sug.place, nextFlex);
+      const nextHours = ph2 && !ph2.always ? (ph2.open ? ` Ao ${weekdayName(nextFlex)} o ${PLACE_NAME[sug.place]} só abre das ${ph2.from} às ${ph2.to}.` : ` Ao ${weekdayName(nextFlex)} o ${PLACE_NAME[sug.place]} está fechado.`) : '';
+      html += `<section class="banner must-banner"><div><strong>Hoje dá para repor</strong><p>Esta semana fizeste ${w.done} de ${w.target} treinos. ${sug.short > 1 ? `Faltam ${sug.short}: repõe um hoje no ${PLACE_NAME[sug.place]} e o outro ${when}.` : `Repõe no ${PLACE_NAME[sug.place]} hoje ou ${when}, como der mais jeito.`}${hoursNote}${sug.short > 1 ? ' Um treino por dia: não faças dois no mesmo dia para compensar.' : nextHours}</p></div></section>`;
     } else if (sug.mandatory) {
       const lost = sug.short - 1;
       const later = Math.min(lost, laterFlex);
       const gone = lost - later;
-      html += `<section class="banner must-banner"><div><strong>Hoje é obrigatório</strong><p>Esta semana fizeste ${w.done} de ${w.target} treinos. Hoje repões no ${PLACE_NAME[sug.place]}.${hoursNote}${later > 0 && gone === 0 ? ' O outro treino em falta pode ficar para amanhã.' : ''}${later > 0 && gone > 0 ? ` Outro pode ficar para amanhã; ${gone === 1 ? 'o que sobra fica' : `os ${gone} que sobram ficam`} por esta semana.` : ''}${later === 0 && gone > 0 ? ` ${gone === 1 ? 'O outro treino em falta fica' : `Os outros ${gone} treinos em falta ficam`} por esta semana.` : ''}${lost > 0 ? ' Não faças dois treinos no mesmo dia para compensar.' : ''}</p></div></section>`;
-    } else if (plan === 'repor') {
-      html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Já fizeste os ${w.target} treinos desta semana${w.extra ? ` e mais ${w.extra}` : ''}, por isso hoje não há nada para repor. Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
+      html += `<section class="banner must-banner"><div><strong>${laterFlex ? 'Hoje é obrigatório' : 'Hoje é o último dia para repor'}</strong><p>Esta semana fizeste ${w.done} de ${w.target} treinos. Hoje repões no ${PLACE_NAME[sug.place]}.${hoursNote}${later > 0 && gone === 0 ? ' O outro treino em falta pode ficar para amanhã.' : ''}${later > 0 && gone > 0 ? ` Outro pode ficar para amanhã; ${gone === 1 ? 'o que sobra fica' : `os ${gone} que sobram ficam`} por esta semana.` : ''}${later === 0 && gone > 0 ? ` ${gone === 1 ? 'O outro treino em falta fica' : `Os outros ${gone} treinos em falta ficam`} por esta semana.` : ''}${lost > 0 ? ' Não faças dois treinos no mesmo dia para compensar.' : ''}</p></div></section>`;
     } else {
       html += `<section class="banner"><div><strong>Hoje é opcional</strong><p>Já fizeste os ${w.target} treinos desta semana${w.extra ? ` e mais ${w.extra}` : ''}. Se te apetecer, ${PLACE_NAME[sug.place]}${sug.place === 'supera' ? ' (o C, treino extra)' : ''}; se não, descansa ou corre. As duas opções estão certas.</p></div><a class="btn secondary small" href="#/corpo">Registar corrida</a></section>`;
     }
   } else if (!active && plan === 'descanso') {
     const st = E.weekStatus(today);
     const tomorrow = addDays(today, 1);
-    const satMust = E.planFor(tomorrow) === 'livre' && st.done < st.target && tomorrow <= addDays(st.week, 6);
-    html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano.${satMust ? ` Amanhã é obrigatório: falta${st.target - st.done > 1 ? 'm' : ''} ${st.target - st.done} treino${st.target - st.done > 1 ? 's' : ''} esta semana.` : ''} Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
+    const short = st.target - st.done;
+    const flexLeft = st.days.filter((d) => E.isFlex(d.plan) && d.date > today).length;
+    const weekendMust = short > 0 && flexLeft > 0 && E.isFlex(E.planFor(tomorrow)) && tomorrow <= addDays(st.week, 6);
+    html += `<section class="banner"><div><strong>Dia de descanso</strong><p>Recuperar também faz parte do plano.${weekendMust ? ` Falta${short > 1 ? 'm' : ''} ${short} treino${short > 1 ? 's' : ''} esta semana: repões ${flexLeft >= 2 ? 'no fim de semana, no sábado ou no domingo, como der mais jeito' : 'amanhã'}.` : ''} Se quiseres treinar na mesma, escolhe abaixo.</p></div></section>`;
   }
 
   // Dia trocado (Supera ↔ Estádio) e chuva no Estádio
@@ -407,7 +412,7 @@ export function renderToday(root) {
       if (left <= 0 || !def.length) return '';
       const flex = st.days.filter((d) => E.isFlex(d.plan) && d.date >= today).length;
       const owed = def.reduce((a, [, n]) => a + n, 0);
-      const when = flex >= 2 ? 'O fim de semana' : flex === 1 ? (st.days.find((d) => E.isFlex(d.plan) && d.date >= today).plan === 'repor' ? 'O domingo' : 'O sábado') : '';
+      const when = flex >= 2 ? 'O fim de semana (sábado ou domingo)' : flex === 1 ? `O ${weekdayName(st.days.find((d) => E.isFlex(d.plan) && d.date >= today).date)}` : '';
       return `<p class="muted small">Falta repor: ${def.map(([pl, n]) => `${n} no ${PLACE_NAME[pl]}`).join(' e ')}.${flex ? (owed > flex ? ` ${when} repõe ${flex === 1 ? 'um' : flex}; o resto fica por esta semana.` : ` ${when} serve para isso.`) : ''}</p>`;
     })()}
     ${goalMeters(E.goals(), true)}
@@ -567,7 +572,7 @@ export function renderOnboarding(root) {
         <label class="field"><span>Peso corporal</span><span class="with-unit"><input name="bw" inputmode="decimal" value="${fmtNum(b.bw)}" class="input num"><i>kg</i></span></label>
       </div>
       <div class="field"><span>O ginásio tem discos de 1,25 kg?</span>${segmented('small', [{ value: 'yes', label: 'Sim' }, { value: 'no', label: 'Não, o mais pequeno é 2,5 kg' }], S.plates.includes(1.25) ? 'yes' : 'no')}</div>
-      <p class="muted small">Plano semanal por defeito: 4 treinos (Supera à segunda e quarta, Estádio à terça e quinta). O sábado é obrigatório se faltares a algum, senão é opcional. Sexta e domingo de descanso. Mudas em Mais → Definições.</p>
+      <p class="muted small">Plano semanal por defeito: 4 treinos (Supera à segunda e quarta, Estádio à terça e quinta). Se faltares a algum, repões no sábado ou no domingo; senão o fim de semana é opcional. Sexta de descanso. Mudas em Mais → Definições.</p>
       <button class="btn primary block big">Começar</button>
       <p class="muted center small">Já usas a Forja noutro dispositivo? <a href="#/mais/sync">Liga a sincronização</a> em vez de recomeçar.</p>
     </form>
