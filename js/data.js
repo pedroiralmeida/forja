@@ -76,15 +76,10 @@ export const EX = {
     name: 'Explosive pull-ups', kind: 'bodyweight', tier: 'skill', group: 'costas',
     note: 'o mais alto possível, peito à barra',
     cues: [
-      'Começa parado, pendurado com os braços esticados e os ombros já puxados para baixo. Sem balanço para "ganhar embalo".',
-      'Puxa o mais depressa e com o máximo de força que conseguires, desde baixo: a ideia é a barra chegar ao peito ou mais abaixo.',
-      'Puxa os cotovelos para baixo e para trás até ficarem junto às costelas (não abertos para os lados à altura dos ombros) e leva o peito à barra, inclinando ligeiramente o tronco para trás no topo.',
-      'Puxa sem parar até ao topo: o arranque sozinho não te leva lá acima. Continua a puxar, com os cotovelos a descer até às costelas, até o peito chegar à barra. O corpo ainda deve ir a subir quando o queixo passa a barra.',
-      'Corpo direito e firme, nunca na vertical: pernas juntas e um pouco à frente (corpo ligeiramente "côncavo"), o que já o inclina um pouco para trás. À medida que sobes, a inclinação aumenta, para o peito ir à barra. A inclinação vem de levar os cotovelos para trás, não de dobrar as costas nem de atirar a cabeça para trás.',
-      'Desce controlado até aos braços esticados, para um segundo e faz a rep seguinte do zero.',
-      'Poucas reps e todas rápidas: se uma rep sair lenta ou mais baixa, a série acabou. Descansa 2 a 3 minutos entre séries.',
-      'A forma acerta-se antes: nas pull-ups do aquecimento (normais e controladas) e nas australian pull-ups. Aqui todas as reps são explosivas, desde a primeira: reps normais antes, na mesma série, gastavam a força e as explosivas saíam mais baixas.',
-      'Olha em frente e leva o peito à barra: não estiques o pescoço nem inclines a cabeça para trás para o queixo passar.',
+      'Começa parado, com os braços esticados: ombros para baixo, pernas juntas e pés um pouco à frente. Sem balanço.',
+      'Puxa com toda a força e sem parar, a levar a barra para a barriga: os cotovelos descem e acabam atrás do corpo, junto às costelas.',
+      'Ao subir, inclina o corpo todo para trás, para ser o peito a chegar à barra (não atires só a cabeça para trás).',
+      'Desce controlado até aos braços esticados e faz a seguinte do zero. Se uma rep sair lenta ou mais baixa, a série acabou. Descansa 2 a 3 min entre séries.',
     ],
   },
   waist_pull: {
@@ -370,7 +365,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.36.5';
+export const APP_VERSION = '1.36.6';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 

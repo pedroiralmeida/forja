@@ -1097,7 +1097,7 @@ function applyEstadioOneOff(day, exercises, o) {
   const out = exercises.map((e) => {
     if (e.ex !== 'explosive_pull' || !o.explosiveBand) return e;
     const sets = e.sets.map((x) => ({ ...x, band: o.explosiveBand }));
-    const extra = `Hoje com a banda de ${o.explosiveBand}, para treinar a forma: cotovelos para baixo e para trás até às costelas e peito à barra em todas as reps. Se chegares lá com muita folga, troca para a de ${o.lighterBand}.`;
+    const extra = `Hoje com a banda de ${o.explosiveBand}, para treinar o caminho: em cada rep a barra tem de tocar no peito, abaixo das clavículas (vê o lembrete). Se já tocar com folga, troca para a de ${o.lighterBand}.`;
     return { ...e, sets, note: e.note ? `${e.note} ${extra}` : extra, prescribed: prescribedOf(sets) };
   });
   if (o.pullMax) {
