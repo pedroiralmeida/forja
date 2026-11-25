@@ -1,5 +1,5 @@
 // Cálculos: 1RM estimado, progressão, prescrições, marcos, objetivos, peso corporal
-import { BENCH_TARGET, BENCH_NEXT_TOP, PAUSED_EX,
+import { BENCH_TARGET, BENCH_NEXT_TOP, PAUSED_EX, ESTADIO_ONE_OFF,
   EX, DAYS, MU_STAGES, MILESTONES, BAND_LEVELS, PLACE_DAYS, CORE_DAYS, EXTRA_DAYS, PLACES, STOCK_KINDS, PURCHASE_CATEGORIES, MISS_REASONS, APP_VERSION,
 } from './data.js';
 import { state, list, get, local, persistLocal } from './store.js';
@@ -1087,8 +1087,28 @@ export function pausedInfo(ex, iso = todayISO()) {
 
 export function buildSession(day, { deload = false } = {}) {
   const tpl = DAYS[day];
-  const exercises = tpl.slots.filter((slot) => !pausedInfo(slot.ex)).flatMap((slot) => buildEntry(slot, deload));
+  let exercises = tpl.slots.filter((slot) => !pausedInfo(slot.ex)).flatMap((slot) => buildEntry(slot, deload));
+  if (tpl.place === 'estadio' && ESTADIO_ONE_OFF && ESTADIO_ONE_OFF.date === todayISO()) exercises = applyEstadioOneOff(day, exercises, ESTADIO_ONE_OFF);
   return { id: uid(), day, date: todayISO(), startedAt: now(), deload, notes: '', exercises };
+}
+
+// Ajuste pontual de um treino do Estádio (ESTADIO_ONE_OFF): série de pull-ups no início e explosive pull-ups com banda
+function applyEstadioOneOff(day, exercises, o) {
+  const out = exercises.map((e) => {
+    if (e.ex !== 'explosive_pull' || !o.explosiveBand) return e;
+    const sets = e.sets.map((x) => ({ ...x, band: o.explosiveBand }));
+    const extra = `Hoje com a banda de ${o.explosiveBand}, para treinar a forma: cotovelos para baixo e para trás até às costelas e peito à barra em todas as reps. Se chegares lá com muita folga, troca para a de ${o.lighterBand}.`;
+    return { ...e, sets, note: e.note ? `${e.note} ${extra}` : extra, prescribed: prescribedOf(sets) };
+  });
+  if (o.pullMax) {
+    const sets = [setObj('work', null, null, { tReps: `até ${o.pullMax}` })];
+    out.unshift({
+      key: `${day}_pullmax`, slotId: `${day}_pullmax`, ex: 'pullup', mode: 'reps', target: `1×até ${o.pullMax}`,
+      note: `Só hoje, a teu pedido. Depois de aquecer (pulsos, ombros e 2 ou 3 pull-ups fáceis), 1 série de pull-ups até ao limite da boa forma, no máximo ${o.pullMax}. Conta só as reps com os braços esticados em baixo e o queixo acima da barra. Para quando a seguinte já não sairia completa: não forces uma rep a falhar a meio. Esta semana a regra dos cotovelos pede 2 reps na reserva; se o cotovelo passar de 2 em 10, para logo. Descansa 3 a 4 min antes do resto.`,
+      sets, prescribed: prescribedOf(sets),
+    });
+  }
+  return out;
 }
 
 export function slotById(slotId) {

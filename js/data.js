@@ -370,7 +370,7 @@ export const PLAN_TYPES = [
   { value: 'descanso', label: 'Descanso' },
 ];
 
-export const APP_VERSION = '1.36.4';
+export const APP_VERSION = '1.36.5';
 
 export const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -391,6 +391,10 @@ export const BENCH_TARGET = { slot: 'A_bench', w: 80, reps: 3, rpe: 9, triggerW:
 // (até `until`) e deixa de valer quando esse treino ficar registado. check: último aquecimento, que decide;
 // fallback: peso se o aquecimento sair pesado ou o cotovelo doer.
 export const BENCH_NEXT_TOP = { slot: 'A_bench', from: '2026-11-23', until: '2026-11-30', w: 75, reps: 3, rpe: 9, check: 70, fallback: 72.5 };
+
+// Só no treino do Estádio de 25/11 (pedido do Pedro): 1 série de pull-ups no início (até ao limite, no máximo 10)
+// e as explosive pull-ups com banda, para treinar a forma.
+export const ESTADIO_ONE_OFF = { date: '2026-11-25', pullMax: 10, explosiveBand: '20 kg', lighterBand: '10 kg' };
 
 export const MU_STAGES = [
   {
