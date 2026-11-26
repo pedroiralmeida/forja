@@ -8,30 +8,31 @@ import { esc, fmtNum, parseNum, uid, todayISO, addDays } from './util.js';
 import { MEAL_SLOTS } from './data.js';
 
 // Proteína aproximada por porção. g: null usa o valor da whey nas definições.
-// meals: refeições em que o alimento costuma entrar (aparece primeiro nesse "Registar o que comi").
-const P = ['pa'], L = ['lanche'], PL = ['pa', 'lanche'], AJ = ['almoco', 'jantar'], ALL = ['pa', 'almoco', 'lanche', 'jantar'];
+// meals: refeições em que o alimento entra. Cada refeição só mostra os seus alimentos (e os que já lá registaste);
+// o resto escreve-se em "Outro alimento".
+const PL = ['pa', 'lanche'], AJ = ['almoco', 'jantar'], LAJ = ['lanche', 'almoco', 'jantar'], ALL = ['pa', 'almoco', 'lanche', 'jantar'];
 export const FOODS = [
   { id: 'pao_fiambre', name: 'Pão com fiambre de peru', portion: '1 carcaça com 2 fatias', g: 10, meals: PL },
   { id: 'pao_fiambre_normal', name: 'Pão com fiambre', portion: '1 carcaça com 2 fatias', g: 10, meals: PL },
   { id: 'pao_queijo', name: 'Pão com queijo', portion: '1 carcaça com 2 fatias', g: 15, meals: PL },
   { id: 'whey', name: 'Whey', portion: '1 dose', g: null, meals: PL },
-  { id: 'yopro', name: 'YoPro', portion: '1 unidade', g: 25, meals: L },
+  { id: 'yopro', name: 'YoPro', portion: '1 unidade', g: 25, meals: PL },
   { id: 'bife_peru', name: 'Bife de peru', portion: '1 bife', g: 25, meals: AJ },
   { id: 'salmao', name: 'Salmão', portion: '1 posta média (~150 g cru)', g: 30, meals: AJ },
   { id: 'salmao_peq', name: 'Salmão, posta pequena', portion: '1 posta pequena (~90 g cru)', g: 18, meals: AJ },
   { id: 'carne', name: 'Carne, frango ou peixe', portion: 'palma da mão', g: 35, meals: AJ },
   { id: 'ovo', name: 'Ovo', portion: '1 ovo', g: 6, meals: ['pa', 'almoco', 'jantar'] },
-  { id: 'atum', name: 'Atum', portion: '1 lata escorrida', g: 20, meals: L },
-  { id: 'cavala', name: 'Cavala', portion: '1 lata', g: 16, meals: L },
+  { id: 'atum', name: 'Atum', portion: '1 lata escorrida', g: 20, meals: LAJ },
+  { id: 'cavala', name: 'Cavala', portion: '1 lata', g: 16, meals: LAJ },
   { id: 'fiambre', name: 'Fiambre', portion: '2 fatias', g: 5, meals: PL },
   { id: 'fiambre_peru', name: 'Fiambre de peru', portion: '4 fatias', g: 10, meals: PL },
   { id: 'queijo', name: 'Queijo', portion: '1 fatia', g: 5, meals: PL },
   { id: 'requeijao', name: 'Requeijão', portion: '100 g', g: 10, meals: PL },
   { id: 'skyr', name: 'Skyr', portion: '1 copo', g: 16, meals: PL },
   { id: 'leite', name: 'Leite', portion: '1 copo (250 ml)', g: 8, meals: PL },
-  { id: 'amendoas', name: 'Amêndoas', portion: 'um punhado (30 g)', g: 6, meals: L },
-  { id: 'cajus', name: 'Cajus', portion: 'um punhado (30 g)', g: 5, meals: PL },
   { id: 'aveia', name: 'Aveia instantânea', portion: '45 g', g: 6, meals: PL },
+  { id: 'amendoas', name: 'Amêndoas', portion: 'um punhado (30 g)', g: 6, meals: PL },
+  { id: 'cajus', name: 'Cajus', portion: 'um punhado (30 g)', g: 5, meals: PL },
   { id: 'manteiga_amendoim', name: 'Manteiga de amendoim', portion: '1 colher (15 g)', g: 4, meals: PL },
   { id: 'pao', name: 'Pão', portion: '1 carcaça', g: 5, meals: ALL },
   { id: 'arroz', name: 'Arroz', portion: '1 prato', g: 4, meals: AJ },
@@ -52,10 +53,10 @@ export const FOODS = [
   { id: 'salada', name: 'Salada', portion: '1 prato', g: 1, meals: AJ },
   { id: 'iogurte', name: 'Iogurte natural', portion: '1 iogurte (125 g)', g: 5, meals: PL },
   { id: 'iogurte_grego', name: 'Iogurte grego', portion: '1 iogurte (~120 g)', g: 8, meals: PL },
-  { id: 'cereais', name: 'Cereais', portion: '1 taça (40 g)', g: 3, meals: P },
+  { id: 'cereais', name: 'Cereais', portion: '1 taça (40 g)', g: 3, meals: PL },
   { id: 'pao_forma', name: 'Pão de forma', portion: '2 fatias', g: 5, meals: PL },
   { id: 'tosta_mista', name: 'Tosta mista', portion: '1 tosta (queijo e fiambre)', g: 15, meals: PL },
-  { id: 'nozes', name: 'Nozes', portion: 'um punhado (30 g)', g: 4, meals: L },
+  { id: 'nozes', name: 'Nozes', portion: 'um punhado (30 g)', g: 4, meals: PL },
   { id: 'maca', name: 'Maçã', portion: '1 maçã', g: 0.5, meals: ALL },
   { id: 'laranja', name: 'Laranja', portion: '1 laranja', g: 1, meals: ALL },
   { id: 'kiwi', name: 'Kiwi', portion: '1 kiwi', g: 1, meals: ALL },
@@ -68,7 +69,6 @@ export const PROTEIN_REF = FOODS.filter((f) => f.g !== null).map((f) => [`${f.na
 const QTY_MIN = 0.25;
 const QTY_MAX = 20;
 const FRAC = { 0.25: '¼', 0.5: '½', 0.75: '¾' };
-const TOP = 10;
 const TOP_MEAL = 20;
 let mult = 1;
 let pickMeal = null; // refeição escolhida no bloco da proteína; null = pela hora do dia
@@ -163,10 +163,10 @@ export function mealTotals(h) {
 
 // Escolha de alimentos. meal fixa (painel das refeições) ou escolhida aqui (bloco da proteína).
 export function foodPicker(meal = null) {
-  const foods = catalog(meal || pickMeal || mealAt());
-  // À vista: o que já comeste nesta refeição e o que costuma entrar nela; o resto fica em "Mais alimentos"
-  let top = foods.filter((f) => f.mealUses > 0 || f.hint).slice(0, TOP_MEAL);
-  if (top.length < TOP) top = foods.slice(0, TOP);
+  // Só os alimentos desta refeição (nada de bacalhau ao pequeno-almoço) e os que já registaste nela
+  const foods = catalog(meal || pickMeal || mealAt()).filter((f) => f.hint || f.mealUses > 0);
+  // À vista: os primeiros (o que já comeste nesta refeição primeiro); o resto fica em "Mais alimentos"
+  const top = foods.slice(0, TOP_MEAL);
   const topIds = new Set(top.map((f) => f.id));
   const rest = foods.filter((f) => !topIds.has(f.id));
   const cur = pickMeal || mealAt();
