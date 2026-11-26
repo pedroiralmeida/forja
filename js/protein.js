@@ -48,6 +48,7 @@ export const FOODS = [
   { id: 'vaca', name: 'Carne de vaca', portion: 'palma da mão (~120 g)', g: 28, meals: AJ },
   { id: 'hamburguer', name: 'Hambúrguer', portion: '1 hambúrguer (~100 g)', g: 18, meals: AJ },
   { id: 'peixe', name: 'Peixe branco (pescada, dourada…)', portion: 'palma da mão (~120 g)', g: 22, meals: AJ },
+  { id: 'camarao', name: 'Camarão', portion: '1 porção (~100 g cozido, sem casca)', g: 20, meals: AJ },
   { id: 'bacalhau', name: 'Bacalhau', portion: '1 posta (~120 g)', g: 25, meals: AJ },
   { id: 'leguminosas', name: 'Feijão, grão ou lentilhas', portion: '1 concha (~150 g cozido)', g: 10, meals: AJ },
   { id: 'salada', name: 'Salada', portion: '1 prato', g: 1, meals: AJ },
