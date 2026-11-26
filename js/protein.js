@@ -60,6 +60,7 @@ export const FOODS = [
   { id: 'maca', name: 'Maçã', portion: '1 maçã', g: 0.5, meals: ALL },
   { id: 'laranja', name: 'Laranja', portion: '1 laranja', g: 1, meals: ALL },
   { id: 'kiwi', name: 'Kiwi', portion: '1 kiwi', g: 1, meals: ALL },
+  { id: 'salada_frutas', name: 'Salada de frutas', portion: '1 taça (~200 g)', g: 1, meals: ALL },
 ];
 
 // Compatibilidade com quem importava a lista antiga
