@@ -1,6 +1,6 @@
 // Service worker da Forja: guarda a app em cache para funcionar sem internet.
 // Quando mudares algum ficheiro, sobe a VERSION para os dispositivos receberem a versão nova.
-const VERSION = 'forja-v1.36.9';
+const VERSION = 'forja-v1.37.0';
 const ASSETS = [
   "./",
   "./index.html",

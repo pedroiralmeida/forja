@@ -782,6 +782,14 @@ function buildTopBackoff(slot, exId, deload) {
       let cap = t.w + (r <= 7 ? 2 * inc : inc);
       if (t.reps < slot.topReps || r >= 9.5) cap = t.w;
       if (top > cap) top = cap;
+      // Fizeste as reps no RPE pedido ou abaixo: sobe sempre (a conta pelo 1RM sozinha deixava-te no mesmo peso)
+      if (!t.target && t.reps >= slot.topReps && r <= slot.topRPE) {
+        const up = roundW(exId, t.w + (r <= 7 ? 2 * inc : inc));
+        if (top < up) {
+          top = up;
+          note = `Da última vez fizeste ${fmtNum(t.w)} kg × ${t.reps} com RPE ${fmtNum(r)}: hoje sobe para ${fmtNum(top)} kg. ${note}`;
+        }
+      }
       if (t.target && bt) {
         if (top > bt.triggerW) top = roundW(exId, bt.triggerW);
         note = t.reps >= bt.reps
@@ -938,6 +946,14 @@ function buildDouble(slot, exId, deload) {
     if (allMax) {
       w = roundW(exId, lw + inc);
       note = `Da última vez fizeste ${slot.max} reps em todas as séries com ${fmtNum(lw)} kg: hoje sobe para ${fmtNum(w)} kg e recomeça perto das ${slot.min} reps.${info.kind === 'machine' ? ' Se a máquina não tiver este peso, usa o mais próximo acima.' : ''}`;
+      if (exId === 'bench') {
+        // Quantas reps a RPE 8 este peso pede, pela força atual (em vez de recomeçar sempre no mínimo)
+        const E = currentBenchE1RM();
+        let r = slot.min;
+        for (let k = slot.max; k >= slot.min; k--) if (E * pct(k, 8) >= w - 1e-9) { r = k; break; }
+        reps = Array(slot.sets).fill(r);
+        note = `Da última vez fizeste ${slot.max} reps em todas as séries com ${fmtNum(lw)} kg: hoje sobe para ${fmtNum(w)} kg. Pela tua força atual devem sair cerca de ${r} reps por série com 2 na reserva (RPE 8).`;
+      }
     } else if (fail && prevFail) {
       w = roundW(exId, lw * 0.9);
       note = `Ficaste abaixo de ${slot.min} reps duas vezes seguidas: baixa o peso cerca de 10% e volta a subir.`;
@@ -949,6 +965,16 @@ function buildDouble(slot, exId, deload) {
       w = lw;
       reps = Array.from({ length: slot.sets }, (_, i) => clamp((ws[i] ? ws[i].reps : slot.min) + 1, slot.min, slot.max));
       note = `Da última vez: ${fmtNum(lw)} kg × ${ws.map((x) => x.reps).join(', ')}. Hoje: mesmo peso e tenta +1 rep por série (já está preenchido). Quando fizeres ${slot.max} em todas as séries, a app sobe o peso.`;
+    }
+  }
+  // Supino: o peso das séries de volume nunca fica muito atrás da força atual (1RM estimado pela série
+  // principal). Pelo menos o peso de 7 reps a RPE 8, arredondado para baixo.
+  if (exId === 'bench' && w !== null && !deload && hist.length) {
+    const floorW = Math.floor((currentBenchE1RM() * pct(slot.min + 1, 8)) / inc + 1e-9) * inc;
+    if (floorW > w) {
+      w = floorW;
+      reps = Array(slot.sets).fill(slot.min + 1);
+      note = `Pela tua série principal mais recente, este peso já está leve para ti: hoje ${fmtNum(w)} kg, ${slot.min + 1} reps por série com 2 na reserva (RPE 8). Se passares das ${slot.max} longe do limite, sobe na série seguinte.`;
     }
   }
   let n = slot.sets;
